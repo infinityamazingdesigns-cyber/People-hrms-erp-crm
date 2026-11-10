@@ -1,0 +1,68 @@
+# Roadmap
+
+Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
+
+## Ready
+
+- [x] Organisation settings (`org`)
+- [x] Modules (`modules`)
+- [x] Users & access (`users`)
+- [x] Audit log (`audit`)
+- [x] Project guide (`guide`)
+
+## Next — porting
+
+- [ ] Email & 2-step (`email`)
+- [ ] Employee master (`employees`)
+- [ ] Org chart (`orgchart`)
+- [ ] My profile (`profile`)
+- [ ] KYC & bank (`kyc`)
+- [ ] Letter desk (`letters`)
+- [ ] Recruitment pipeline (`recruitment`)
+- [ ] Careers page (`careers`)
+- [ ] Onboarding (`onboarding`)
+- [ ] Probation (`probation`)
+- [ ] Induction academy (`induction`)
+- [ ] Aptitude test (`aptitude`)
+- [ ] Training register (`training`)
+- [ ] Attendance (`attendance`)
+- [ ] Biometric machines (`biometric`)
+- [ ] Shifts & weekly offs (`shifts`)
+- [ ] Holiday calendar (`holidays`)
+- [ ] Leave (`leave`)
+- [ ] Payroll (`payroll`)
+- [ ] Payslips (`payslips`)
+- [ ] Full & final (`fnf`)
+- [ ] Statutory compliance (`statutory`)
+- [ ] Expense claims (`claims`)
+- [ ] Performance (KRA) (`pms`)
+- [ ] Feedback & conduct (`conduct`)
+- [ ] Asset register (`assets`)
+- [ ] Announcement board (`board`)
+- [ ] Team chat (`talk`)
+- [ ] Tasks (`tasks`)
+- [ ] Browser notifications (`notify`)
+- [ ] Visitors (`visitors`)
+- [ ] CRM & orders (`crm`)
+- [ ] Enquiry register (`enquiries`)
+- [ ] Quotations (`quotes`)
+- [ ] Stock & inventory (`stock`)
+- [ ] Purchase & procurement (`purchase`)
+
+## Later — planned
+
+- [ ] Group insurance (`insurance`)
+- [ ] Candidate portal (`candidates`)
+- [ ] Recruitment intelligence (`recintel`)
+- [ ] Staff movement (`movement`)
+- [ ] Branch day book (`daybook`)
+- [ ] Vendor bills (HO) (`vendorbills`)
+- [ ] Video meetings (`meet`)
+- [ ] Help desk (`helpdesk`)
+- [ ] Marketing & ROAS (`marketing`)
+- [ ] Complaints & CAPA (`quality`)
+- [ ] Production workers (`production`)
+- [ ] Third parties & contracts (`contracts`)
+- [ ] HR dashboard (MIS) (`mis`)
+- [ ] My day (`myday`)
+- [ ] Lite mode (`lite`)

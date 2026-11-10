@@ -1,0 +1,24 @@
+name: checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_mysql, openssl, mbstring, fileinfo
+      - name: PHP syntax
+        run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l > /dev/null
+      - name: Tests
+        run: php tests/run.php
+      - name: Guard (no organisation data, no secrets)
+        run: python3 tools/guard.py
+      - name: Module folders and docs are up to date
+        run: |
+          php tools/gen_modules.php && php tools/gen_docs.php
+          git diff --exit-code -- modules docs || (echo "Run php tools/gen_modules.php && php tools/gen_docs.php and commit" && exit 1)

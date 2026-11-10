@@ -1,0 +1,9 @@
+config.php
+.env
+data/
+uploads/
+*.log
+.DS_Store
+/vendor/
+/node_modules/
+.guard-deny
