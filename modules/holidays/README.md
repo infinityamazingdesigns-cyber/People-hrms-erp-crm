@@ -1,11 +1,11 @@
 # Holiday calendar
 
-**Key:** `holidays` · **Group:** time · **Status:** Porting from the reference build
+**Key:** `holidays` · **Group:** time · **Status:** Ready
 
 Holidays by branch; drives attendance, payroll and the announcement board.
 
 ## Access
-- Switched on by the Super Admin on **Admin → Modules**; needs nothing.
+- Switched on by the Super Admin on **Admin → Modules**; needs Employee master (`employees`).
 - Default roles when first switched on: Super Admin, HR Manager, Employee. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('holidays')`; every API with `module_require('holidays', true)`.
 
