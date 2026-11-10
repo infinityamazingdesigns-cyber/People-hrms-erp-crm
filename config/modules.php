@@ -133,7 +133,7 @@ return [
         'about' => 'Shift, flexible hours and weekly offs per branch and per person; late / early rules.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'HROPS'], 'entry' => 'modules/shifts/',
         'ref' => ['attendance_rules.php', 'lib/att_rules.php', 'lib/att_rule_view.php']],
-    'holidays' => ['name' => 'Holiday calendar', 'group' => 'time', 'status' => 'port',
+    'holidays' => ['name' => 'Holiday calendar', 'group' => 'time', 'needs' => ['employees'], 'status' => 'built',
         'about' => 'Holidays by branch; drives attendance, payroll and the announcement board.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'EMPLOYEE'], 'entry' => 'modules/holidays/',
         'ref' => ['lib/hol_seed.php', 'hol_check.php']],
