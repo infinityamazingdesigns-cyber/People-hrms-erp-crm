@@ -12,11 +12,11 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Employee master (`employees`)
 - [x] Org chart (`orgchart`)
 - [x] My profile (`profile`)
+- [x] KYC & bank (`kyc`)
 
 ## Next — porting
 
 - [ ] Email & 2-step (`email`)
-- [ ] KYC & bank (`kyc`)
 - [ ] Letter desk (`letters`)
 - [ ] Recruitment pipeline (`recruitment`)
 - [ ] Careers page (`careers`)

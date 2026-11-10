@@ -68,7 +68,7 @@ return [
         'about' => 'Each person fills their own details; HR verifies before anything changes.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'HROPS', 'SUPERADMIN'], 'entry' => 'modules/profile/',
         'ref' => ['my_profile.php', 'lib/my_profile.php', 'lib/edit_log.php']],
-    'kyc' => ['name' => 'KYC & bank', 'group' => 'people', 'needs' => ['profile'], 'status' => 'port',
+    'kyc' => ['name' => 'KYC & bank', 'group' => 'people', 'needs' => ['profile'], 'status' => 'built',
         'about' => 'Tax ID, national ID (last 4 only), social-security / PF number, bank — sealed at rest, masked, verified by HR.',
         'roles' => ['EMPLOYEE', 'HRMANAGER', 'HROPS', 'SUPERADMIN'], 'entry' => 'modules/kyc/',
         'ref' => ['kyc.php', 'lib/kyc.php', 'lib/kyc_bulk.php', 'joining_kyc.php', 'lib/onb_kyc.php']],
