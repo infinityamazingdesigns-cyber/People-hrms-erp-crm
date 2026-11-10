@@ -1,6 +1,6 @@
 # My profile
 
-**Key:** `profile` · **Group:** people · **Status:** Porting from the reference build
+**Key:** `profile` · **Group:** people · **Status:** Ready
 
 Each person fills their own details; HR verifies before anything changes.
 

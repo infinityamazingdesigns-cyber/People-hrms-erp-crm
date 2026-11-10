@@ -64,7 +64,7 @@ return [
         'about' => 'Reporting lines for everyone; vacant seats and exits visible to HR only; drag to re-arrange.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'CEO', 'MANAGER', 'EMPLOYEE'], 'entry' => 'modules/orgchart/',
         'ref' => ['org_chart.php', 'lib/org_view.php', 'lib/org_edit.php', 'lib/emp_org.php']],
-    'profile' => ['name' => 'My profile', 'group' => 'people', 'needs' => ['employees'], 'status' => 'port',
+    'profile' => ['name' => 'My profile', 'group' => 'people', 'needs' => ['employees'], 'status' => 'built',
         'about' => 'Each person fills their own details; HR verifies before anything changes.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'HROPS', 'SUPERADMIN'], 'entry' => 'modules/profile/',
         'ref' => ['my_profile.php', 'lib/my_profile.php', 'lib/edit_log.php']],

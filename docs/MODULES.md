@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 7 ready · 34 porting · 15 planned
+**56 modules** — 8 ready · 33 porting · 15 planned
 
 ## Administration
 
@@ -21,7 +21,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 |---|---|---|---|---|
 | **Employee master** `employees` | One record per person: code, name, department, designation, branch, joining, status, leavers. | — | Super Admin, HR Manager, HR Operations | Ready |
 | **Org chart** `orgchart` | Reporting lines for everyone; vacant seats and exits visible to HR only; drag to re-arrange. | employees | Super Admin, HR Manager, CEO / Director, Manager, Employee | Ready |
-| **My profile** `profile` | Each person fills their own details; HR verifies before anything changes. | employees | Employee, Manager, HR Manager, HR Operations, Super Admin | Porting |
+| **My profile** `profile` | Each person fills their own details; HR verifies before anything changes. | employees | Employee, Manager, HR Manager, HR Operations, Super Admin | Ready |
 | **KYC & bank** `kyc` | Tax ID, national ID (last 4 only), social-security / PF number, bank — sealed at rest, masked, verified by HR. | profile | Employee, HR Manager, HR Operations, Super Admin | Porting |
 | **Letter desk** `letters` | Offer, appointment, confirmation, increment, relieving letters; approval, signed PDF, verify code, e-acceptance. | employees | Super Admin, HR Manager, CEO / Director | Porting |
 | **Group insurance** `insurance` | Who is covered, card numbers, nominees, policy copy requests. | employees | Super Admin, HR Manager | Planned |
