@@ -7,3 +7,4 @@
 | 2026-11-10 | 92adfee | My profile | notifications, joining-date change requests, postal lookup |
 | 2026-11-10 | 92adfee | KYC & bank | bulk upload, HR entry + confirm, ask-to-update, payroll gaps |
 | 2026-11-10 | 92adfee | Holiday calendar | readers (attendance, payroll, board) come with their modules |
+| 2026-11-10 | 92adfee | Attendance part 1 (punch, register) | corrections, month close, late/early rules, shifts |

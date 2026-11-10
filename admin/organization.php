@@ -31,12 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $t = fn($k) => preg_match('/^\d{2}:\d{2}$/', (string)($_POST[$k] ?? '')) ? $_POST[$k] : null;
         if ($code === '' || $name === '') flash('A branch needs a code and a name.', 'err');
         else {
+            $num = fn($k, $lo, $hi) => is_numeric($_POST[$k] ?? '') && (float)$_POST[$k] >= $lo && (float)$_POST[$k] <= $hi ? (float)$_POST[$k] : null;
             $row = [$code, $name, trim((string)($_POST['aliases'] ?? '')), trim((string)($_POST['state'] ?? '')),
                     trim((string)($_POST['city'] ?? '')), trim((string)($_POST['address'] ?? '')), $t('shift_start'), $t('shift_end'), $wo,
-                    empty($_POST['active']) ? 0 : 1];
+                    empty($_POST['active']) ? 0 : 1, $num('lat', -90, 90), $num('lng', -180, 180), ($r = $num('radius_m', 20, 5000)) === null ? null : (int)$r];
             try {
-                if ($id) $db->prepare('UPDATE branch SET code=?, name=?, aliases=?, state=?, city=?, address=?, shift_start=?, shift_end=?, weekoffs=?, active=? WHERE id=?')->execute([...$row, $id]);
-                else $db->prepare('INSERT INTO branch (code, name, aliases, state, city, address, shift_start, shift_end, weekoffs, active) VALUES (?,?,?,?,?,?,?,?,?,?)')->execute($row);
+                if ($id) $db->prepare('UPDATE branch SET code=?, name=?, aliases=?, state=?, city=?, address=?, shift_start=?, shift_end=?, weekoffs=?, active=?, lat=?, lng=?, radius_m=? WHERE id=?')->execute([...$row, $id]);
+                else $db->prepare('INSERT INTO branch (code, name, aliases, state, city, address, shift_start, shift_end, weekoffs, active, lat, lng, radius_m) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')->execute($row);
                 audit((int)$u['id'], 'org_branch', ($id ? 'edit #' . $id : 'add') . ' ' . $code);
                 flash('Branch saved.');
             } catch (PDOException $e) { flash('That code is already used by another branch.', 'err'); }
@@ -71,14 +72,15 @@ $days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 </form>
 
 <section class="card"><h2>Branches</h2>
-<table><thead><tr><th>Code</th><th>Name</th><th>Other spellings</th><th>State</th><th>Shift</th><th>Weekly off</th><th>Active</th><th></th></tr></thead><tbody>
-<?php foreach (array_merge(branches(false), [['id' => 0, 'code' => '', 'name' => '', 'aliases' => '', 'state' => '', 'city' => '', 'address' => '', 'shift_start' => '', 'shift_end' => '', 'weekoffs' => 'Sun', 'active' => 1]]) as $b): $fid = 'b' . $b['id']; ?>
+<table><thead><tr><th>Code</th><th>Name</th><th>Other spellings</th><th>State</th><th>Shift</th><th>Weekly off</th><th>Office location (lat, lng, radius m)</th><th>Active</th><th></th></tr></thead><tbody>
+<?php foreach (array_merge(branches(false), [['id' => 0, 'code' => '', 'name' => '', 'aliases' => '', 'state' => '', 'city' => '', 'address' => '', 'shift_start' => '', 'shift_end' => '', 'weekoffs' => 'Sun', 'active' => 1, 'lat' => null, 'lng' => null, 'radius_m' => null]]) as $b): $fid = 'b' . $b['id']; ?>
 <tr><td><input form="<?= $fid ?>" name="code" value="<?= h($b['code']) ?>" size="6" placeholder="New"></td>
 <td><input form="<?= $fid ?>" name="name" value="<?= h($b['name']) ?>"></td>
 <td><input form="<?= $fid ?>" name="aliases" value="<?= h($b['aliases']) ?>" placeholder="comma separated"></td>
 <td><input form="<?= $fid ?>" name="state" value="<?= h($b['state']) ?>" size="10"></td>
 <td><input form="<?= $fid ?>" name="shift_start" type="time" value="<?= h(substr((string)$b['shift_start'], 0, 5)) ?>"> – <input form="<?= $fid ?>" name="shift_end" type="time" value="<?= h(substr((string)$b['shift_end'], 0, 5)) ?>"></td>
 <td class="days"><?php foreach ($days as $d): ?><label><input form="<?= $fid ?>" type="checkbox" name="weekoffs[]" value="<?= $d ?>"<?= in_array($d, explode(',', (string)$b['weekoffs']), true) ? ' checked' : '' ?>><?= $d[0] ?></label><?php endforeach; ?></td>
+<td><input form="<?= $fid ?>" name="lat" value="<?= h((string)$b['lat']) ?>" size="8" placeholder="lat"> <input form="<?= $fid ?>" name="lng" value="<?= h((string)$b['lng']) ?>" size="8" placeholder="lng"> <input form="<?= $fid ?>" name="radius_m" value="<?= h((string)$b['radius_m']) ?>" size="4" placeholder="200"></td>
 <td><input form="<?= $fid ?>" type="checkbox" name="active" value="1"<?= $b['active'] ? ' checked' : '' ?>></td>
 <td><form id="<?= $fid ?>" method="post"><?= csrf_field() ?><input type="hidden" name="a" value="branch"><input type="hidden" name="id" value="<?= (int)$b['id'] ?>"><input type="hidden" name="city" value="<?= h($b['city']) ?>"><input type="hidden" name="address" value="<?= h($b['address']) ?>"><button class="btn sm"><?= $b['id'] ? 'Save' : 'Add' ?></button></form></td></tr>
 <?php endforeach; ?>

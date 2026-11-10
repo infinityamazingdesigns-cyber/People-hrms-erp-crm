@@ -121,7 +121,7 @@ return [
         'ref' => ['training.php', 'lib/training.php']],
 
     /* ---------------- Time & attendance ---------------- */
-    'attendance' => ['name' => 'Attendance', 'group' => 'time', 'needs' => ['employees'], 'status' => 'port',
+    'attendance' => ['name' => 'Attendance', 'group' => 'time', 'needs' => ['employees', 'holidays', 'orgchart'], 'status' => 'built',
         'about' => 'Phone punch with live selfie + precise GPS, office geofence, register, corrections, month close.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN', 'CEO'], 'entry' => 'modules/attendance/',
         'ref' => ['attendance.php', 'lib/attendance.php', 'lib/att_requests.php', 'lib/att_close.php', 'api/attendance.php']],
