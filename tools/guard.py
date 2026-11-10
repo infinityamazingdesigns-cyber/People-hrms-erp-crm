@@ -36,7 +36,7 @@ RULES = [
     ("API token", re.compile(r"\b(sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{30,}|AIza[0-9A-Za-z_\-]{30,}|xox[bpa]-[A-Za-z0-9-]{10,})\b")),
     ("password in code", re.compile(r"""['"](db_pass|password|secret|api_key|token)['"]\s*=>\s*['"][^'"]{6,}['"]""", re.I)),
     ("mobile number", re.compile(r"(?<![\d.])(?:\+?91[ -]?)?[6-9]\d{9}(?!\d)")),
-    ("email address", re.compile(r"\b[A-Za-z0-9._%+-]+@(?!example\.(?:com|org|net)\b|test\b|localhost\b)[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")),
+    ("email address", re.compile(r"(?i)\b[A-Za-z0-9._%+-]+@(?!example\.(?:com|org|net)\b|test\b|localhost\b)[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")),
 ]
 # Lines that may legitimately show a pattern (placeholders in docs / samples).
 ALLOW_LINE = re.compile(r"guard:allow|CHANGE_ME|XXXX|ABCDE1234F|example\.com", re.I)
