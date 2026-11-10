@@ -19,3 +19,4 @@ Customers, products, orders, dispatch, tracking page, customer messages, same-da
 4. Country-specific statutory rules go into a rule pack (`docs/RULE_PACKS.md`), not into module code.
 5. Tests use synthetic data only (`TEST –` names); add them under `tests/cases/`.
 6. `python3 tools/guard.py` must pass before the commit.
+7. Record what was ported and what became a setting in `modules/crm/NOTES.md` (this README is regenerated).

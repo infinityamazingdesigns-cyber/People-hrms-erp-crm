@@ -20,3 +20,4 @@ Desk, expected visitors, card reading on device, host approval, pass, retention 
 4. Country-specific statutory rules go into a rule pack (`docs/RULE_PACKS.md`), not into module code.
 5. Tests use synthetic data only (`TEST –` names); add them under `tests/cases/`.
 6. `python3 tools/guard.py` must pass before the commit.
+7. Record what was ported and what became a setting in `modules/visitors/NOTES.md` (this README is regenerated).

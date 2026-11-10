@@ -23,3 +23,4 @@ CTC structures, month run from attendance, statutory deductions by country/state
 4. Country-specific statutory rules go into a rule pack (`docs/RULE_PACKS.md`), not into module code.
 5. Tests use synthetic data only (`TEST –` names); add them under `tests/cases/`.
 6. `python3 tools/guard.py` must pass before the commit.
+7. Record what was ported and what became a setting in `modules/payroll/NOTES.md` (this README is regenerated).
