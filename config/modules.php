@@ -60,7 +60,7 @@ return [
         'about' => 'One record per person: code, name, department, designation, branch, joining, status, leavers.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'HROPS'], 'entry' => 'modules/employees/',
         'ref' => ['lib/emp_current.php', 'lib/emp_roster.php', 'lib/emp_record.php', 'emp_record.php', 'emp_codes.php', 'lib/emp_recode.php']],
-    'orgchart' => ['name' => 'Org chart', 'group' => 'people', 'needs' => ['employees'], 'status' => 'port',
+    'orgchart' => ['name' => 'Org chart', 'group' => 'people', 'needs' => ['employees'], 'status' => 'built',
         'about' => 'Reporting lines for everyone; vacant seats and exits visible to HR only; drag to re-arrange.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'CEO', 'MANAGER', 'EMPLOYEE'], 'entry' => 'modules/orgchart/',
         'ref' => ['org_chart.php', 'lib/org_view.php', 'lib/org_edit.php', 'lib/emp_org.php']],

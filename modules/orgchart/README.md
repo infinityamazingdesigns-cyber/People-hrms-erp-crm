@@ -1,6 +1,6 @@
 # Org chart
 
-**Key:** `orgchart` · **Group:** people · **Status:** Porting from the reference build
+**Key:** `orgchart` · **Group:** people · **Status:** Ready
 
 Reporting lines for everyone; vacant seats and exits visible to HR only; drag to re-arrange.
 
