@@ -1,6 +1,6 @@
 # KYC & bank
 
-**Key:** `kyc` · **Group:** people · **Status:** Porting from the reference build
+**Key:** `kyc` · **Group:** people · **Status:** Ready
 
 Tax ID, national ID (last 4 only), social-security / PF number, bank — sealed at rest, masked, verified by HR.
 
