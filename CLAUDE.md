@@ -45,5 +45,5 @@ A product for **any** organisation. Nothing in this repository may belong to one
 - `install.php` never deletes itself (hosting malware scanners remove self-deleting PHP).
 
 ## Porting from the reference build
-See `docs/PORTING.md`. Logic only, never data; one module per pull request; spec in `modules/<key>/README.md`
+See `docs/PORTING.md`. Logic only, never data; one module per pull request; spec in `modules/<key>/NOTES.md`
 updated with what was ported and what became a setting.

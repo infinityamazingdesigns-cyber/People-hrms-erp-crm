@@ -19,7 +19,7 @@ permission. The reference repository is never copied wholesale and **none of its
 2. Write the module under `modules/<key>/` (pages) and `lib/` or `modules/<key>/lib/` (rules), using `org()`,
    `branches()`, module settings and rule packs for anything organisation-specific.
 3. Replace constants that held decisions (thresholds, rates, lists) with settings that have neutral defaults.
-4. Add migrations, tests (`tests/cases/<ID>.php`), update the module README (what is ported, what became a setting)
+4. Add migrations, tests (`tests/cases/<ID>.php`), update `modules/<key>/NOTES.md` (what is ported, what became a setting)
    and `status` in `config/modules.php` (`port` → `built`).
 5. Run `php tests/run.php` and `python3 tools/guard.py`; open a pull request.
 

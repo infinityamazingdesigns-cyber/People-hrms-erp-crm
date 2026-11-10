@@ -9,11 +9,11 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Users & access (`users`)
 - [x] Audit log (`audit`)
 - [x] Project guide (`guide`)
+- [x] Employee master (`employees`)
 
 ## Next — porting
 
 - [ ] Email & 2-step (`email`)
-- [ ] Employee master (`employees`)
 - [ ] Org chart (`orgchart`)
 - [ ] My profile (`profile`)
 - [ ] KYC & bank (`kyc`)

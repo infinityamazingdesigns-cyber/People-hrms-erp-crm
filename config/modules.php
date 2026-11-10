@@ -56,7 +56,7 @@ return [
         'roles' => ['SUPERADMIN'], 'entry' => 'modules/email/', 'ref' => ['lib/mail.php', 'lib/two_step.php', 'mail_settings.php']],
 
     /* ---------------- People ---------------- */
-    'employees' => ['name' => 'Employee master', 'group' => 'people', 'status' => 'port',
+    'employees' => ['name' => 'Employee master', 'group' => 'people', 'status' => 'built',
         'about' => 'One record per person: code, name, department, designation, branch, joining, status, leavers.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'HROPS'], 'entry' => 'modules/employees/',
         'ref' => ['lib/emp_current.php', 'lib/emp_roster.php', 'lib/emp_record.php', 'emp_record.php', 'emp_codes.php', 'lib/emp_recode.php']],
