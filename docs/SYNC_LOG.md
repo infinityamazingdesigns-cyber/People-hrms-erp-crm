@@ -9,3 +9,4 @@
 | 2026-11-10 | 92adfee | Holiday calendar | readers (attendance, payroll, board) come with their modules |
 | 2026-11-10 | 92adfee | Attendance part 1 (punch, register) | corrections, month close, late/early rules, shifts |
 | 2026-11-12 | 92adfee | Attendance part 2 (requests, month close, late/early) | per-person shifts, permissions/cuts, leave clash |
+| 2026-11-12 | 92adfee | Shifts & weekly offs | late/early allowances (payroll rule pack) |

@@ -111,9 +111,10 @@ function att_is_weekoff(string $day, string $weekoffs): bool {
 
 /**
  * Day lines for one person: day => [status, in, out, hours, punches, holiday, away_min].
- * $punches = this person's punch rows in the range; $hol = day => name; $weekoffs = branch weekly offs.
+ * $punches = this person's punch rows in the range; $hol = day => name; $weekoffs = "Sun,Sat" for every day, or
+ * day => "Sun,Sat" when a shift rule changes it during the range.
  */
-function att_person_days(array $punches, array $hol, string $weekoffs, string $from, string $to, string $today, array $set, ?string $doj = null, ?string $lastDay = null): array {
+function att_person_days(array $punches, array $hol, string|array $weekoffs, string $from, string $to, string $today, array $set, ?string $doj = null, ?string $lastDay = null): array {
     $by = [];
     foreach ($punches as $p) $by[(string)$p['day']][] = $p;
     $out = [];
@@ -129,7 +130,7 @@ function att_person_days(array $punches, array $hol, string $weekoffs, string $f
         if ($outs && end($ps)['type'] === 'OUT') $line['out'] = end($outs)['time'];
         $prev = null;
         foreach ($ps as $p) { if ($p['type'] === 'OUT') $prev = $p['time']; elseif ($prev !== null) { $line['away_min'] += max(0, intdiv(att_sec($p['time']) - att_sec($prev), 60)); $prev = null; } }
-        $off = $line['holiday'] !== null ? 'Holiday' : (att_is_weekoff($d, $weekoffs) ? 'Weekly off' : '');
+        $off = $line['holiday'] !== null ? 'Holiday' : (att_is_weekoff($d, is_array($weekoffs) ? (string)($weekoffs[$d] ?? '') : $weekoffs) ? 'Weekly off' : '');
         if ($line['in'] && $line['out']) {
             $h = round((att_sec($line['out']) - att_sec($line['in']) - $line['away_min'] * 60) / 3600, 2);
             $line['hours'] = $h;
@@ -269,20 +270,32 @@ function att_register(PDO $db, array $u, string $from, string $to, ?string $oneC
     return $out;
 }
 
-/** Day lines for one person with holidays, approved corrections and late / early against the branch shift. */
+/** Day lines for one person with holidays, approved corrections and late / early against the shift in force each day
+ *  (the person's shift rule, else the branch's). */
 function att_days_for(PDO $db, array $emp, string $from, string $to, ?array $punches = null): array {
     $set = att_settings();
     $code = strtoupper((string)$emp['code']);
     $punches ??= att_punches($db, $from, $to, [$code])[$code] ?? [];
-    $br = ['weekoffs' => 'Sun', 'shift_start' => null, 'shift_end' => null];
-    foreach (branches(false) as $b) if ((int)$b['id'] === (int)$emp['branch_id']) $br = $b;
+    $eff = shift_by_day(shift_rules($db, [$code])[$code], shift_branch($emp['branch_id'] ? (int)$emp['branch_id'] : null), $from, $to);
     $hol = hol_days($db, $emp['code'], $emp['branch_id'] ? (int)$emp['branch_id'] : null, $from, $to);
-    $days = att_person_days($punches, $hol, (string)$br['weekoffs'], $from, $to, date('Y-m-d'), $set, $emp['doj'], $emp['last_day']);
+    $days = att_person_days($punches, $hol, array_map(fn($e) => $e['weekoffs'], $eff), $from, $to, date('Y-m-d'), $set, $emp['doj'], $emp['last_day']);
     static $corr = [];
     $k = $from . '|' . $to;
     $corr[$k] ??= atr_corrections($db, $from, $to);
     $days = atr_apply($days, $corr[$k][$code] ?? [], $set);
-    return atr_late_early($days, $br['shift_start'] ? substr((string)$br['shift_start'], 0, 5) : null, $br['shift_end'] ? substr((string)$br['shift_end'], 0, 5) : null, (int)$set['grace_min']);
+    return att_late_early_by_day($days, $eff, (int)$set['grace_min']);
+}
+
+/** Late / early per day with that day's shift; flexible days get none. */
+function att_late_early_by_day(array $days, array $eff, int $grace): array {
+    foreach ($days as $d => $l) {
+        $e = $eff[$d] ?? null;
+        $one = atr_late_early([$d => $l], $e && !$e['flexible'] ? $e['start'] : null, $e && !$e['flexible'] ? $e['end'] : null, $grace)[$d];
+        $one['late'] ??= 0; $one['early'] ??= 0;
+        $one['shift'] = $e ? shift_label($e) : '';
+        $days[$d] = $one;
+    }
+    return $days;
 }
 
 /** Stream a selfie if this login may see that punch. */
@@ -300,3 +313,4 @@ function att_selfie_send(PDO $db, array $u, string $id): void {
 }
 
 require_once __DIR__ . '/att_requests.php';
+require_once __DIR__ . '/shifts.php';
