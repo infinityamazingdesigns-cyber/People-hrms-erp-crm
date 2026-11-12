@@ -1,12 +1,12 @@
 # Probation
 
-**Key:** `probation` · **Group:** onboard · **Status:** Porting from the reference build
+**Key:** `probation` · **Group:** onboard · **Status:** Ready
 
 Check-ins, manager review before the end date, HR confirms / extends.
 
 ## Access
-- Switched on by the Super Admin on **Admin → Modules**; needs Onboarding (`onboarding`).
-- Default roles when first switched on: Super Admin, HR Manager, Manager. The Super Admin can change this and add per-person exceptions.
+- Switched on by the Super Admin on **Admin → Modules**; needs Employee master (`employees`).
+- Default roles when first switched on: Super Admin, HR Manager, HR Operations, Manager. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('probation')`; every API with `module_require('probation', true)`.
 
 ## Reference build (port source)

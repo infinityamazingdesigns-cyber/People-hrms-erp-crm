@@ -99,13 +99,13 @@ return [
         'ref' => ['recruit_intel.php', 'lib/recruit_intel.php', 'lib/recruit_inbox.php']],
 
     /* ---------------- Onboard & grow ---------------- */
-    'onboarding' => ['name' => 'Onboarding', 'group' => 'onboard', 'needs' => ['employees'], 'status' => 'port',
+    'onboarding' => ['name' => 'Onboarding', 'group' => 'onboard', 'needs' => ['employees'], 'status' => 'built',
         'about' => 'Checklist per joiner from offer to first week; convert candidate to employee.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'HROPS'], 'entry' => 'modules/onboarding/',
         'ref' => ['onboarding.php', 'lib/onboarding.php']],
-    'probation' => ['name' => 'Probation', 'group' => 'onboard', 'needs' => ['onboarding'], 'status' => 'port',
+    'probation' => ['name' => 'Probation', 'group' => 'onboard', 'needs' => ['employees'], 'status' => 'built',
         'about' => 'Check-ins, manager review before the end date, HR confirms / extends.',
-        'roles' => ['SUPERADMIN', 'HRMANAGER', 'MANAGER'], 'entry' => 'modules/probation/',
+        'roles' => ['SUPERADMIN', 'HRMANAGER', 'HROPS', 'MANAGER'], 'entry' => 'modules/probation/',
         'ref' => ['probation.php', 'lib/probation_review.php']],
     'induction' => ['name' => 'Induction academy', 'group' => 'onboard', 'needs' => ['employees'], 'status' => 'port',
         'about' => 'Self-paced levels and quizzes; progress feeds onboarding.',
