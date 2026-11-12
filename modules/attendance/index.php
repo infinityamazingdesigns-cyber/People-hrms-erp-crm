@@ -97,10 +97,10 @@ $lateTag = fn(array $d) => (!empty($d['corrected']) ? ' <span class="pill planne
       <td><?php foreach ($d['punches'] as $p): ?><a href="?selfie=<?= h($p['selfie_id']) ?>" target="_blank" title="<?= h($p['geofence'] . ($p['distance_m'] !== null ? ' · ' . $p['distance_m'] . ' m' : '') . ($p['remarks'] ? ' · ' . $p['remarks'] : '')) ?>"><?= h($p['type'] . ' ' . att_hm($p['time'])) ?></a> <?php endforeach; ?></td></tr><?php endforeach; ?>
     </tbody></table>
   <?php else: ?>
-  <table><thead><tr><th>Code</th><th>Name</th><th>Branch</th><th>Present</th><th>Half / short</th><th>Absent</th><th>Missed punch</th><th>Late / early</th><th>Off / holiday</th><th>Hours</th></tr></thead><tbody>
+  <table><thead><tr><th>Code</th><th>Name</th><th>Branch</th><th>Present</th><th>Half / short</th><th>Absent</th><th>Missed punch</th><th>Late / early</th><th>Leave</th><th>Off / holiday</th><th>Hours</th></tr></thead><tbody>
   <?php foreach ($rows as $r): $s = att_summary(array_filter($r['days'], fn($d) => $d['day'] <= date('Y-m-d'))); ?>
     <tr><td><a href="?view=register&code=<?= h(urlencode($r['emp']['code'])) ?>&from=<?= h($from) ?>&to=<?= h($to) ?>"><?= h($r['emp']['code']) ?></a></td><td><?= h($r['emp']['name']) ?></td><td><?= h($brName[$r['emp']['branch_id']] ?? '') ?></td>
-    <td><?= $s['Present'] ?></td><td><?= $s['Half day'] + $s['Short'] ?></td><td><?= $s['Absent'] ?></td><td><?= $s['Missed punch'] ?></td><td><?= $s['Late'] ?> / <?= $s['Early'] ?></td><td><?= $s['Weekly off'] + $s['Holiday'] ?></td><td><?= $s['hours'] ?></td></tr>
+    <td><?= $s['Present'] ?></td><td><?= $s['Half day'] + $s['Short'] ?></td><td><?= $s['Absent'] ?></td><td><?= $s['Missed punch'] ?></td><td><?= $s['Late'] ?> / <?= $s['Early'] ?></td><td><?= $s['Leave days'] ?></td><td><?= $s['Weekly off'] + $s['Holiday'] ?></td><td><?= $s['hours'] ?></td></tr>
   <?php endforeach; ?><?php if (!$rows): ?><tr><td colspan="10"><em>Nobody in your view for these dates.</em></td></tr><?php endif; ?>
   </tbody></table><?php endif; ?>
 </section>

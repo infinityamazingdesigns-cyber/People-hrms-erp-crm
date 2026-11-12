@@ -1,6 +1,6 @@
 # Leave
 
-**Key:** `leave` · **Group:** time · **Status:** Porting from the reference build
+**Key:** `leave` · **Group:** time · **Status:** Ready
 
 Apply (day / half / time), manager → HR approval, balances, withdraw, handover, categories.
 

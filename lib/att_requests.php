@@ -234,7 +234,7 @@ function atr_corrections(PDO $db, string $from, string $to): array {
 function atr_month_blockers(PDO $db, string $ym): int {
     $s = $db->prepare("SELECT COUNT(*) FROM attendance_request WHERE status IN ('manager','hr') AND day BETWEEN ? AND ?");
     $s->execute([$ym . '-01', date('Y-m-t', strtotime($ym . '-01'))]);
-    return (int)$s->fetchColumn();
+    return (int)$s->fetchColumn() + (function_exists('lv_month_blockers') ? lv_month_blockers($db, $ym) : 0);
 }
 
 function atr_month_close(PDO $db, array $u, string $ym, string $note): void {

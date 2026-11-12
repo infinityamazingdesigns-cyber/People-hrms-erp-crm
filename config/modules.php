@@ -137,7 +137,7 @@ return [
         'about' => 'Holidays by branch; drives attendance, payroll and the announcement board.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'EMPLOYEE'], 'entry' => 'modules/holidays/',
         'ref' => ['lib/hol_seed.php', 'hol_check.php']],
-    'leave' => ['name' => 'Leave', 'group' => 'time', 'needs' => ['employees'], 'status' => 'port',
+    'leave' => ['name' => 'Leave', 'group' => 'time', 'needs' => ['employees'], 'status' => 'built',
         'about' => 'Apply (day / half / time), manager → HR approval, balances, withdraw, handover, categories.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'HROPS', 'SUPERADMIN'], 'entry' => 'modules/leave/',
         'ref' => ['leave.php', 'lib/leave.php', 'lib/leave_balance.php']],

@@ -149,10 +149,11 @@ function att_person_days(array $punches, array $hol, string|array $weekoffs, str
 
 /** Totals over day lines. */
 function att_summary(array $lines): array {
-    $s = ['Present' => 0, 'Half day' => 0, 'Short' => 0, 'Absent' => 0, 'Missed punch' => 0, 'Weekly off' => 0, 'Holiday' => 0, 'Late' => 0, 'Early' => 0, 'hours' => 0.0];
+    $s = ['Present' => 0, 'Half day' => 0, 'Short' => 0, 'Absent' => 0, 'Missed punch' => 0, 'Weekly off' => 0, 'Holiday' => 0, 'Leave days' => 0.0, 'Late' => 0, 'Early' => 0, 'hours' => 0.0];
     foreach ($lines as $l) {
         $k = explode(' · ', (string)$l['status'])[0];
         if (isset($s[$k])) $s[$k]++;
+        if (!empty($l['leave'])) { $h = $l['leave']['halves']; $s['Leave days'] += ($h[0] ? .5 : 0) + ($h[1] ? .5 : 0); }
         if (!empty($l['late'])) $s['Late']++;
         if (!empty($l['early'])) $s['Early']++;
         $s['hours'] += (float)($l['hours'] ?? 0);
@@ -283,7 +284,7 @@ function att_days_for(PDO $db, array $emp, string $from, string $to, ?array $pun
     $k = $from . '|' . $to;
     $corr[$k] ??= atr_corrections($db, $from, $to);
     $days = atr_apply($days, $corr[$k][$code] ?? [], $set);
-    return att_late_early_by_day($days, $eff, (int)$set['grace_min']);
+    return lv_overlay(att_late_early_by_day($days, $eff, (int)$set['grace_min']), lv_by_day($db, $code, $from, $to));
 }
 
 /** Late / early per day with that day's shift; flexible days get none. */
@@ -314,3 +315,4 @@ function att_selfie_send(PDO $db, array $u, string $id): void {
 
 require_once __DIR__ . '/att_requests.php';
 require_once __DIR__ . '/shifts.php';
+require_once __DIR__ . '/leave.php';
