@@ -1,11 +1,11 @@
 # Attendance
 
-**Key:** `attendance` · **Group:** time · **Status:** Porting from the reference build
+**Key:** `attendance` · **Group:** time · **Status:** Ready
 
 Phone punch with live selfie + precise GPS, office geofence, register, corrections, month close.
 
 ## Access
-- Switched on by the Super Admin on **Admin → Modules**; needs Employee master (`employees`).
+- Switched on by the Super Admin on **Admin → Modules**; needs Employee master (`employees`), Holiday calendar (`holidays`), Org chart (`orgchart`).
 - Default roles when first switched on: Employee, Manager, HR Manager, Super Admin, CEO / Director. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('attendance')`; every API with `module_require('attendance', true)`.
 

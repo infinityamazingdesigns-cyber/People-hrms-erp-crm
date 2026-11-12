@@ -13,6 +13,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Org chart (`orgchart`)
 - [x] My profile (`profile`)
 - [x] KYC & bank (`kyc`)
+- [x] Attendance (`attendance`)
 - [x] Holiday calendar (`holidays`)
 
 ## Next — porting
@@ -26,7 +27,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [ ] Induction academy (`induction`)
 - [ ] Aptitude test (`aptitude`)
 - [ ] Training register (`training`)
-- [ ] Attendance (`attendance`)
 - [ ] Biometric machines (`biometric`)
 - [ ] Shifts & weekly offs (`shifts`)
 - [ ] Leave (`leave`)
