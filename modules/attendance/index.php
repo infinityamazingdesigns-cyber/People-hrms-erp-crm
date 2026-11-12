@@ -73,6 +73,7 @@ $lateTag = fn(array $d) => (!empty($d['corrected']) ? ' <span class="pill planne
 <section class="card">
   <div class="row"><a class="btn sm ghost" href="?view=me&m=<?= $prevM ?>">‹</a><h2 style="margin:0"><?= h(date('F Y', strtotime($mFrom))) ?></h2><?php if ($nextM <= date('Y-m')): ?><a class="btn sm ghost" href="?view=me&m=<?= $nextM ?>">›</a><?php endif; ?></div>
   <p><?php foreach ($sum as $k => $v): if ($k === 'hours' || !$v) continue; ?><span class="pill"><?= h($k) ?>: <?= $v ?></span> <?php endforeach; ?><span class="pill">Hours: <?= $sum['hours'] ?></span></p>
+  <p class="muted">Your shift: <?= h(shift_label(shift_for($db, $emp, date('Y-m-d')))) ?></p>
   <table><thead><tr><th>Date</th><th>Status</th><th>In</th><th>Out</th><th>Hours</th><th>Punches</th></tr></thead><tbody>
   <?php foreach ($days as $d): ?><tr><td><?= h(date('D j', strtotime($d['day']))) ?></td><td><?= $d['status'] !== '' ? $pill($d['status']) : '' ?><?= $d['holiday'] ? ' <small class="muted">' . h($d['holiday']) . '</small>' : '' ?><?= $lateTag($d) ?>
     <?php if ($d['day'] >= $openFrom && $d['day'] <= date('Y-m-d') && in_array(explode(' · ', $d['status'])[0], ['Missed punch', 'Absent', 'Short', 'Half day', 'Not in yet'], true) || (!empty($d['late']) && $d['day'] >= $openFrom)): ?> <a class="muted" href="requests.php?day=<?= h($d['day']) ?>">Ask to correct</a><?php endif; ?></td>
@@ -117,7 +118,7 @@ $lateTag = fn(array $d) => (!empty($d['corrected']) ? ' <span class="pill planne
   <label class="tick"><input type="checkbox" name="remarks_outside" value="1"<?= $set['remarks_outside'] ? ' checked' : '' ?>> Ask for a remark when someone punches away from every office</label><br>
   <label class="tick"><input type="checkbox" name="managers_see_team" value="1"<?= $set['managers_see_team'] ? ' checked' : '' ?>> Managers see their own team's attendance</label>
   <p>Roles that see everyone's attendance (within their branches):<br><?php foreach (role_labels() as $rc => $rl): ?><label class="tick"><input type="checkbox" name="see_all_roles[]" value="<?= h($rc) ?>"<?= in_array($rc, $set['see_all_roles'], true) ? ' checked' : '' ?><?= $rc === 'SUPERADMIN' ? ' disabled checked' : '' ?>><?= h($rl) ?></label><?php endforeach; ?></p>
-  <p class="muted">Office locations and radius come from each branch (Admin → Organisation). A branch without a shift start counts as flexible hours.</p>
+  <p class="muted">Office locations and radius come from each branch (Admin → Organisation). A branch without a shift start counts as flexible hours. Shifts & weekly offs sets them per person.</p>
   <button class="btn">Save</button></form>
 <?php endif;
 ui_foot();

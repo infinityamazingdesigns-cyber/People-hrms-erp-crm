@@ -7,9 +7,12 @@ header('Permissions-Policy: camera=(self), microphone=(), geolocation=(self), pa
 $u = module_require('attendance');
 $db = pdo();
 $emp = !empty($u['emp_code']) ? emp_by_code($db, (string)$u['emp_code']) : null;
-$br = null; foreach (branches(false) as $b) if ($emp && (int)$b['id'] === (int)$emp['branch_id']) $br = $b;
-$flexible = !$br || empty($br['shift_start']);
 $set = att_settings();
+$tz = new DateTimeZone(org('timezone') ?: 'UTC');
+// Flexible = the person's shift rule says so, or their branch has no shift start. Asked for the calendar day and the
+// day before, so a flexible night still lands on the day it began.
+$nowD = (new DateTimeImmutable('now', $tz))->format('Y-m-d');
+$flexible = !$emp || shift_for($db, $emp, $nowD)['flexible'] || shift_for($db, $emp, date('Y-m-d', strtotime($nowD . ' -1 day')))['flexible'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     check_csrf();
@@ -23,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$tz = new DateTimeZone(org('timezone') ?: 'UTC');
 [$day] = att_work_day($flexible, new DateTimeImmutable('now', $tz), (int)$set['flex_day_change']);
 $today = att_today($db, (int)$u['id'], $day);
 $next = att_next($today, (int)$set['max_punches']);

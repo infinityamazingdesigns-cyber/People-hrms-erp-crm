@@ -1,8 +1,8 @@
 # Shifts & weekly offs
 
-**Key:** `shifts` · **Group:** time · **Status:** Porting from the reference build
+**Key:** `shifts` · **Group:** time · **Status:** Ready
 
-Shift, flexible hours and weekly offs per branch and per person; late / early rules.
+Shift, flexible hours and weekly offs per person from a date, over the branch's; drives attendance late / early.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Attendance (`attendance`).
