@@ -17,9 +17,21 @@
 - Time zone from Admin → Organisation; precision, hours and visibility are module settings, not constants.
 - Who sees everyone is a role list (the reference build fixed it to two named categories).
 
-## Part 2 (next)
-- Correction requests (manager → HR, HR may skip the manager), month close for payroll, late / early rules with
-  grace and permissions, per-person shifts and weekly offs (Shifts module).
+## Part 2
+- Correction requests for this month and last month (until it is closed): in / out time, reason, note; one open
+  request per day; route reporting manager (login linked to the manager's code) → HR; no manager login → HR.
+- HR approvers may decide while it is with the manager ("manager skipped"); nobody decides their own; reject needs a
+  note; the person can withdraw while waiting. Approved corrections fill the register day (marked "corrected");
+  punches are never changed.
+- Month close (Super Admin, HR Manager): blocked while requests wait; closed = no new requests; only Super Admin
+  reopens with a reason.
+- HR adds attendance directly (Super Admin, HR Manager), also in a closed month, never for their own code.
+- Late / early against the branch shift with grace minutes (setting); never on weekly offs or holidays; counted in
+  the register summary and the CSV.
+
+## Later
+- Per-person shifts and weekly offs (Shifts module); late-coming permissions and pay cuts (Payroll module);
+  clash with leave (Leave module).
 
 ## Not ported
 - Biometric machines (own module), place names from map services, Drive copies of selfies, auto check-out,

@@ -20,7 +20,7 @@ require_once __DIR__ . '/employees.php';
 require_once __DIR__ . '/orgchart.php';
 require_once __DIR__ . '/holidays.php';
 
-const ATT_DEFAULTS = ['accuracy_m' => 25, 'max_punches' => 6, 'full_day_hours' => 8, 'half_day_hours' => 4, 'flex_day_change' => 4,
+const ATT_DEFAULTS = ['accuracy_m' => 25, 'max_punches' => 6, 'full_day_hours' => 8, 'half_day_hours' => 4, 'flex_day_change' => 4, 'grace_min' => 5,
     'see_all_roles' => ['SUPERADMIN', 'CEO', 'HRMANAGER'], 'managers_see_team' => true, 'remarks_outside' => true];
 const ATT_MAX_ACCURACY_CEILING = 150;
 const ATT_MAX_FIX_AGE_MS = 30000;
@@ -42,13 +42,14 @@ function att_settings_check(array $in, array $roles): array {
     $e = [];
     $o = ['accuracy_m' => (int)($in['accuracy_m'] ?? 25), 'max_punches' => (int)($in['max_punches'] ?? 6),
           'full_day_hours' => (float)($in['full_day_hours'] ?? 8), 'half_day_hours' => (float)($in['half_day_hours'] ?? 4),
-          'flex_day_change' => (int)($in['flex_day_change'] ?? 4),
+          'flex_day_change' => (int)($in['flex_day_change'] ?? 4), 'grace_min' => (int)($in['grace_min'] ?? 5),
           'see_all_roles' => array_values(array_intersect((array)($in['see_all_roles'] ?? []), $roles)),
           'managers_see_team' => !empty($in['managers_see_team']), 'remarks_outside' => !empty($in['remarks_outside'])];
     if ($o['accuracy_m'] < 5 || $o['accuracy_m'] > ATT_MAX_ACCURACY_CEILING) $e[] = 'GPS precision: 5 to ' . ATT_MAX_ACCURACY_CEILING . ' m.';
     if ($o['max_punches'] < 2 || $o['max_punches'] > 12 || $o['max_punches'] % 2) $e[] = 'Punches a day: an even number from 2 to 12.';
     if ($o['half_day_hours'] <= 0 || $o['full_day_hours'] <= $o['half_day_hours'] || $o['full_day_hours'] > 16) $e[] = 'Hours: half day below full day, full day at most 16.';
     if ($o['flex_day_change'] < 0 || $o['flex_day_change'] > 8) $e[] = 'Day-change hour: 0 to 8.';
+    if ($o['grace_min'] < 0 || $o['grace_min'] > 60) $e[] = 'Grace minutes: 0 to 60.';
     if (!in_array('SUPERADMIN', $o['see_all_roles'], true)) $o['see_all_roles'][] = 'SUPERADMIN';
     return [$o, $e];
 }
@@ -147,10 +148,12 @@ function att_person_days(array $punches, array $hol, string $weekoffs, string $f
 
 /** Totals over day lines. */
 function att_summary(array $lines): array {
-    $s = ['Present' => 0, 'Half day' => 0, 'Short' => 0, 'Absent' => 0, 'Missed punch' => 0, 'Weekly off' => 0, 'Holiday' => 0, 'hours' => 0.0];
+    $s = ['Present' => 0, 'Half day' => 0, 'Short' => 0, 'Absent' => 0, 'Missed punch' => 0, 'Weekly off' => 0, 'Holiday' => 0, 'Late' => 0, 'Early' => 0, 'hours' => 0.0];
     foreach ($lines as $l) {
         $k = explode(' · ', (string)$l['status'])[0];
         if (isset($s[$k])) $s[$k]++;
+        if (!empty($l['late'])) $s['Late']++;
+        if (!empty($l['early'])) $s['Early']++;
         $s['hours'] += (float)($l['hours'] ?? 0);
     }
     $s['hours'] = round($s['hours'], 1);
@@ -261,13 +264,25 @@ function att_register(PDO $db, array $u, string $from, string $to, ?string $oneC
         $people[] = $e;
     }
     $punches = att_punches($db, $from, $to, array_map(fn($p) => strtoupper($p['code']), $people));
-    $brW = array_column(branches(false), 'weekoffs', 'id');
     $out = [];
-    foreach ($people as $p) {
-        $hol = hol_days($db, $p['code'], $p['branch_id'] ? (int)$p['branch_id'] : null, $from, $to);
-        $out[] = ['emp' => $p, 'days' => att_person_days($punches[strtoupper($p['code'])] ?? [], $hol, (string)($brW[$p['branch_id']] ?? 'Sun'), $from, $to, $today, $set, $p['doj'], $p['last_day'])];
-    }
+    foreach ($people as $p) $out[] = ['emp' => $p, 'days' => att_days_for($db, $p, $from, $to, $punches[strtoupper($p['code'])] ?? [])];
     return $out;
+}
+
+/** Day lines for one person with holidays, approved corrections and late / early against the branch shift. */
+function att_days_for(PDO $db, array $emp, string $from, string $to, ?array $punches = null): array {
+    $set = att_settings();
+    $code = strtoupper((string)$emp['code']);
+    $punches ??= att_punches($db, $from, $to, [$code])[$code] ?? [];
+    $br = ['weekoffs' => 'Sun', 'shift_start' => null, 'shift_end' => null];
+    foreach (branches(false) as $b) if ((int)$b['id'] === (int)$emp['branch_id']) $br = $b;
+    $hol = hol_days($db, $emp['code'], $emp['branch_id'] ? (int)$emp['branch_id'] : null, $from, $to);
+    $days = att_person_days($punches, $hol, (string)$br['weekoffs'], $from, $to, date('Y-m-d'), $set, $emp['doj'], $emp['last_day']);
+    static $corr = [];
+    $k = $from . '|' . $to;
+    $corr[$k] ??= atr_corrections($db, $from, $to);
+    $days = atr_apply($days, $corr[$k][$code] ?? [], $set);
+    return atr_late_early($days, $br['shift_start'] ? substr((string)$br['shift_start'], 0, 5) : null, $br['shift_end'] ? substr((string)$br['shift_end'], 0, 5) : null, (int)$set['grace_min']);
 }
 
 /** Stream a selfie if this login may see that punch. */
@@ -283,3 +298,5 @@ function att_selfie_send(PDO $db, array $u, string $id): void {
     echo $r['bytes'];
     exit;
 }
+
+require_once __DIR__ . '/att_requests.php';
