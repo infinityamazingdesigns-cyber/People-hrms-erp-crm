@@ -1,12 +1,12 @@
 # Letter desk
 
-**Key:** `letters` · **Group:** people · **Status:** Porting from the reference build
+**Key:** `letters` · **Group:** people · **Status:** Ready
 
 Offer, appointment, confirmation, increment, relieving letters; approval, signed PDF, verify code, e-acceptance.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Employee master (`employees`).
-- Default roles when first switched on: Super Admin, HR Manager, CEO / Director. The Super Admin can change this and add per-person exceptions.
+- Default roles when first switched on: Super Admin, HR Manager, HR Operations, CEO / Director. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('letters')`; every API with `module_require('letters', true)`.
 
 ## Reference build (port source)
