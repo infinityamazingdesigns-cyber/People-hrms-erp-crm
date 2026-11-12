@@ -41,6 +41,13 @@ A product for **any** organisation. Nothing in this repository may belong to one
 - Audit lines carry ids, field names and counts — never values of ID numbers, bank details or amounts.
 - Sensitive audit families are hash-chained (`AUDIT_CHAINED_PREFIXES`); add a prefix when a new family lands.
 
+## Email and sign-in
+- Every email goes through `mail_queue()` / `mail_queue_send()` (outbox, retried) or `mail_send_now()` (sign-in codes,
+  logged without the body) — never PHP `mail()` or a second client. Mail secrets live in `config.php` only.
+- A staging copy (`'stage' => true`) sends nothing.
+- 2-step sign-in: the session is signed in only by `login_finish()`, after the code when `tfa_decide()` asks for one.
+  Only an HMAC of a code is kept; the trust cookie is signed over the login and its password hash.
+
 ## Code
 - PHP 8, `declare(strict_types=1)`, PDO prepared statements only, every table `DEFAULT CHARSET=utf8mb4`.
 - Schema changes are new files in `db/migrations/` (never edit an applied one). No DDL inside a transaction.

@@ -53,9 +53,9 @@ return [
     'guide' => ['name' => 'Project guide', 'group' => 'core', 'core' => true, 'status' => 'built',
         'about' => 'Setup checklist, module catalog and how each module works.',
         'roles' => ['SUPERADMIN', 'HRMANAGER'], 'entry' => 'admin/guide.php', 'ref' => ['lib/master_index.php']],
-    'email' => ['name' => 'Email & 2-step', 'group' => 'core', 'status' => 'port',
+    'email' => ['name' => 'Email & 2-step', 'group' => 'core', 'status' => 'built',
         'about' => 'Outgoing mail (Google Workspace or SMTP), outbox with retries, 2-step sign-in codes.',
-        'roles' => ['SUPERADMIN'], 'entry' => 'modules/email/', 'ref' => ['lib/mail.php', 'lib/two_step.php', 'mail_settings.php']],
+        'roles' => ['SUPERADMIN', 'ITADMIN'], 'entry' => 'modules/email/', 'ref' => ['lib/mail.php', 'lib/two_step.php', 'mail_settings.php']],
 
     /* ---------------- People ---------------- */
     'employees' => ['name' => 'Employee master', 'group' => 'people', 'status' => 'built',

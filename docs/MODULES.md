@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 16 ready · 25 porting · 15 planned
+**56 modules** — 17 ready · 24 porting · 15 planned
 
 ## For me
 
@@ -18,7 +18,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 | **Users & access** `users` | Logins, roles, branch scope, password resets, deactivation. The owner can never be removed. | — | Super Admin, HR Manager | Ready |
 | **Audit log** `audit` | Every sign-in and change, sensitive actions on a tamper-evident hash chain. | — | Super Admin | Ready |
 | **Project guide** `guide` | Setup checklist, module catalog and how each module works. | — | Super Admin, HR Manager | Ready |
-| **Email & 2-step** `email` | Outgoing mail (Google Workspace or SMTP), outbox with retries, 2-step sign-in codes. | — | Super Admin | Porting |
+| **Email & 2-step** `email` | Outgoing mail (Google Workspace or SMTP), outbox with retries, 2-step sign-in codes. | — | Super Admin, IT Admin | Ready |
 
 ## People
 
