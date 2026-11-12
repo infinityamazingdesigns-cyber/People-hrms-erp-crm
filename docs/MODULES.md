@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 12 ready · 29 porting · 15 planned
+**56 modules** — 13 ready · 28 porting · 15 planned
 
 ## Administration
 
@@ -53,7 +53,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 | **Biometric machines** `biometric` | ADMS push from machines of any make, vendor cloud APIs, key-based punch API. | attendance | Super Admin | Porting |
 | **Shifts & weekly offs** `shifts` | Shift, flexible hours and weekly offs per person from a date, over the branch's; drives attendance late / early. | attendance | Super Admin, HR Manager, HR Operations | Ready |
 | **Holiday calendar** `holidays` | Holidays by branch; drives attendance, payroll and the announcement board. | employees | Super Admin, HR Manager, Employee | Ready |
-| **Leave** `leave` | Apply (day / half / time), manager → HR approval, balances, withdraw, handover, categories. | employees | Employee, Manager, HR Manager, HR Operations, Super Admin | Porting |
+| **Leave** `leave` | Apply (day / half / time), manager → HR approval, balances, withdraw, handover, categories. | employees | Employee, Manager, HR Manager, HR Operations, Super Admin | Ready |
 | **Staff movement** `movement` | Gate log of staff going out during working hours, late-return alerts. | attendance | Super Admin, Reception / Security, Production Head | Planned |
 
 ## Pay & expenses
