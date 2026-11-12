@@ -19,6 +19,11 @@ A product for **any** organisation. Nothing in this repository may belong to one
 - Every module page starts with `module_require('<key>')`, every API with `module_require('<key>', true)`.
   Access = module ON (Admin → Modules) **and** an allowed role or a per-person allow, **and** no per-person deny.
 - Menus list only `module_menu($u)`. Never link to a module page from somewhere that skips the gate.
+- Own-records pages (My letters …) use `module_require_self('<key>')`: every signed-in login while the module is on,
+  no per-person deny; the page shows only the login's own records. They are declared as `self` in the catalog and
+  listed under "For me".
+- Public pages (no sign-in) call `module_public('<key>')` first, are throttled, send `noindex`, and show only what
+  the page's rule allows: `modules/letters/respond.php` (answer link), `modules/letters/verify.php` (verification).
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 
 ## Organisation values come from settings

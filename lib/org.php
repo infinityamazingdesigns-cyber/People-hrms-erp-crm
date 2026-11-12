@@ -9,6 +9,7 @@ const ORG_DEFAULTS = [
     'name' => 'Your Company',
     'legal_name' => '',
     'tagline' => '',
+    'address' => '',
     'country' => 'IN',               // statutory rule pack (see docs/RULE_PACKS.md)
     'timezone' => 'Asia/Kolkata',
     'currency' => 'INR',
@@ -27,6 +28,7 @@ const ORG_FIELDS = [
     'name' => ['label' => 'Display name', 'max' => 80, 'required' => true],
     'legal_name' => ['label' => 'Legal name', 'max' => 160],
     'tagline' => ['label' => 'Tagline', 'max' => 120],
+    'address' => ['label' => 'Address (printed on letters)', 'max' => 300],
     'country' => ['label' => 'Country (statutory rules)', 'choices' => ['IN' => 'India', 'AE' => 'UAE', 'GB' => 'United Kingdom', 'US' => 'United States', 'XX' => 'Other / none']],
     'timezone' => ['label' => 'Time zone', 'max' => 40],
     'currency' => ['label' => 'Currency', 'choices' => ['INR' => 'INR ₹', 'AED' => 'AED', 'GBP' => 'GBP £', 'USD' => 'USD $', 'EUR' => 'EUR €']],

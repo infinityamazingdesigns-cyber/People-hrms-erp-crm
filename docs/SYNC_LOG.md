@@ -13,3 +13,4 @@
 | 2026-11-12 | 92adfee | Leave | payroll leave bank, carry-forward, notices to cover |
 | 2026-11-12 | 92adfee | Onboarding | letter / induction / KYC auto-ticks |
 | 2026-11-12 | 92adfee | Probation | conduct holds on confirmation |
+| 2026-11-12 | 92adfee | Letter desk | email, clearance, signature images |

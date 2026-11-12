@@ -15,10 +15,12 @@
  *   status    built | port | planned   (built = working here; port = being ported from the reference build; planned = spec only)
  *   ref       reference build files the port starts from (paths in the private reference repo; never copied with data)
  *   entry     page that opens the module
+ *   self      [label, page, about] — an own-records page shown to every signed-in login while the module is on (module_require_self)
  */
 declare(strict_types=1);
 
 const MODULE_GROUPS = [
+    'me'        => 'For me',
     'core'      => 'Administration',
     'people'    => 'People',
     'hiring'    => 'Attract & hire',
@@ -72,9 +74,9 @@ return [
         'about' => 'Tax ID, national ID (last 4 only), social-security / PF number, bank — sealed at rest, masked, verified by HR.',
         'roles' => ['EMPLOYEE', 'HRMANAGER', 'HROPS', 'SUPERADMIN'], 'entry' => 'modules/kyc/',
         'ref' => ['kyc.php', 'lib/kyc.php', 'lib/kyc_bulk.php', 'joining_kyc.php', 'lib/onb_kyc.php']],
-    'letters' => ['name' => 'Letter desk', 'group' => 'people', 'needs' => ['employees'], 'status' => 'port',
+    'letters' => ['name' => 'Letter desk', 'group' => 'people', 'needs' => ['employees'], 'status' => 'built', 'self' => ['My letters', 'modules/letters/mine.php', 'Your letters; ask HR for a certificate.'],
         'about' => 'Offer, appointment, confirmation, increment, relieving letters; approval, signed PDF, verify code, e-acceptance.',
-        'roles' => ['SUPERADMIN', 'HRMANAGER', 'CEO'], 'entry' => 'modules/letters/',
+        'roles' => ['SUPERADMIN', 'HRMANAGER', 'HROPS', 'CEO'], 'entry' => 'modules/letters/',
         'ref' => ['super/apps/letters.html', 'lib/letters.php', 'lib/letter_issue.php', 'letter.php', 'verify.php', 'my_letters.php']],
     'insurance' => ['name' => 'Group insurance', 'group' => 'people', 'needs' => ['employees'], 'status' => 'planned',
         'about' => 'Who is covered, card numbers, nominees, policy copy requests.',

@@ -78,6 +78,26 @@ function module_require(string $key, bool $api = false): array {
     ui_foot(); exit;
 }
 
+/**
+ * Gate for a module's own-records page (My letters, …): every signed-in login while the module is ON, unless a
+ * per-person "deny" blocks them. The page itself shows only the login's own records.
+ */
+function module_require_self(string $key, bool $api = false): array {
+    $u = require_login($api);
+    if (module_on($key) && module_person((int)$u['id'], $key) !== 'deny') return $u;
+    http_response_code(403);
+    if ($api) { header('Content-Type: application/json'); echo json_encode(['error' => 'module_not_allowed']); exit; }
+    ui_head('Not available', $u);
+    echo '<div class="card"><h2>Not available</h2><p>This is switched off. Ask your HR team.</p></div>';
+    ui_foot(); exit;
+}
+
+/** Public page of a module (no sign-in): 404 while the module is off. */
+function module_public(string $key): void {
+    if (module_on($key)) return;
+    http_response_code(404); echo 'Not found'; exit;
+}
+
 /* ---------- Switching on / off (Super Admin) ---------- */
 
 /** Modules that must be on before $key (transitively). Pure over the catalog. */
@@ -148,7 +168,10 @@ function module_person_save(array $actor, int $uid, string $key, ?string $mode, 
 /** The menu: allowed modules by group, in catalog order. */
 function module_menu(array $u): array {
     $out = [];
-    foreach (module_catalog() as $k => $m)
+    foreach (module_catalog() as $k => $m) {
+        if (!empty($m['self']) && module_on($k) && module_person((int)$u['id'], $k) !== 'deny')
+            $out['me'][$k . ':self'] = ['name' => $m['self'][0], 'entry' => $m['self'][1], 'status' => 'built', 'group' => 'me', 'about' => $m['self'][2] ?? 'Only your own records.'];
         if (module_allowed($u, $k)) $out[$m['group']][$k] = $m;
-    return $out;
+    }
+    return array_replace(array_intersect_key(array_flip(array_keys(MODULE_GROUPS)), $out), $out);
 }
