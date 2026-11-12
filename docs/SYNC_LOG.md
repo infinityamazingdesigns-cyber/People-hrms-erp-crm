@@ -11,3 +11,5 @@
 | 2026-11-12 | 92adfee | Attendance part 2 (requests, month close, late/early) | per-person shifts, permissions/cuts, leave clash |
 | 2026-11-12 | 92adfee | Shifts & weekly offs | late/early allowances (payroll rule pack) |
 | 2026-11-12 | 92adfee | Leave | payroll leave bank, carry-forward, notices to cover |
+| 2026-11-12 | 92adfee | Onboarding | letter / induction / KYC auto-ticks |
+| 2026-11-12 | 92adfee | Probation | conduct holds on confirmation |

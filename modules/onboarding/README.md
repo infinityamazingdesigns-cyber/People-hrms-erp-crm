@@ -1,6 +1,6 @@
 # Onboarding
 
-**Key:** `onboarding` · **Group:** onboard · **Status:** Porting from the reference build
+**Key:** `onboarding` · **Group:** onboard · **Status:** Ready
 
 Checklist per joiner from offer to first week; convert candidate to employee.
 
