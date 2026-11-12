@@ -371,3 +371,28 @@ function let_signer_save(PDO $db, array $u, array $in): void {
     $db->prepare('INSERT INTO letter_signer (role_code, name, title, from_day, set_by) VALUES (?,?,?,?,?)')->execute([$role, mb_substr($name, 0, 120), mb_substr($title, 0, 120), $from, (int)$u['id']]);
     audit((int)$u['id'], 'letter_signer_set', $role);
 }
+
+/** This site's address: config 'site_url', else the request's host. */
+function let_site_url(): string {
+    $c = rtrim((string)cfg('site_url', ''), '/');
+    if ($c !== '') return $c . '/';
+    return (is_https() ? 'https://' : 'http://') . preg_replace('/[^A-Za-z0-9.:-]/', '', (string)($_SERVER['HTTP_HOST'] ?? 'localhost')) . wn_base();
+}
+
+/** Email an issued letter to the person (Email module). A letter waiting for an answer gets a new link inside. */
+function let_email(PDO $db, array $u, int $id): string {
+    require_once __DIR__ . '/mail.php';
+    $l = let_get($db, $id);
+    if (!$l || $l['status'] !== 'issued' || !let_is_hr($u)) throw new RuntimeException('Only an issued letter is emailed.');
+    if (!mail_valid($l['email'])) throw new RuntimeException('The letter has no email address — add it before issuing, or print it.');
+    if (!mail_can_send()) throw new RuntimeException('Email is not set up (Email & 2-step).');
+    $t = let_template($db, (int)$l['template_id']);
+    $link = $l['resp'] !== 'none' && !$l['response'] ? let_site_url() . 'modules/letters/respond.php?t=' . let_new_link($db, $u, $id) : '';
+    $org = org('legal_name') ?: org('name');
+    $text = "Dear {$l['person']},\n\nPlease find your {$t['name']} ({$l['ref']}) below." . ($link !== '' ? "\n\nTo " . ($l['resp'] === 'accept' ? 'accept or decline' : 'acknowledge') . " it, open: $link" : '')
+          . "\n\nVerification code: {$l['verify_code']} — check it at " . let_site_url() . "modules/letters/verify.php\n\n$org";
+    $html = mail_html($text, $t['name'], $org, org('color_primary'), $l['body_html'] . '<p><b>' . h($l['signer_name']) . '</b><br>' . h($l['signer_title']) . '</p>');
+    mail_queue_send($db, ['to' => $l['email'], 'subject' => $t['name'] . ' · ' . $l['ref'], 'text' => $text, 'html' => $html], 'letter', (string)$l['ref'], (int)$u['id']);
+    let_log($db, $id, 'Emailed to ' . mail_mask($l['email']), (int)$u['id']);
+    return mail_mask($l['email']);
+}

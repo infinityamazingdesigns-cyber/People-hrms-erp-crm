@@ -9,6 +9,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Users & access (`users`)
 - [x] Audit log (`audit`)
 - [x] Project guide (`guide`)
+- [x] Email & 2-step (`email`)
 - [x] Employee master (`employees`)
 - [x] Org chart (`orgchart`)
 - [x] My profile (`profile`)
@@ -23,7 +24,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 ## Next — porting
 
-- [ ] Email & 2-step (`email`)
 - [ ] Recruitment pipeline (`recruitment`)
 - [ ] Careers page (`careers`)
 - [ ] Induction academy (`induction`)

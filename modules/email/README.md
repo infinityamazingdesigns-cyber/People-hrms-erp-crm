@@ -1,12 +1,12 @@
 # Email & 2-step
 
-**Key:** `email` · **Group:** core · **Status:** Porting from the reference build
+**Key:** `email` · **Group:** core · **Status:** Ready
 
 Outgoing mail (Google Workspace or SMTP), outbox with retries, 2-step sign-in codes.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs nothing.
-- Default roles when first switched on: Super Admin. The Super Admin can change this and add per-person exceptions.
+- Default roles when first switched on: Super Admin, IT Admin. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('email')`; every API with `module_require('email', true)`.
 
 ## Reference build (port source)

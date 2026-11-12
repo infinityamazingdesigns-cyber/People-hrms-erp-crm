@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 flash('Issued.' . ($tok ? ' Copy the answer link below — it is shown only now.' : ''));
                 break;
             case 'link': $_SESSION['let_link'][$id] = let_new_link($db, $u, $id); flash('New link made; the old one stopped working.'); break;
+            case 'email': flash('Emailed to ' . let_email($db, $u, $id) . '.'); break;
             case 'withdraw': let_withdraw($db, $u, $id, (string)($_POST['reason'] ?? '')); flash('Withdrawn.'); break;
             case 'reqclose': let_request_close($db, $u, (int)$_POST['req'], (string)($_POST['note'] ?? '')); flash('Request closed.'); $to = 'index.php?view=requests'; break;
             case 'tpl': let_template_save($db, $u, (int)($_POST['tid'] ?? 0) ?: null, $_POST); flash('Template saved.'); $to = 'index.php?view=templates'; break;
@@ -65,6 +66,7 @@ $st = fn($l) => '<span class="pill ' . (in_array($l['status'], ['issued', 'appro
   <p class="row"><a class="btn sm ghost" href="print.php?id=<?= $id ?>" target="_blank" rel="noopener"><?= $l['status'] === 'issued' ? 'Open / print' : 'Preview' ?></a>
   <?php if ($isHr && $l['status'] === 'draft' && $t['needs_approval']): ?><form method="post"><?= csrf_field() ?><input type="hidden" name="id" value="<?= $id ?>"><button class="btn sm" name="a" value="ask">Send for approval</button></form><?php endif; ?>
   <?php if ($isHr && !let_own($u, $l) && (($t['needs_approval'] && $l['status'] === 'approved') || (!$t['needs_approval'] && $l['status'] === 'draft'))): ?><form method="post"><?= csrf_field() ?><input type="hidden" name="id" value="<?= $id ?>"><button class="btn sm" name="a" value="issue">Issue</button></form><?php endif; ?>
+  <?php if ($isHr && $l['status'] === 'issued' && module_on('email')): ?><form method="post"><?= csrf_field() ?><input type="hidden" name="id" value="<?= $id ?>"><button class="btn sm ghost" name="a" value="email"<?= $l['email'] === '' ? ' disabled title="No email on this letter"' : '' ?>>Email to the person</button></form><?php endif; ?>
   <?php if ($isHr && $l['status'] === 'issued' && $l['resp'] !== 'none' && !$l['response']): ?><form method="post"><?= csrf_field() ?><input type="hidden" name="id" value="<?= $id ?>"><button class="btn sm ghost" name="a" value="link">New answer link</button></form><?php endif; ?></p>
   <?php if ($l['response']): ?><p><b><?= h(LET_ANSWER[$l['resp']][$l['response']]) ?></b> by <?= h($l['resp_name']) ?> on <?= h(date('j M Y H:i', strtotime($l['resp_at']))) ?></p><?php endif; ?>
   <?php if (let_can_approve($u, $l)): ?><form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="id" value="<?= $id ?>"><input name="note" placeholder="Note (needed to send back)"><button class="btn sm" name="a" value="approve">Approve</button><button class="btn sm ghost" name="a" value="return">Send back</button></form><?php endif; ?>
