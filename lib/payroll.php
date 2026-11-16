@@ -173,6 +173,7 @@ function pay_calc(array $p, array $att, array $in, array $R, string $state, stri
     $ded = $s['emp'];
     if (($t = round((float)($in['tds'] ?? 0), 2)) > 0) $ded['Income tax (TDS)'] = $t;
     if (($o = round((float)($in['other_ded'] ?? 0), 2)) > 0) $ded['Other deductions'] = $o;
+    if (($l = round((float)($in['loan'] ?? 0), 2)) > 0) $ded['Loan / advance'] = $l;
     $gross = array_sum($earn) + $other;
     $net = $gross - array_sum($ded);
     $flags = $s['notes'];
@@ -288,7 +289,7 @@ function pay_build(PDO $db, string $ym, ?array $u = null): array {
     $from = $ym . '-01'; $to = date('Y-m-t', strtotime($from)); $days = (int)date('t', strtotime($from)); $today = date('Y-m-d');
     $paidMap = [];
     foreach (lv_types($db, false) as $t) $paidMap[$t['code']] = $R['paid_leave'] ? in_array($t['code'], $R['paid_leave'], true) : (bool)$t['paid'];
-    $ctc = pay_ctc_rows($db); $inputs = pay_inputs($db, $ym);
+    $ctc = pay_ctc_rows($db); $inputs = pay_inputs($db, $ym); $loans = pay_loan_dues($db, $ym);
     $brs = array_column(branches(false), null, 'id');
     $s = $db->prepare('SELECT * FROM employee WHERE active = 1 AND doj IS NOT NULL AND doj <= ? AND (last_day IS NULL OR last_day >= ?) ORDER BY name');
     $s->execute([$to, $from]);
@@ -304,6 +305,8 @@ function pay_build(PDO $db, string $ym, ?array $u = null): array {
         $lines = att_days_for($db, $e, $from, $to, $punches[strtoupper($e['code'])] ?? []);
         $pd = pay_paid_days($lines, $paidMap, $e['doj'], $e['last_day'], $today);
         $in = $inputs[strtoupper($e['code'])] ?? [];
+        $myLoans = $loans[strtoupper($e['code'])] ?? [];
+        $in['loan'] = array_sum($myLoans);
         $state = (string)($brs[$e['branch_id']]['state'] ?? '');
         $row = ['emp_code' => $e['code'], 'name' => $e['name'], 'branch_id' => $e['branch_id'], 'department' => $e['department'], 'pay_mode' => $p['pay_mode'],
                 'hold' => (int)($in['hold'] ?? 0), 'hold_reason' => (string)($in['hold_reason'] ?? ''), 'note' => (string)($in['note'] ?? ''), 'ctc' => $c, 'state' => $state];
@@ -313,7 +316,7 @@ function pay_build(PDO $db, string $ym, ?array $u = null): array {
         if (!empty($pd['flags']['missed'])) $flags[] = count($pd['flags']['missed']) . ' missed punch(es)';
         if (!empty($pd['flags']['leave_type'])) $flags[] = 'Leave without a type on ' . count($pd['flags']['leave_type']) . ' day(s)';
         if ($pd['in_month'] < $days) $flags[] = 'Part of the month (' . $pd['in_month'] . ' of ' . $days . ' days)';
-        $out[] = $row + $calc + ['flags' => $flags, 'unpaid' => $pd['unpaid']];
+        $out[] = $row + $calc + ['flags' => $flags, 'unpaid' => $pd['unpaid'], 'loans' => $myLoans];
     }
     return $out;
 }
@@ -338,6 +341,7 @@ function pay_step(PDO $db, array $u, string $ym, string $step, string $note = ''
         try {
             $ins = $db->prepare('INSERT INTO pay_snapshot (ym, ver, emp_code, data) VALUES (?,?,?,?)');
             foreach ($rows as $r) $ins->execute([$ym, $ver, $r['emp_code'], json_encode($r)]);
+            pay_loan_record($db, $ym, $ver, $rows);
             $db->prepare("UPDATE pay_month SET status = 'confirmed', ver = ?, confirmed_by = ?, confirmed_at = NOW() WHERE ym = ?")->execute([$ver, $uid, $ym]);
             $db->commit();
         } catch (Throwable $e) { $db->rollBack(); throw $e; }
@@ -374,3 +378,5 @@ function pay_money(float $v): string {
     }
     return ($v < 0 ? '−' : '') . $sym . number_format(abs($v), 0);
 }
+
+require_once __DIR__ . '/payroll2.php';
