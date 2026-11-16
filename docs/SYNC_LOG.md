@@ -15,3 +15,4 @@
 | 2026-11-12 | 92adfee | Probation | conduct holds on confirmation |
 | 2026-11-12 | 92adfee | Letter desk | email, clearance, signature images |
 | 2026-11-12 | 92adfee | Email & 2-step | PDF attachments, module notices by email |
+| 2026-11-12 | 92adfee | Payroll part 1 | payslips, bank file, returns, loans, leave bank |

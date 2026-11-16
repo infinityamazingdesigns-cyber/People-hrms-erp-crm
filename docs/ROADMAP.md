@@ -21,6 +21,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Shifts & weekly offs (`shifts`)
 - [x] Holiday calendar (`holidays`)
 - [x] Leave (`leave`)
+- [x] Payroll (`payroll`)
 
 ## Next — porting
 
@@ -30,7 +31,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [ ] Aptitude test (`aptitude`)
 - [ ] Training register (`training`)
 - [ ] Biometric machines (`biometric`)
-- [ ] Payroll (`payroll`)
 - [ ] Payslips (`payslips`)
 - [ ] Full & final (`fnf`)
 - [ ] Statutory compliance (`statutory`)

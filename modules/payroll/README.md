@@ -1,6 +1,6 @@
 # Payroll
 
-**Key:** `payroll` · **Group:** pay · **Status:** Porting from the reference build
+**Key:** `payroll` · **Group:** pay · **Status:** Ready
 
 CTC structures, month run from attendance, statutory deductions by country/state rule packs, HR → CEO approval, bank file.
 

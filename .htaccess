@@ -9,7 +9,7 @@ DirectoryIndex index.php
   RewriteCond %{HTTP:X-Forwarded-Proto} !https
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
   # Never serve internals
-  RewriteRule ^(config\.php|config/|lib/|db/|tools/|tests/|data/|docs/|\.git) - [F,L]
+  RewriteRule ^(config\.php|config/|lib/|db/|tools/|tests/|data/|docs/|rulepacks/|\.git) - [F,L]
   RewriteRule \.(md|sql|py|sh|json|lock)$ - [F,L]
 </IfModule>
 
