@@ -149,7 +149,7 @@ return [
         'ref' => ['movement.php', 'lib/staff_movement.php']],
 
     /* ---------------- Pay & expenses ---------------- */
-    'payroll' => ['name' => 'Payroll', 'group' => 'pay', 'needs' => ['attendance', 'leave'], 'status' => 'port',
+    'payroll' => ['name' => 'Payroll', 'group' => 'pay', 'needs' => ['attendance', 'leave'], 'status' => 'built',
         'about' => 'CTC structures, month run from attendance, statutory deductions by country/state rule packs, HR → CEO approval, bank file.',
         'roles' => ['SUPERADMIN', 'CEO'], 'entry' => 'modules/payroll/',
         'ref' => ['payroll.php', 'lib/payroll.php', 'lib/payroll_rules.php', 'lib/payroll_view.php', 'lib/pay_view.php']],
