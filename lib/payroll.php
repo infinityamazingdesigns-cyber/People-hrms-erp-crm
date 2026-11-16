@@ -111,7 +111,9 @@ function pay_structure(float $G, array $R): array {
 
 /** Employer statutory for a full month at gross G. Pure given the pack function. */
 function pay_employer_cost(float $G, array $emp, array $R, string $state, string $ym, callable $stat): float {
-    return array_sum($stat(pay_structure($G, $R), $G, $emp, $R, $state, $ym)['er']);
+    $er = $stat(pay_structure($G, $R), $G, $emp, $R, $state, $ym)['er'];
+    unset($er['Labour welfare fund']);                     // paid only in some months — never part of working CTC back
+    return array_sum($er);
 }
 
 /** Gross from a monthly CTC: CTC − employer statutory when CTC includes it (worked back), else CTC. Pure. */
@@ -174,11 +176,14 @@ function pay_calc(array $p, array $att, array $in, array $R, string $state, stri
     if (($t = round((float)($in['tds'] ?? 0), 2)) > 0) $ded['Income tax (TDS)'] = $t;
     if (($o = round((float)($in['other_ded'] ?? 0), 2)) > 0) $ded['Other deductions'] = $o;
     if (($l = round((float)($in['loan'] ?? 0), 2)) > 0) $ded['Loan / advance'] = $l;
-    $gross = array_sum($earn) + $other;
+    $arr = round((float)($in['arrear'] ?? 0), 2);
+    if ($arr < 0) $ded['Arrears recovered'] = -$arr;
+    $gross = array_sum($earn) + $other + max(0.0, $arr);
     $net = $gross - array_sum($ded);
     $flags = $s['notes'];
+    if ($arr != 0.0) $flags[] = 'Arrears ' . ($arr > 0 ? 'paid' : 'recovered') . ' (statutory not worked out on them)';
     if ($net < 0) $flags[] = 'Deductions are more than the pay';
-    return ['gross_full' => $G, 'parts' => $parts, 'earned' => $earn, 'other_earn' => $other, 'gross' => $gross, 'deductions' => $ded,
+    return ['gross_full' => $G, 'parts' => $parts, 'earned' => $earn, 'other_earn' => $other, 'arrear' => $arr, 'wages' => $s['wages'] ?? [], 'gross' => $gross, 'deductions' => $ded,
             'employer' => $s['er'], 'net' => $net, 'cost' => $gross + array_sum($s['er']), 'paid_days' => $att['paid'], 'days' => $att['days'], 'flags' => $flags];
 }
 
@@ -278,9 +283,10 @@ function pay_input_save(PDO $db, array $u, string $ym, string $code, array $in):
 }
 
 /** Everyone on payroll for a month, worked out now (draft) or read from the snapshot (confirmed). */
-function pay_build(PDO $db, string $ym, ?array $u = null): array {
+/** A month's lines. A locked month is read from its snapshot — unless $fresh, which works it out again (arrears; never saved). */
+function pay_build(PDO $db, string $ym, ?array $u = null, bool $fresh = false): array {
     $m = pay_month_row($db, $ym);
-    if (in_array($m['status'], ['confirmed', 'released'], true)) {
+    if (!$fresh && in_array($m['status'], ['confirmed', 'released'], true)) {
         $s = $db->prepare('SELECT emp_code, data FROM pay_snapshot WHERE ym = ? AND ver = ? ORDER BY emp_code'); $s->execute([$ym, $m['ver']]);
         $rows = array_map(fn($r) => json_decode($r['data'], true), $s->fetchAll());
         return $u ? array_values(array_filter($rows, fn($r) => emp_in_scope($u, ['branch_id' => $r['branch_id']]))) : $rows;
@@ -289,7 +295,7 @@ function pay_build(PDO $db, string $ym, ?array $u = null): array {
     $from = $ym . '-01'; $to = date('Y-m-t', strtotime($from)); $days = (int)date('t', strtotime($from)); $today = date('Y-m-d');
     $paidMap = [];
     foreach (lv_types($db, false) as $t) $paidMap[$t['code']] = $R['paid_leave'] ? in_array($t['code'], $R['paid_leave'], true) : (bool)$t['paid'];
-    $ctc = pay_ctc_rows($db); $inputs = pay_inputs($db, $ym); $loans = pay_loan_dues($db, $ym);
+    $ctc = pay_ctc_rows($db); $inputs = pay_inputs($db, $ym); $loans = $fresh ? [] : pay_loan_dues($db, $ym); $arrears = $fresh ? [] : pay_arrear_for($db, $ym);
     $brs = array_column(branches(false), null, 'id');
     $s = $db->prepare('SELECT * FROM employee WHERE active = 1 AND doj IS NOT NULL AND doj <= ? AND (last_day IS NULL OR last_day >= ?) ORDER BY name');
     $s->execute([$to, $from]);
@@ -307,9 +313,10 @@ function pay_build(PDO $db, string $ym, ?array $u = null): array {
         $in = $inputs[strtoupper($e['code'])] ?? [];
         $myLoans = $loans[strtoupper($e['code'])] ?? [];
         $in['loan'] = array_sum($myLoans);
+        $in['arrear'] = $arrears[strtoupper($e['code'])] ?? 0;
         $state = (string)($brs[$e['branch_id']]['state'] ?? '');
         $row = ['emp_code' => $e['code'], 'name' => $e['name'], 'branch_id' => $e['branch_id'], 'department' => $e['department'], 'pay_mode' => $p['pay_mode'],
-                'hold' => (int)($in['hold'] ?? 0), 'hold_reason' => (string)($in['hold_reason'] ?? ''), 'note' => (string)($in['note'] ?? ''), 'ctc' => $c, 'state' => $state];
+                'hold' => (int)($in['hold'] ?? 0), 'hold_reason' => (string)($in['hold_reason'] ?? ''), 'note' => (string)($in['note'] ?? ''), 'ctc' => $c, 'state' => $state, 'last_day' => $e['last_day']];
         if ($c === null) { $out[] = $row + ['missing_ctc' => true, 'net' => 0, 'gross' => 0, 'cost' => 0, 'flags' => ['No CTC'], 'paid_days' => $pd['paid'], 'days' => $days]; continue; }
         $calc = pay_calc(['ctc' => $c] + $p, ['paid' => $pd['paid'], 'days' => $days], $in, $R, $state, $ym, $stat);
         $flags = $calc['flags'];
@@ -380,3 +387,4 @@ function pay_money(float $v): string {
 }
 
 require_once __DIR__ . '/payroll2.php';
+require_once __DIR__ . '/payroll3.php';
