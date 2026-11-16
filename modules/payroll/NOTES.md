@@ -22,6 +22,12 @@
 - One company's sheet method, CTC-from-take-home lists, standing incentives for named people, PT states of named
   people, named own-payslip lists, leave-bank sheet imports.
 
-## Part 2 (next)
-- Payslips (own view, PIN), bank file, statutory returns (PF ECR, ESI), leave bank / encashment, LWF, bonus,
-  arrears, loans and advances.
+## Part 2
+- Loans and salary advances: amount, monthly recovery from a month; each draft month deducts the recovery or what is
+  left; recoveries written at confirmation per snapshot version; closed with a reason.
+- Bank file (released months, pay + bank data): people paid by bank, not held, with a verified KYC bank account;
+  generic CSV or account / IFSC layout; cells cleaned; who was left out and why; audited with counts.
+- Payslips module (own view, PIN) — see modules/payslips/NOTES.md.
+
+## Part 3 (next)
+- Statutory returns (PF ECR, ESI), leave bank / encashment, LWF, bonus, arrears.

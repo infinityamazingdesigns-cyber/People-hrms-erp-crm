@@ -1,12 +1,12 @@
 # Payslips
 
-**Key:** `payslips` · **Group:** pay · **Status:** Porting from the reference build
+**Key:** `payslips` · **Group:** pay · **Status:** Ready
 
-Released payslips, PIN-locked, PDF; HR chooses who may see their own.
+Released payslips, PIN-locked, print / save as PDF; the Super Admin chooses who sees their own.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Payroll (`payroll`).
-- Default roles when first switched on: Employee, Super Admin. The Super Admin can change this and add per-person exceptions.
+- Default roles when first switched on: Super Admin. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('payslips')`; every API with `module_require('payslips', true)`.
 
 ## Reference build (port source)
