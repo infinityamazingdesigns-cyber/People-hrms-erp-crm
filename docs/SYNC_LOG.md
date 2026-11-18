@@ -25,3 +25,4 @@
 | 2026-11-18 | 92adfee | Tasks — own and given tasks, approval loop, decline, reminders, repeats, team view, calendar file | voice entry, files, more time, bulk, calendar views, push |
 | 2026-11-18 | 92adfee | Team chat — direct and group chats, policy, admins, ticks, files, deletion log | group pictures, stickers, formatting, message info, push |
 | 2026-11-18 | 92adfee | Announcement board — announcements, pictures, celebrations (day-month only), on leave today (names only), own holidays, challenges with own done mark + photos | events, festival art, games, own month attendance, Lite |
+| 2026-11-18 | 92adfee | Recruitment pipeline — requisitions with approval, one record per candidate, stages, interviews + panel feedback, offers, ATS match, onboarding hand-over, erasure | custom ATS criteria, PDF CV reading, intake bridges, reports |

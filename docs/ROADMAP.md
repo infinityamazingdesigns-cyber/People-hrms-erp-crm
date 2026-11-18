@@ -15,6 +15,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] My profile (`profile`)
 - [x] KYC & bank (`kyc`)
 - [x] Letter desk (`letters`)
+- [x] Recruitment pipeline (`recruitment`)
 - [x] Onboarding (`onboarding`)
 - [x] Probation (`probation`)
 - [x] Attendance (`attendance`)
@@ -33,7 +34,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 ## Next — porting
 
-- [ ] Recruitment pipeline (`recruitment`)
 - [ ] Careers page (`careers`)
 - [ ] Induction academy (`induction`)
 - [ ] Aptitude test (`aptitude`)

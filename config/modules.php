@@ -83,9 +83,9 @@ return [
         'roles' => ['SUPERADMIN', 'HRMANAGER'], 'entry' => 'modules/insurance/', 'ref' => ['mediclaim.php', 'lib/mediclaim.php']],
 
     /* ---------------- Attract & hire ---------------- */
-    'recruitment' => ['name' => 'Recruitment pipeline', 'group' => 'hiring', 'needs' => ['employees'], 'status' => 'port',
+    'recruitment' => ['name' => 'Recruitment pipeline', 'group' => 'hiring', 'needs' => ['employees'], 'status' => 'built', 'self' => ['My interviews', 'modules/recruitment/panel.php', 'Interviews you are on the panel for; give your feedback.'],
         'about' => 'Requisitions, vacancies, candidate pipeline, interviews, offers, ATS match score.',
-        'roles' => ['SUPERADMIN', 'HRMANAGER', 'HRRECRUIT'], 'entry' => 'modules/recruitment/',
+        'roles' => ['SUPERADMIN', 'HRMANAGER', 'HRRECRUIT', 'CEO', 'MANAGER'], 'entry' => 'modules/recruitment/',
         'ref' => ['artifacts/recruitment-master-v2', 'assets/pms_ats.js', 'lib/recruit_sync.php']],
     'careers' => ['name' => 'Careers page', 'group' => 'hiring', 'needs' => ['recruitment'], 'status' => 'port',
         'about' => 'Public job board + guided application form, CV reading, consent, employer ratings.',
