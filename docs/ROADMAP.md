@@ -32,6 +32,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Announcement board (`board`)
 - [x] Team chat (`talk`)
 - [x] Tasks (`tasks`)
+- [x] Visitors (`visitors`)
 
 ## Next — porting
 
@@ -42,7 +43,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [ ] Performance (KRA) (`pms`)
 - [ ] Feedback & conduct (`conduct`)
 - [ ] Browser notifications (`notify`)
-- [ ] Visitors (`visitors`)
 - [ ] CRM & orders (`crm`)
 - [ ] Enquiry register (`enquiries`)
 - [ ] Quotations (`quotes`)

@@ -1,8 +1,8 @@
 # Visitors
 
-**Key:** `visitors` · **Group:** frontdesk · **Status:** Porting from the reference build
+**Key:** `visitors` · **Group:** frontdesk · **Status:** Ready
 
-Desk, expected visitors, card reading on device, host approval, pass, retention + purge.
+Desk, expected visitors, groups, host answer (desk or host), pass, register + reports, retention + removal.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs nothing.

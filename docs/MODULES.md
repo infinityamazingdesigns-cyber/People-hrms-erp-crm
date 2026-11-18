@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 28 ready · 13 porting · 15 planned
+**56 modules** — 29 ready · 12 porting · 15 planned
 
 ## For me
 
@@ -101,7 +101,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
 | Module | What it does | Needs | Default roles | Status |
 |---|---|---|---|---|
-| **Visitors** `visitors` | Desk, expected visitors, card reading on device, host approval, pass, retention + purge. | — | Super Admin, HR Manager, Reception / Security, CEO / Director | Porting |
+| **Visitors** `visitors` | Desk, expected visitors, groups, host answer (desk or host), pass, register + reports, retention + removal. | — | Super Admin, HR Manager, Reception / Security, CEO / Director | Ready |
 
 ## Sales & CRM
 
