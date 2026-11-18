@@ -176,8 +176,8 @@ return [
         'roles' => ['HRMANAGER', 'CEO', 'ACCOUNTS', 'SUPERADMIN'], 'entry' => 'modules/vendorbills/', 'ref' => ['vendor_bills.php', 'lib/vendor_pay.php']],
 
     /* ---------------- Performance & conduct ---------------- */
-    'pms' => ['name' => 'Performance (KRA)', 'group' => 'perform', 'needs' => ['employees'], 'status' => 'port',
-        'about' => 'Role sheets with weighted KRAs, self-evaluation, manager review, HR console.',
+    'pms' => ['name' => 'Performance (KRA)', 'group' => 'perform', 'needs' => ['employees'], 'status' => 'built',
+        'about' => 'Role sheets with weighted KRAs and KPIs, holders, self-evaluation, manager review, HR close, console + CSV.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'HRPERF', 'SUPERADMIN'], 'entry' => 'modules/pms/',
         'ref' => ['pms_roles.php', 'lib/pms_roles.php', 'super/apps/mypms.html']],
     'conduct' => ['name' => 'Feedback & conduct', 'group' => 'perform', 'needs' => ['employees'], 'status' => 'port',
