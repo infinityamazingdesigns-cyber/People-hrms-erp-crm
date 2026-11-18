@@ -478,23 +478,16 @@ function rc_cv_add(PDO $db, array $u, int $cid, string $bytes, string $name): st
     $s = $db->prepare('INSERT INTO rc_file (id, candidate_id, name, type, size, data, uploaded_by) VALUES (?,?,?,?,?,?,?)');
     $s->bindValue(1, $id); $s->bindValue(2, $cid); $s->bindValue(3, $name); $s->bindValue(4, $t); $s->bindValue(5, strlen($bytes)); $s->bindValue(6, $bytes, PDO::PARAM_LOB); $s->bindValue(7, (int)$u['id']);
     $s->execute();
-    if ($t === 'text/plain') $db->prepare('UPDATE rc_candidate SET cv_text = COALESCE(NULLIF(cv_text, \'\'), ?) WHERE id = ?')->execute([mb_substr($bytes, 0, 40000), $cid]);
-    elseif ($t === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' && ($txt = rc_docx_text($bytes)) !== '')
-        $db->prepare('UPDATE rc_candidate SET cv_text = COALESCE(NULLIF(cv_text, \'\'), ?) WHERE id = ?')->execute([mb_substr($txt, 0, 40000), $cid]);
+    $txt = $t === 'text/plain' ? $bytes : (in_array($t, ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'], true) ? rc_cv_text($bytes) : '');
+    if (trim($txt) !== '') $db->prepare('UPDATE rc_candidate SET cv_text = COALESCE(NULLIF(cv_text, \'\'), ?) WHERE id = ?')->execute([mb_substr($txt, 0, 40000), $cid]);
     rc_log($db, 'cand', $cid, 'cv', (int)$u['id']);
     return $id;
 }
 
-/** Text of a .docx (for the ATS). Empty when it cannot be read. */
-function rc_docx_text(string $bytes): string {
-    if (!class_exists('ZipArchive')) return '';
-    $tmp = tempnam(sys_get_temp_dir(), 'cv'); file_put_contents($tmp, $bytes);
-    $z = new ZipArchive(); $x = '';
-    if ($z->open($tmp) === true) { $x = (string)$z->getFromName('word/document.xml'); $z->close(); }
-    @unlink($tmp);
-    if ($x === '') return '';
-    $x = preg_replace('/<\/w:p>/', "\n", $x);
-    return trim(html_entity_decode(strip_tags((string)$x), ENT_QUOTES | ENT_XML1, 'UTF-8'));
+/** Text of a PDF / .docx CV for the match (read on this server; empty when it has no text, e.g. a scan). */
+function rc_cv_text(string $bytes): string {
+    require_once __DIR__ . '/cv_parse.php';
+    return cvp_text($bytes)['text'];
 }
 
 function rc_app_get(PDO $db, int $id): ?array {

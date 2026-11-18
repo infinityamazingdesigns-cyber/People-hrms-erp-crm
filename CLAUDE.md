@@ -23,7 +23,9 @@ A product for **any** organisation. Nothing in this repository may belong to one
   no per-person deny; the page shows only the login's own records. They are declared as `self` in the catalog and
   listed under "For me".
 - Public pages (no sign-in) call `module_public('<key>')` first, are throttled, send `noindex`, and show only what
-  the page's rule allows: `modules/letters/respond.php` (answer link), `modules/letters/verify.php` (verification).
+  the page's rule allows: `modules/letters/respond.php` (answer link), `modules/letters/verify.php` (verification),
+  `modules/careers/apply.php` (job board + application form; public details of open positions only, never pay).
+- Every page under `modules/` calls one of the gates first (test GT01).
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 
 ## Organisation values come from settings
