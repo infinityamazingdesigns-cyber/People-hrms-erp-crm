@@ -1,6 +1,6 @@
 # Expense claims
 
-**Key:** `claims` · **Group:** pay · **Status:** Porting from the reference build
+**Key:** `claims` · **Group:** pay · **Status:** Ready
 
 Multi-line claims with bills, HR audit → CEO approval → Accounts pay; drafts; duplicate checks.
 

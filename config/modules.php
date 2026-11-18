@@ -164,7 +164,7 @@ return [
         'about' => 'Portals, registrations, due dates, challans, month close, insurance cover — driven by a country rule pack.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'ACCOUNTS'], 'entry' => 'modules/statutory/',
         'ref' => ['statutory.php', 'lib/statutory.php', 'lib/statutory_ops.php']],
-    'claims' => ['name' => 'Expense claims', 'group' => 'pay', 'status' => 'port',
+    'claims' => ['name' => 'Expense claims', 'group' => 'pay', 'status' => 'built',
         'about' => 'Multi-line claims with bills, HR audit → CEO approval → Accounts pay; drafts; duplicate checks.',
         'roles' => ['EMPLOYEE', 'HRMANAGER', 'CEO', 'ACCOUNTS', 'SUPERADMIN'], 'entry' => 'modules/claims/',
         'ref' => ['expense_claims.php', 'lib/expense_claims.php']],

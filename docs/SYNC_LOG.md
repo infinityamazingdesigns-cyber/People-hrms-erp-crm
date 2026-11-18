@@ -20,3 +20,4 @@
 | 2026-11-16 | 92adfee | Payroll part 3 — statutory returns, state summary, labour welfare fund, arrears | leave encashment, bonus, gratuity, TDS projection |
 | 2026-11-18 | 92adfee | Full & final — settlement, leave adjustment, documents, steps, bank line | leave days onto the payroll line, separation agreement, gratuity |
 | 2026-11-18 | 92adfee | Statutory compliance — links, due rules, spends from locked payroll, payments, filings, registrations | insurance cover, incidents, contractors, duties, reminders, my part |
+| 2026-11-18 | 92adfee | Expense claims — lines, bills, audit → approval → payment, duplicates, report | notices, pay with salary, branch day book, payment slips |
