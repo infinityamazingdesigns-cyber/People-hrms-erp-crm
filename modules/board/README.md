@@ -1,6 +1,6 @@
 # Announcement board
 
-**Key:** `board` · **Group:** comms · **Status:** Porting from the reference build
+**Key:** `board` · **Group:** comms · **Status:** Ready
 
 Announcements, pictures, birthdays, who is on leave, holidays, daily challenge.
 

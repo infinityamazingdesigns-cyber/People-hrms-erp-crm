@@ -192,7 +192,7 @@ return [
         'ref' => ['lib/asset_access.php', 'lib/asset_import.php', 'my_assets.php', 'lib/my_assets.php']],
 
     /* ---------------- Communication ---------------- */
-    'board' => ['name' => 'Announcement board', 'group' => 'comms', 'status' => 'port',
+    'board' => ['name' => 'Announcement board', 'group' => 'comms', 'status' => 'built',
         'about' => 'Announcements, pictures, birthdays, who is on leave, holidays, daily challenge.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN', 'CEO'], 'entry' => 'modules/board/',
         'ref' => ['mood.php', 'lib/mood_board.php', 'lib/board.php']],
