@@ -1,8 +1,8 @@
 # Careers page
 
-**Key:** `careers` · **Group:** hiring · **Status:** Porting from the reference build
+**Key:** `careers` · **Group:** hiring · **Status:** Ready
 
-Public job board + guided application form, CV reading, consent, employer ratings.
+Public job board + application form, CV reading on the server, consent, spam checks, employer ratings.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Recruitment pipeline (`recruitment`).
