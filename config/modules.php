@@ -196,7 +196,7 @@ return [
         'about' => 'Announcements, pictures, birthdays, who is on leave, holidays, daily challenge.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN', 'CEO'], 'entry' => 'modules/board/',
         'ref' => ['mood.php', 'lib/mood_board.php', 'lib/board.php']],
-    'talk' => ['name' => 'Team chat', 'group' => 'comms', 'status' => 'port',
+    'talk' => ['name' => 'Team chat', 'group' => 'comms', 'status' => 'built',
         'about' => 'One-to-one and group chat, files, read receipts, admin policies; nobody reads chats they are not in.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN', 'CEO'], 'entry' => 'modules/talk/',
         'ref' => ['talk.php', 'lib/talk.php', 'api/talk.php']],

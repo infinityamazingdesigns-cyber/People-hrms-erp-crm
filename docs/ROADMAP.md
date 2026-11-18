@@ -27,6 +27,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Statutory compliance (`statutory`)
 - [x] Expense claims (`claims`)
 - [x] Asset register (`assets`)
+- [x] Team chat (`talk`)
 - [x] Tasks (`tasks`)
 
 ## Next — porting
@@ -40,7 +41,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [ ] Performance (KRA) (`pms`)
 - [ ] Feedback & conduct (`conduct`)
 - [ ] Announcement board (`board`)
-- [ ] Team chat (`talk`)
 - [ ] Browser notifications (`notify`)
 - [ ] Visitors (`visitors`)
 - [ ] CRM & orders (`crm`)

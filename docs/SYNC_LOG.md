@@ -23,3 +23,4 @@
 | 2026-11-18 | 92adfee | Expense claims — lines, bills, audit → approval → payment, duplicates, report | notices, pay with salary, branch day book, payment slips |
 | 2026-11-18 | 92adfee | Asset register — categories, assets, give / take back, no deletion, my assets, issues, yearly audit | import, merging duplicates, IT accounts, office assets |
 | 2026-11-18 | 92adfee | Tasks — own and given tasks, approval loop, decline, reminders, repeats, team view, calendar file | voice entry, files, more time, bulk, calendar views, push |
+| 2026-11-18 | 92adfee | Team chat — direct and group chats, policy, admins, ticks, files, deletion log | group pictures, stickers, formatting, message info, push |
