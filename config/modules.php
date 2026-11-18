@@ -218,8 +218,8 @@ return [
         'ref' => ['sw.js', 'lib/push.php', 'api/push.php']],
 
     /* ---------------- Front desk ---------------- */
-    'visitors' => ['name' => 'Visitors', 'group' => 'frontdesk', 'status' => 'port',
-        'about' => 'Desk, expected visitors, card reading on device, host approval, pass, retention + purge.',
+    'visitors' => ['name' => 'Visitors', 'group' => 'frontdesk', 'status' => 'built', 'self' => ['Visitors for me', 'modules/visitors/mine.php', 'Who is waiting for you at reception; let them in or decline.'],
+        'about' => 'Desk, expected visitors, groups, host answer (desk or host), pass, register + reports, retention + removal.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'RECEPTION', 'CEO'], 'entry' => 'modules/visitors/',
         'ref' => ['visitors.php', 'lib/visitors.php']],
 
