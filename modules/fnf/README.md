@@ -1,6 +1,6 @@
 # Full & final
 
-**Key:** `fnf` · **Group:** pay · **Status:** Porting from the reference build
+**Key:** `fnf` · **Group:** pay · **Status:** Ready
 
 Settlement for leavers, leave adjustment, documents, approval steps.
 
