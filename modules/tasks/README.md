@@ -1,6 +1,6 @@
 # Tasks
 
-**Key:** `tasks` · **Group:** comms · **Status:** Porting from the reference build
+**Key:** `tasks` · **Group:** comms · **Status:** Ready
 
 Personal and assigned tasks, approval loop, reminders, repeat, voice entry, calendar.
 

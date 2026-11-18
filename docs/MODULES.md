@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 23 ready · 18 porting · 15 planned
+**56 modules** — 24 ready · 17 porting · 15 planned
 
 ## For me
 
@@ -93,7 +93,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 | **Announcement board** `board` | Announcements, pictures, birthdays, who is on leave, holidays, daily challenge. | — | Employee, Manager, HR Manager, Super Admin, CEO / Director | Porting |
 | **Team chat** `talk` | One-to-one and group chat, files, read receipts, admin policies; nobody reads chats they are not in. | — | Employee, Manager, HR Manager, Super Admin, CEO / Director | Porting |
 | **Video meetings** `meet` | Browser-to-browser video, screen share, waiting room, transcript, minutes. | talk | Employee, Manager, HR Manager, Super Admin, CEO / Director | Planned |
-| **Tasks** `tasks` | Personal and assigned tasks, approval loop, reminders, repeat, voice entry, calendar. | — | Employee, Manager, HR Manager, Super Admin, CEO / Director | Porting |
+| **Tasks** `tasks` | Personal and assigned tasks, approval loop, reminders, repeat, voice entry, calendar. | — | Employee, Manager, HR Manager, Super Admin, CEO / Director | Ready |
 | **Help desk** `helpdesk` | Answers on policies and screens in several languages, team contacts, office locations. | — | Employee, Manager, HR Manager, Super Admin | Planned |
 | **Browser notifications** `notify` | Web push per device; text fetched with the person's own sign-in. | — | Employee, Manager, HR Manager, Super Admin | Porting |
 
