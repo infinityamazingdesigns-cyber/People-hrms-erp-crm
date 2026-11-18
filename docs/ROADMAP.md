@@ -26,6 +26,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Full & final (`fnf`)
 - [x] Statutory compliance (`statutory`)
 - [x] Expense claims (`claims`)
+- [x] Asset register (`assets`)
 
 ## Next — porting
 
@@ -37,7 +38,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [ ] Biometric machines (`biometric`)
 - [ ] Performance (KRA) (`pms`)
 - [ ] Feedback & conduct (`conduct`)
-- [ ] Asset register (`assets`)
 - [ ] Announcement board (`board`)
 - [ ] Team chat (`talk`)
 - [ ] Tasks (`tasks`)

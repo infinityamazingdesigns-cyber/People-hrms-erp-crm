@@ -186,7 +186,7 @@ return [
         'ref' => ['feedback.php', 'lib/discipline.php']],
 
     /* ---------------- Assets & IT ---------------- */
-    'assets' => ['name' => 'Asset register', 'group' => 'assets', 'needs' => ['employees'], 'status' => 'port',
+    'assets' => ['name' => 'Asset register', 'group' => 'assets', 'needs' => ['employees'], 'status' => 'built', 'self' => ['My assets', 'modules/assets/mine.php', 'What the company gave you; confirm or report an issue.'],
         'about' => 'Laptops, phones, SIMs, office assets; allot / return; no deletion; yearly audit; IT accounts.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'ITADMIN'], 'entry' => 'modules/assets/',
         'ref' => ['lib/asset_access.php', 'lib/asset_import.php', 'my_assets.php', 'lib/my_assets.php']],

@@ -1,6 +1,6 @@
 # Asset register
 
-**Key:** `assets` · **Group:** assets · **Status:** Porting from the reference build
+**Key:** `assets` · **Group:** assets · **Status:** Ready
 
 Laptops, phones, SIMs, office assets; allot / return; no deletion; yearly audit; IT accounts.
 
