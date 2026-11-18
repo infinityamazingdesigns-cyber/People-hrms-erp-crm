@@ -204,7 +204,7 @@ return [
         'about' => 'Browser-to-browser video, screen share, waiting room, transcript, minutes.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN', 'CEO'], 'entry' => 'modules/meet/',
         'ref' => ['meet.php', 'lib/meet.php', 'api/meet.php']],
-    'tasks' => ['name' => 'Tasks', 'group' => 'comms', 'status' => 'port',
+    'tasks' => ['name' => 'Tasks', 'group' => 'comms', 'status' => 'built',
         'about' => 'Personal and assigned tasks, approval loop, reminders, repeat, voice entry, calendar.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN', 'CEO'], 'entry' => 'modules/tasks/',
         'ref' => ['pendings.php', 'lib/pendings.php', 'api/pendings.php']],
