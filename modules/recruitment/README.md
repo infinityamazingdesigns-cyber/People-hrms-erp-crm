@@ -1,12 +1,12 @@
 # Recruitment pipeline
 
-**Key:** `recruitment` · **Group:** hiring · **Status:** Porting from the reference build
+**Key:** `recruitment` · **Group:** hiring · **Status:** Ready
 
 Requisitions, vacancies, candidate pipeline, interviews, offers, ATS match score.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Employee master (`employees`).
-- Default roles when first switched on: Super Admin, HR Manager, HR Recruitment. The Super Admin can change this and add per-person exceptions.
+- Default roles when first switched on: Super Admin, HR Manager, HR Recruitment, CEO / Director, Manager. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('recruitment')`; every API with `module_require('recruitment', true)`.
 
 ## Reference build (port source)
