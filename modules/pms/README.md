@@ -1,8 +1,8 @@
 # Performance (KRA)
 
-**Key:** `pms` · **Group:** perform · **Status:** Porting from the reference build
+**Key:** `pms` · **Group:** perform · **Status:** Ready
 
-Role sheets with weighted KRAs, self-evaluation, manager review, HR console.
+Role sheets with weighted KRAs and KPIs, holders, self-evaluation, manager review, HR close, console + CSV.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Employee master (`employees`).
