@@ -160,7 +160,7 @@ return [
     'fnf' => ['name' => 'Full & final', 'group' => 'pay', 'needs' => ['payroll'], 'status' => 'built',
         'about' => 'Settlement for leavers, leave adjustment, documents, approval steps.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'CEO'], 'entry' => 'modules/fnf/', 'ref' => ['fnf.php', 'lib/fnf.php']],
-    'statutory' => ['name' => 'Statutory compliance', 'group' => 'pay', 'needs' => ['payroll'], 'status' => 'port',
+    'statutory' => ['name' => 'Statutory compliance', 'group' => 'pay', 'needs' => ['payroll'], 'status' => 'built',
         'about' => 'Portals, registrations, due dates, challans, month close, insurance cover — driven by a country rule pack.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'ACCOUNTS'], 'entry' => 'modules/statutory/',
         'ref' => ['statutory.php', 'lib/statutory.php', 'lib/statutory_ops.php']],

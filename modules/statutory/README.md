@@ -1,6 +1,6 @@
 # Statutory compliance
 
-**Key:** `statutory` · **Group:** pay · **Status:** Porting from the reference build
+**Key:** `statutory` · **Group:** pay · **Status:** Ready
 
 Portals, registrations, due dates, challans, month close, insurance cover — driven by a country rule pack.
 

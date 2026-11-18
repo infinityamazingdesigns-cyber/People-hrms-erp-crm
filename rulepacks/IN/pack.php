@@ -115,4 +115,39 @@ return [
         'lwf' => [], 'lwf_deduct' => true,
     ],
     'returns' => ['ecr' => 'PF return (ECR text)', 'esi' => 'ESI monthly sheet (CSV)', 'state' => 'Professional tax and labour welfare fund by state (CSV)'],
+    // Statutory compliance: schemes, which payslip lines make up each, and public national links / dues / registrations
+    // seeded once (the Super Admin confirms each; state links and dues are added for the organisation's own states).
+    'statutory' => [
+        'schemes' => ['pf' => 'Provident fund (EPFO)', 'esi' => 'State insurance (ESIC)', 'pt' => 'Professional tax', 'lwf' => 'Labour welfare fund',
+                      'tds' => 'Income tax on salary (TDS)', 'lab' => 'Labour laws & registrations'],
+        'map' => ['pf' => ['ee' => ['PF'], 'er' => ['PF (EPF)', 'PF (pension)'], 'charges' => ['EDLI', 'PF admin'], 'by_state' => false],
+                  'esi' => ['ee' => ['ESI'], 'er' => ['ESI'], 'charges' => [], 'by_state' => false],
+                  'pt' => ['ee' => ['Professional tax'], 'er' => [], 'charges' => [], 'by_state' => true],
+                  'lwf' => ['ee' => ['Labour welfare fund'], 'er' => ['Labour welfare fund'], 'charges' => [], 'by_state' => true],
+                  'tds' => ['ee' => ['Income tax (TDS)'], 'er' => [], 'charges' => [], 'by_state' => false]],
+        'state_schemes' => ['pt', 'lwf'],
+        'portals' => [   // key => [scheme, audience, name, https address, note]
+            'pf_member' => ['pf', 'emp', 'EPFO member portal (UAN)', 'https://unifiedportal-mem.epfindia.gov.in/memberinterface/', 'UAN activation, KYC, nominee, claims and transfers'],
+            'pf_passbook' => ['pf', 'emp', 'EPF passbook', 'https://passbook.epfindia.gov.in/MemberPassBook/login', 'Monthly credits by member ID'],
+            'pf_emp' => ['pf', 'pay', 'EPFO employer portal', 'https://unifiedportal-emp.epfindia.gov.in/epfo/', 'Upload the ECR, make the challan, pay; new joiners\' UAN and exits'],
+            'esi_ip' => ['esi', 'emp', 'ESIC insured person portal', 'https://www.esic.in/EmployeePortal/login.aspx', 'e-Pehchan card, family details, entitlement'],
+            'esi_emp' => ['esi', 'pay', 'ESIC employer portal', 'https://www.esic.gov.in/', 'Monthly contribution and challan; new IP registration and exits'],
+            'tds_pay' => ['tds', 'pay', 'Income-tax e-filing — e-Pay Tax', 'https://www.incometax.gov.in/iec/foportal/', 'TAN login: tax deducted on salary'],
+            'tds_traces' => ['tds', 'proc', 'TRACES — statements and Form 16', 'https://www.tdscpc.gov.in/', 'Quarterly statements, Form 16, defaults'],
+            'tds_emp' => ['tds', 'emp', 'Income-tax e-filing — Form 26AS / AIS', 'https://www.incometax.gov.in/iec/foportal/', 'Each person checks the tax deposited against their PAN'],
+            'shram' => ['lab', 'proc', 'Shram Suvidha — labour registrations', 'https://shramsuvidha.gov.in/', 'Establishment registration and the Labour Identification Number'],
+        ],
+        'dues' => [      // key => [scheme, label, day (31 = last), wage months ('' = every), months after, kind, who, checked]
+            'pf' => ['pf', 'Provident fund — ECR and challan', 15, '', 1, 'both', 'hr', 1],
+            'esi' => ['esi', 'State insurance — monthly contribution', 15, '', 1, 'both', 'hr', 1],
+            'tds' => ['tds', 'Tax on salary — deposit', 7, '1,2,4,5,6,7,8,9,10,11,12', 1, 'pay', 'accounts', 1],
+            'tds_mar' => ['tds', 'Tax on salary — March deposit', 30, '3', 1, 'pay', 'accounts', 1],
+            'tds_q' => ['tds', 'Quarterly TDS statement (24Q)', 31, '6,9,12', 1, 'file', 'ca', 0],
+            'tds_q4' => ['tds', 'Quarterly TDS statement (24Q) — last quarter', 31, '3', 2, 'file', 'ca', 0],
+        ],
+        'regs' => [      // key => [scheme, label]
+            'pf_code' => ['pf', 'PF establishment code'], 'esi_code' => ['esi', 'ESIC employer code'],
+            'tan' => ['tds', 'Tax deduction account number (TAN)'], 'lin' => ['lab', 'Labour Identification Number (LIN)'],
+        ],
+    ],
 ];
