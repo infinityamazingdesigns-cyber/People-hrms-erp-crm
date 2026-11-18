@@ -216,6 +216,7 @@ function ps_render(array $l, string $ym): string {
     $M = fn($v) => h(pay_money((float)$v));
     $rowsE = ''; foreach ((array)$l['earned'] as $k => $v) $rowsE .= '<tr><td>' . h($k) . '</td><td class="n">' . $M($l['parts'][$k] ?? 0) . '</td><td class="n">' . $M($v) . '</td></tr>';
     if (!empty($l['other_earn'])) $rowsE .= '<tr><td>Other earnings</td><td></td><td class="n">' . $M($l['other_earn']) . '</td></tr>';
+    if (!empty($l['arrear']) && $l['arrear'] > 0) $rowsE .= '<tr><td>Arrears</td><td></td><td class="n">' . $M($l['arrear']) . '</td></tr>';
     $rowsD = ''; foreach ((array)$l['deductions'] as $k => $v) $rowsD .= '<tr><td>' . h($k) . '</td><td class="n">' . $M($v) . '</td></tr>';
     $rowsR = ''; foreach ((array)$l['employer'] as $k => $v) $rowsR .= '<tr><td>' . h($k) . '</td><td class="n">' . $M($v) . '</td></tr>';
     return '<div class="slip"><div class="sh"><b>' . h(org('legal_name') ?: org('name')) . '</b><small>' . h(org('address')) . '</small><h2>Payslip · ' . h(date('F Y', strtotime($ym . '-01'))) . '</h2></div>'

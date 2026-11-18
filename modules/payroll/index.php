@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         switch ($a) {
             case 'input': pay_input_save($db, $u, $ym, (string)$_POST['code'], $_POST); flash('Saved.'); break;
             case 'loan': pay_loan_add($db, $u, $_POST); flash('Saved. Recovery starts in ' . date('F Y', strtotime($_POST['from_ym'] . '-01')) . '.'); $to = 'index.php?view=loans&ym=' . $ym; break;
+            case 'arrear': $amt = pay_arrear_add($db, $u, $ym, (string)$_POST['from_ym'], (string)$_POST['code'], (string)($_POST['note'] ?? '')); flash('Arrears of ' . pay_money($amt) . ' added to this month.'); break;
+            case 'arrearoff': pay_arrear_off($db, $u, (int)$_POST['id'], (string)($_POST['reason'] ?? '')); flash('Taken off.'); break;
             case 'loanclose': pay_loan_close($db, $u, (int)$_POST['id'], (string)($_POST['reason'] ?? '')); flash('Closed.'); $to = 'index.php?view=loans&ym=' . $ym; break;
             case 'check': case 'confirm': case 'release': case 'reopen': pay_step($db, $u, $ym, $a, (string)($_POST['note'] ?? '')); flash(PAY_STATUS[pay_month_row($db, $ym)['status']] . '.'); break;
             case 'profile': pay_profile_save($db, $u, (string)$_POST['code'], $_POST); flash('Saved.'); $to = 'index.php?view=people&code=' . urlencode((string)$_POST['code']); break;
@@ -36,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (isset($R['pf'])) { $pf = $R['pf']; $R['pf'] = ['on' => !empty($_POST['pf_on']), 'emp_pct' => $num('pf_emp', $pf['emp_pct']), 'er_pct' => $num('pf_er', $pf['er_pct']), 'eps_pct' => $num('pf_eps', $pf['eps_pct']), 'ceiling' => $num('pf_ceiling', $pf['ceiling']),
                     'parts' => isset($_POST['pf_parts']) ? (array_values(array_filter(array_map('trim', explode(',', (string)$_POST['pf_parts'])))) ?: ['Basic']) : $pf['parts'], 'charges' => !empty($_POST['pf_charges']), 'edli_pct' => $num('pf_edli', $pf['edli_pct']), 'admin_pct' => $num('pf_admin', $pf['admin_pct'])]; }
                 if (isset($R['esic'])) { $es = $R['esic']; $R['esic'] = ['on' => !empty($_POST['esic_on']), 'emp_pct' => $num('esic_emp', $es['emp_pct']), 'er_pct' => $num('esic_er', $es['er_pct']), 'ceiling' => $num('esic_ceiling', $es['ceiling'])]; }
+                if (isset($R['lwf']) && isset($_POST['lwf']) && function_exists('rp_in_lwf_parse')) { $lw = []; foreach ((array)$_POST['lwf'] as $st => $txt) if (($v = rp_in_lwf_parse((string)$txt)) !== null) $lw[(string)$st] = $v; $R['lwf'] = $lw; $R['lwf_deduct'] = !empty($_POST['lwf_deduct']); }
                 if (isset($R['pt'], $_POST['pt'])) { $pt = []; foreach ((array)($_POST['pt'] ?? []) as $st => $txt) if (trim((string)$txt) !== '') $pt[(string)$st] = pay_pt_parse((string)$txt); $R['pt'] = $pt; }
                 if (isset($_POST['paid_leave'])) $R['paid_leave'] = array_values(array_intersect(array_column(lv_types($db, false), 'code'), (array)($_POST['paid_leave'] ?? [])));
                 if (isset($_POST['confirm_roles'])) $R['confirm_roles'] = array_values(array_intersect(array_keys(role_labels()), (array)($_POST['confirm_roles'] ?? []))) ?: ['CEO'];
@@ -59,6 +62,12 @@ if ($view === 'bank') {
     echo $fmt === 'neft' ? bank_csv_line(['Account', 'IFSC', 'Name', 'Amount', 'Narration']) : bank_csv_line(['Name', 'Account', 'Bank code', 'Amount', 'Reference']);
     foreach ($b['rows'] as $r) echo $fmt === 'neft' ? bank_csv_line([$r['acct'], $r['code'], $r['name'], number_format($r['amount'], 2, '.', ''), $r['ref']]) : bank_csv_line([$r['name'], $r['acct'], $r['code'], number_format($r['amount'], 2, '.', ''), $r['ref']]);
     exit;
+}
+if ($view === 'return') {
+    try { $f = pay_return($db, $u, $ym, (string)($_GET['kind'] ?? '')); }
+    catch (Throwable $e) { flash($e->getMessage(), 'err'); redirect('index.php?view=month&ym=' . $ym); }
+    header('Content-Type: ' . $f['mime'] . '; charset=utf-8'); header('Content-Disposition: attachment; filename="' . $f['name'] . '"'); header('Cache-Control: no-store');
+    echo $f['body']; exit;
 }
 if ($view === 'csv') {
     $rows = pay_build($db, $ym, $u);
@@ -92,7 +101,15 @@ ui_head('Payroll', $u, 'payroll');
   <?php if ($m['status'] === 'released' && bank_can($u)): $bk = bank_preview($db, $rows, $ym); ?>
   <p>Bank file: <?= count($bk['rows']) ?> payments, <?= $M($bk['total']) ?> <?php foreach (BANK_FORMATS as $k => $l): ?><a class="btn sm ghost" href="?view=bank&ym=<?= $ym ?>&fmt=<?= $k ?>"><?= h($l) ?></a> <?php endforeach; ?></p>
   <?php if ($bk['left_out']): ?><p class="muted">Left out: <?= h(implode(' · ', array_map(fn($x) => $x[1] . ' (' . $x[2] . ')', $bk['left_out']))) ?></p><?php endif; endif; ?>
+  <?php if (pay_locked($m)): ?><p><b>Returns</b> <?php foreach (pay_return_kinds(pay_pack()) as $k => $l): $pv = pay_return_preview($db, $rows, $k); ?><a class="btn sm ghost" href="?view=return&ym=<?= $ym ?>&kind=<?= h($k) ?>"><?= h($l) ?></a><?= $pv['left_out'] ? ' <small class="muted">' . count($pv['left_out']) . ' without a number: ' . h(implode(', ', array_map(fn($x) => $x[1], $pv['left_out']))) . '</small>' : '' ?> <?php endforeach; ?></p><?php endif; ?>
   <p class="muted">Checked by someone other than the person who entered the inputs; confirmed and released by <?= h(implode(' / ', array_map(fn($r) => role_labels()[$r] ?? $r, (array)pay_rules($db, $ym)['confirm_roles']))) ?>. A confirmed month is read from its snapshot.</p></section>
+<?php if ($draft): $arr = pay_arrears($db, $u, $ym); $have = pay_arrear_lines($db, $ym); if ($arr || $have): ?>
+<section class="card"><h2>Arrears</h2><p class="muted">Locked months worked out again from today's attendance, leave and rules. Earnings that differ can be paid or recovered in this month, once per person; statutory is not worked out on them.</p>
+  <table><tbody><?php foreach ($arr as $a): ?><tr><td><?= h($a['name'] . ' · ' . $a['emp_code']) ?></td><td><?= h(date('M Y', strtotime($a['from_ym'] . '-01'))) ?></td><td><?= h(implode(' · ', array_map(fn($k, $v) => $k . ' ' . pay_money($v), array_keys($a['parts']), $a['parts']))) ?></td><td><b><?= $M($a['total']) ?></b></td>
+    <td><form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="arrear"><input type="hidden" name="ym" value="<?= $ym ?>"><input type="hidden" name="from_ym" value="<?= h($a['from_ym']) ?>"><input type="hidden" name="code" value="<?= h($a['emp_code']) ?>"><input name="note" placeholder="Note"><button class="btn sm"><?= $a['total'] > 0 ? 'Pay' : 'Recover' ?> in this month</button></form></td></tr><?php endforeach; ?>
+  <?php foreach ($have as $a): ?><tr><td><?= h(($a['name'] ?? '') . ' · ' . $a['emp_code']) ?></td><td><?= h(date('M Y', strtotime($a['from_ym'] . '-01'))) ?></td><td><?= $a['active'] ? '<span class="pill on">In this month</span>' : '<span class="pill off">Taken off</span> ' . h($a['off_reason']) ?></td><td><b><?= $M($a['amount']) ?></b></td>
+    <td><?php if ($a['active']): ?><form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="arrearoff"><input type="hidden" name="ym" value="<?= $ym ?>"><input type="hidden" name="id" value="<?= (int)$a['id'] ?>"><input name="reason" placeholder="Reason" required><button class="btn sm ghost">Take off</button></form><?php endif; ?></td></tr><?php endforeach; ?></tbody></table></section>
+<?php endif; endif; ?>
 <section class="card"><table><thead><tr><th>Name</th><th>Paid days</th><th>Gross</th><th>Deductions</th><th>Net</th><th>To look at</th><th></th></tr></thead><tbody>
 <?php foreach ($rows as $r): ?>
   <tr><td><?= h($r['name'] . ' · ' . $r['emp_code']) ?><?= $r['hold'] ? ' <span class="pill port">Hold</span>' : '' ?></td><td><?= h((string)($r['paid_days'] ?? '')) ?> / <?= (int)($r['days'] ?? 0) ?></td>
@@ -100,7 +117,8 @@ ui_head('Payroll', $u, 'payroll');
     <td><a href="?view=month&ym=<?= $ym ?>&code=<?= urlencode($r['emp_code']) ?>#l">Open</a></td></tr>
   <?php if (strcasecmp($open, $r['emp_code']) === 0 && empty($r['missing_ctc'])): ?><tr id="l"><td colspan="7">
     <div class="grid2"><div><b>Earned</b><table><tbody><?php foreach ($r['earned'] as $k => $v): ?><tr><td><?= h($k) ?></td><td><?= $M($r['parts'][$k] ?? 0) ?> / month</td><td><?= $M($v) ?></td></tr><?php endforeach; ?>
-      <?php if ($r['other_earn']): ?><tr><td>Other earnings</td><td></td><td><?= $M($r['other_earn']) ?></td></tr><?php endif; ?></tbody></table></div>
+      <?php if ($r['other_earn']): ?><tr><td>Other earnings</td><td></td><td><?= $M($r['other_earn']) ?></td></tr><?php endif; ?>
+      <?php if (($r['arrear'] ?? 0) > 0): ?><tr><td>Arrears</td><td></td><td><?= $M($r['arrear']) ?></td></tr><?php endif; ?></tbody></table></div>
     <div><b>Deductions</b><table><tbody><?php foreach ($r['deductions'] as $k => $v): ?><tr><td><?= h($k) ?></td><td><?= $M($v) ?></td></tr><?php endforeach; ?></tbody></table>
       <b>Employer</b><table><tbody><?php foreach ($r['employer'] as $k => $v): ?><tr><td><?= h($k) ?></td><td><?= $M($v) ?></td></tr><?php endforeach; ?></tbody></table></div></div>
     <?php if (!$draft && $m['status'] !== 'checked' && module_on('payslips')): ?><p><a href="../payslips/?code=<?= urlencode($r['emp_code']) ?>&ym=<?= $ym ?>">Payslip preview</a></p><?php endif; ?>
@@ -149,6 +167,9 @@ ui_head('Payroll', $u, 'payroll');
   <div class="grid"><label>Employee % <input name="esic_emp" value="<?= h((string)$es['emp_pct']) ?>"></label><label>Employer % <input name="esic_er" value="<?= h((string)$es['er_pct']) ?>"></label><label>Gross ceiling <input name="esic_ceiling" value="<?= h((string)$es['ceiling']) ?>"></label></div><?php endif; ?>
   <?php if (isset($R['pt'])): ?><h3>Professional tax by state</h3><p class="muted">One slab per line: from to amount (use - for "and above"), optionally a month number and that month's amount. States come from Admin → Organisation → branches.</p>
   <div class="grid"><?php foreach ($states as $st): ?><label><?= h($st) ?> <textarea name="pt[<?= h($st) ?>]" rows="4"><?= h(pay_pt_text($R['pt'][$st] ?? [])) ?></textarea></label><?php endforeach; ?><?= $states ? '' : '<p class="muted">No branch has a state yet.</p>' ?></div><?php endif; ?>
+  <?php if (isset($R['lwf']) && function_exists('rp_in_lwf_parse')): ?><h3>Labour welfare fund by state</h3><p class="muted">Employee amount, employer amount, the months it is paid (e.g. "6 18 6,12"). Blank = none in that state.</p>
+  <p><label class="tick"><input type="checkbox" name="lwf_deduct" value="1"<?= !empty($R['lwf_deduct']) ? ' checked' : '' ?>> Deduct the employee's share (else the employer pays both)</label></p>
+  <div class="grid"><?php foreach ($states as $st): $lw = $R['lwf'][$st] ?? null; ?><label><?= h($st) ?> <input name="lwf[<?= h($st) ?>]" value="<?= $lw ? h($lw['emp'] . ' ' . $lw['er'] . ' ' . implode(',', $lw['months'])) : '' ?>"></label><?php endforeach; ?></div><?php endif; ?>
   <h3>Paid leave and approval</h3><p>Paid leave types: <?php foreach (lv_types($db, false) as $t): ?><label class="tick"><input type="checkbox" name="paid_leave[]" value="<?= h($t['code']) ?>"<?= ($R['paid_leave'] ? in_array($t['code'], $R['paid_leave'], true) : (bool)$t['paid']) ? ' checked' : '' ?>> <?= h($t['name']) ?></label> <?php endforeach; ?></p>
   <p>Confirms and releases: <?php foreach (['CEO', 'SUPERADMIN'] as $r): ?><label class="tick"><input type="checkbox" name="confirm_roles[]" value="<?= $r ?>"<?= in_array($r, (array)$R['confirm_roles'], true) ? ' checked' : '' ?>> <?= h(role_labels()[$r]) ?></label> <?php endforeach; ?></p>
   <button class="btn sm">Save rules from that month</button></form>

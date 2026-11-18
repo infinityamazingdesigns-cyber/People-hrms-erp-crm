@@ -29,5 +29,21 @@
   generic CSV or account / IFSC layout; cells cleaned; who was left out and why; audited with counts.
 - Payslips module (own view, PIN) — see modules/payslips/NOTES.md.
 
-## Part 3 (next)
-- Statutory returns (PF ECR, ESI), leave bank / encashment, LWF, bonus, arrears.
+## Part 3
+- Returns from a confirmed / released month's snapshot only (never worked out again). Which returns exist comes from
+  the country pack (`returns`): India = PF ECR text (11 fields, `#~#`, UAN = KYC social ID, 12 digits) and the ESI
+  monthly sheet (IP = KYC health ID, 10 digits; reason 2 + last working day for leavers in the month, 1 for zero days).
+  Everyone gets "Deductions by state" (people, professional tax, labour welfare fund). People without the number are
+  listed (from KYC hints, nothing unsealed) and left out; numbers are unsealed only for the download. Each download is
+  logged in `pay_return_log` and audited with counts only.
+- The pack now reports its wage bases per line (`wages`: PF, pension, ESI) so returns use the exact figures; lines locked
+  before this fall back to Basic up to the usual ceiling.
+- Labour welfare fund per state on Payroll → Rules ("employee employer months", e.g. "6 18 6,12"), employee share
+  deducted or paid by the employer (setting). Never part of working CTC back to gross.
+- Arrears: a locked month (last 12) worked out again from today's attendance, leave and rules, never saved; earnings that
+  differ are offered on the draft month — Pay / Recover in this month, once per person per snapshot version, worked out
+  again on the server (never from the form), not on one's own pay. Paid arrears add to gross, recovered ones are a
+  deduction; statutory is not worked out on them (flagged). Taken off with a reason (`pay_arrear`, never deleted).
+
+## Later
+- Leave bank / encashment, statutory bonus, gratuity provision, TDS projection.

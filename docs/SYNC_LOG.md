@@ -17,3 +17,4 @@
 | 2026-11-12 | 92adfee | Email & 2-step | PDF attachments, module notices by email |
 | 2026-11-12 | 92adfee | Payroll part 1 | payslips, bank file, returns, loans, leave bank |
 | 2026-11-16 | 92adfee | Payroll part 2 · Payslips | returns, leave bank, LWF, bonus, arrears |
+| 2026-11-16 | 92adfee | Payroll part 3 — statutory returns, state summary, labour welfare fund, arrears | leave encashment, bonus, gratuity, TDS projection |
