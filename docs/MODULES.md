@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 19 ready · 22 porting · 15 planned
+**56 modules** — 20 ready · 21 porting · 15 planned
 
 ## For me
 
@@ -67,7 +67,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 |---|---|---|---|---|
 | **Payroll** `payroll` | CTC structures, month run from attendance, statutory deductions by country/state rule packs, HR → CEO approval, bank file. | attendance, leave | Super Admin, CEO / Director | Ready |
 | **Payslips** `payslips` | Released payslips, PIN-locked, print / save as PDF; the Super Admin chooses who sees their own. | payroll | Super Admin | Ready |
-| **Full & final** `fnf` | Settlement for leavers, leave adjustment, documents, approval steps. | payroll | Super Admin, HR Manager, CEO / Director | Porting |
+| **Full & final** `fnf` | Settlement for leavers, leave adjustment, documents, approval steps. | payroll | Super Admin, HR Manager, CEO / Director | Ready |
 | **Statutory compliance** `statutory` | Portals, registrations, due dates, challans, month close, insurance cover — driven by a country rule pack. | payroll | Super Admin, HR Manager, Accounts / Payment | Porting |
 | **Expense claims** `claims` | Multi-line claims with bills, HR audit → CEO approval → Accounts pay; drafts; duplicate checks. | — | Employee, HR Manager, CEO / Director, Accounts / Payment, Super Admin | Porting |
 | **Branch day book** `daybook` | Daily cash sheet per branch: bills, dispatch, money received, petty cash, close the day. | — | Employee, HR Manager, CEO / Director, Super Admin | Planned |

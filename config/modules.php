@@ -157,7 +157,7 @@ return [
         'about' => 'Released payslips, PIN-locked, print / save as PDF; the Super Admin chooses who sees their own.',
         'roles' => ['SUPERADMIN'], 'entry' => 'modules/payslips/', 'self' => ['My payslips', 'modules/payslips/', 'Your payslips, opened with your PIN.'],
         'ref' => ['my_payslip.php', 'lib/payslip.php', 'lib/pay_pin.php', 'lib/payslip_pdf.php']],
-    'fnf' => ['name' => 'Full & final', 'group' => 'pay', 'needs' => ['payroll'], 'status' => 'port',
+    'fnf' => ['name' => 'Full & final', 'group' => 'pay', 'needs' => ['payroll'], 'status' => 'built',
         'about' => 'Settlement for leavers, leave adjustment, documents, approval steps.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'CEO'], 'entry' => 'modules/fnf/', 'ref' => ['fnf.php', 'lib/fnf.php']],
     'statutory' => ['name' => 'Statutory compliance', 'group' => 'pay', 'needs' => ['payroll'], 'status' => 'port',
