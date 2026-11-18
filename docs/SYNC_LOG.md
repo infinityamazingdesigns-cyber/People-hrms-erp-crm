@@ -21,3 +21,4 @@
 | 2026-11-18 | 92adfee | Full & final — settlement, leave adjustment, documents, steps, bank line | leave days onto the payroll line, separation agreement, gratuity |
 | 2026-11-18 | 92adfee | Statutory compliance — links, due rules, spends from locked payroll, payments, filings, registrations | insurance cover, incidents, contractors, duties, reminders, my part |
 | 2026-11-18 | 92adfee | Expense claims — lines, bills, audit → approval → payment, duplicates, report | notices, pay with salary, branch day book, payment slips |
+| 2026-11-18 | 92adfee | Asset register — categories, assets, give / take back, no deletion, my assets, issues, yearly audit | import, merging duplicates, IT accounts, office assets |

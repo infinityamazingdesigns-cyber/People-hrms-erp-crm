@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 22 ready · 19 porting · 15 planned
+**56 modules** — 23 ready · 18 porting · 15 planned
 
 ## For me
 
@@ -84,7 +84,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
 | Module | What it does | Needs | Default roles | Status |
 |---|---|---|---|---|
-| **Asset register** `assets` | Laptops, phones, SIMs, office assets; allot / return; no deletion; yearly audit; IT accounts. | employees | Super Admin, HR Manager, IT Admin | Porting |
+| **Asset register** `assets` | Laptops, phones, SIMs, office assets; allot / return; no deletion; yearly audit; IT accounts. | employees | Super Admin, HR Manager, IT Admin | Ready |
 
 ## Communication
 
