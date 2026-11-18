@@ -180,8 +180,8 @@ return [
         'about' => 'Role sheets with weighted KRAs and KPIs, holders, self-evaluation, manager review, HR close, console + CSV.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'HRPERF', 'SUPERADMIN'], 'entry' => 'modules/pms/',
         'ref' => ['pms_roles.php', 'lib/pms_roles.php', 'super/apps/mypms.html']],
-    'conduct' => ['name' => 'Feedback & conduct', 'group' => 'perform', 'needs' => ['employees'], 'status' => 'port',
-        'about' => 'Notes, monthly check-ins, warnings with HR review, appeals, PIP, POSH committee, code of conduct.',
+    'conduct' => ['name' => 'Feedback & conduct', 'group' => 'perform', 'needs' => ['employees'], 'status' => 'built',
+        'about' => 'Feedback notes, monthly check-ins, conduct cases with HR review and approval, replies, appeals, lapse, code of conduct.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'CEO', 'SUPERADMIN'], 'entry' => 'modules/conduct/',
         'ref' => ['feedback.php', 'lib/discipline.php']],
 
