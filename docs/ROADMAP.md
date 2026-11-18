@@ -25,6 +25,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Payslips (`payslips`)
 - [x] Full & final (`fnf`)
 - [x] Statutory compliance (`statutory`)
+- [x] Expense claims (`claims`)
 
 ## Next — porting
 
@@ -34,7 +35,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [ ] Aptitude test (`aptitude`)
 - [ ] Training register (`training`)
 - [ ] Biometric machines (`biometric`)
-- [ ] Expense claims (`claims`)
 - [ ] Performance (KRA) (`pms`)
 - [ ] Feedback & conduct (`conduct`)
 - [ ] Asset register (`assets`)
