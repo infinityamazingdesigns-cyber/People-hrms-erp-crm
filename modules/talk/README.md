@@ -1,6 +1,6 @@
 # Team chat
 
-**Key:** `talk` · **Group:** comms · **Status:** Porting from the reference build
+**Key:** `talk` · **Group:** comms · **Status:** Ready
 
 One-to-one and group chat, files, read receipts, admin policies; nobody reads chats they are not in.
 
