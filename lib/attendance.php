@@ -248,6 +248,14 @@ function att_punches(PDO $db, string $from, string $to, ?array $codes): array {
     $out = [];
     $s = $db->prepare($sql . ' ORDER BY day, no'); $s->execute($args);
     foreach ($s as $r) $out[$r['emp_code'] ? strtoupper($r['emp_code']) : 'U' . $r['user_id']][] = $r;
+    if (function_exists('module_on') && module_on('biometric')) {   // machine punches: earliest and latest of the day with the phone ones
+        require_once __DIR__ . '/biometric.php';
+        foreach (bio_times($db, $from, $to, $codes) as $c => $days) {
+            $byDay = []; foreach ($out[$c] ?? [] as $r) $byDay[(string)$r['day']][] = $r;
+            foreach ($days as $d => [$label, $times]) $byDay[$d] = bio_merge_day($byDay[$d] ?? [], $times, $d, $label);
+            ksort($byDay); $out[$c] = array_merge(...array_values($byDay));
+        }
+    }
     return $out;
 }
 

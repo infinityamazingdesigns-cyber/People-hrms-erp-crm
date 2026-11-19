@@ -26,6 +26,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Aptitude test (`aptitude`)
 - [x] Training register (`training`)
 - [x] Attendance (`attendance`)
+- [x] Biometric machines (`biometric`)
 - [x] Shifts & weekly offs (`shifts`)
 - [x] Holiday calendar (`holidays`)
 - [x] Leave (`leave`)
@@ -49,7 +50,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 ## Next — porting
 
-- [ ] Biometric machines (`biometric`)
 - [ ] Browser notifications (`notify`)
 
 ## Later — planned
