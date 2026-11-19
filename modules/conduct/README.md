@@ -1,8 +1,8 @@
 # Feedback & conduct
 
-**Key:** `conduct` · **Group:** perform · **Status:** Porting from the reference build
+**Key:** `conduct` · **Group:** perform · **Status:** Ready
 
-Notes, monthly check-ins, warnings with HR review, appeals, PIP, POSH committee, code of conduct.
+Feedback notes, monthly check-ins, conduct cases with HR review and approval, replies, appeals, lapse, code of conduct.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Employee master (`employees`).

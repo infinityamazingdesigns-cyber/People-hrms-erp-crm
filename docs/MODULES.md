@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 30 ready · 11 porting · 15 planned
+**56 modules** — 31 ready · 10 porting · 15 planned
 
 ## For me
 
@@ -78,7 +78,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 | Module | What it does | Needs | Default roles | Status |
 |---|---|---|---|---|
 | **Performance (KRA)** `pms` | Role sheets with weighted KRAs and KPIs, holders, self-evaluation, manager review, HR close, console + CSV. | employees | Employee, Manager, HR Manager, HR Performance & Training, Super Admin | Ready |
-| **Feedback & conduct** `conduct` | Notes, monthly check-ins, warnings with HR review, appeals, PIP, POSH committee, code of conduct. | employees | Employee, Manager, HR Manager, CEO / Director, Super Admin | Porting |
+| **Feedback & conduct** `conduct` | Feedback notes, monthly check-ins, conduct cases with HR review and approval, replies, appeals, lapse, code of conduct. | employees | Employee, Manager, HR Manager, CEO / Director, Super Admin | Ready |
 
 ## Assets & IT
 
