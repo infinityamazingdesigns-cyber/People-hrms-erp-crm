@@ -22,6 +22,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Recruitment intelligence (`recintel`)
 - [x] Onboarding (`onboarding`)
 - [x] Probation (`probation`)
+- [x] Induction academy (`induction`)
 - [x] Training register (`training`)
 - [x] Attendance (`attendance`)
 - [x] Shifts & weekly offs (`shifts`)
@@ -47,7 +48,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 ## Next — porting
 
-- [ ] Induction academy (`induction`)
 - [ ] Aptitude test (`aptitude`)
 - [ ] Biometric machines (`biometric`)
 - [ ] Browser notifications (`notify`)
