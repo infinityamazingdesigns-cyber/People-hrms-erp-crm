@@ -36,6 +36,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Full & final (`fnf`)
 - [x] Statutory compliance (`statutory`)
 - [x] Expense claims (`claims`)
+- [x] Branch day book (`daybook`)
 - [x] Performance (KRA) (`pms`)
 - [x] Feedback & conduct (`conduct`)
 - [x] Asset register (`assets`)
@@ -55,7 +56,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 ## Later — planned
 
-- [ ] Branch day book (`daybook`)
 - [ ] Vendor bills (HO) (`vendorbills`)
 - [ ] Video meetings (`meet`)
 - [ ] Help desk (`helpdesk`)
