@@ -208,7 +208,7 @@ return [
         'about' => 'Personal and assigned tasks, approval loop, reminders, repeat, voice entry, calendar.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN', 'CEO'], 'entry' => 'modules/tasks/',
         'ref' => ['pendings.php', 'lib/pendings.php', 'api/pendings.php']],
-    'helpdesk' => ['name' => 'Help desk', 'group' => 'comms', 'status' => 'planned',
+    'helpdesk' => ['name' => 'Help desk', 'group' => 'comms', 'status' => 'built',
         'about' => 'Answers on policies and screens in several languages, team contacts, office locations.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN'], 'entry' => 'modules/helpdesk/',
         'ref' => ['help.php', 'lib/help_desk.php', 'lib/help_desk.json']],

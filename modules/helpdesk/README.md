@@ -1,6 +1,6 @@
 # Help desk
 
-**Key:** `helpdesk` · **Group:** comms · **Status:** Planned — specification only
+**Key:** `helpdesk` · **Group:** comms · **Status:** Ready
 
 Answers on policies and screens in several languages, team contacts, office locations.
 
