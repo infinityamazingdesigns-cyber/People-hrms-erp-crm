@@ -1,12 +1,12 @@
 # Enquiry register
 
-**Key:** `enquiries` · **Group:** sales · **Status:** Porting from the reference build
+**Key:** `enquiries` · **Group:** sales · **Status:** Ready
 
-Leads → enquiries → follow-ups; WhatsApp and ad lead intake.
+Enquiries with stages, quotations, follow-ups due, owners, notes, repeat check, reports, import; won → CRM order.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs CRM & orders (`crm`).
-- Default roles when first switched on: Super Admin, CEO / Director, Sales. The Super Admin can change this and add per-person exceptions.
+- Default roles when first switched on: Super Admin, CEO / Director, Sales, Marketing, Manager. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('enquiries')`; every API with `module_require('enquiries', true)`.
 
 ## Reference build (port source)
