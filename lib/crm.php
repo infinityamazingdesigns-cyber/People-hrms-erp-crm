@@ -5,6 +5,7 @@
 // import with a check that writes nothing, and a change history. Pure functions first, then the database half.
 declare(strict_types=1);
 require_once __DIR__ . '/table_read.php';
+require_once __DIR__ . '/employees.php';   // emp_in_scope() for branch scope
 
 const CRM_KINDS = ['company' => 'Company', 'person' => 'Person'];
 const CRM_NAME_STOP = ['m', 's', 'ms', 'mss', 'messrs', 'pvt', 'private', 'ltd', 'limited', 'llp', 'llc', 'gmbh', 'co', 'company', 'corp', 'corporation', 'inc',

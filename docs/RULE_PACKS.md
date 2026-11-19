@@ -23,5 +23,10 @@ and yearly states), labour welfare fund, statutory bonus, gratuity estimate, min
 income-tax deduction at source with regime choice, leave encashment. Figures are settings the Super Admin confirms,
 with the source and effective month shown.
 
+## Sales tax (quotations and orders)
+A pack may carry `sales_tax`: `label`, `fn($sellerRegion, $placeRegion)` → the parts a line's tax splits into
+(`[['CGST', .5], ['SGST', .5]]` or `[['IGST', 1]]` in India), `words($amount, $major, $minor)` for the amount in words,
+and `regions` (code => name) + `aliases` to read a state from an address. No `sales_tax` = one "Tax" line.
+
 ## Others
 UAE (gratuity, WPS file), UK (PAYE / NI placeholders), US (placeholders). `XX` = no statutory rules (pay as entered).

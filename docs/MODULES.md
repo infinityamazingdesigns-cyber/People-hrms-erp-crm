@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 34 ready · 7 porting · 15 planned
+**56 modules** — 35 ready · 6 porting · 15 planned
 
 ## For me
 
@@ -109,7 +109,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 |---|---|---|---|---|
 | **CRM & orders** `crm` | Customers, products, duplicate check, imports; orders, readiness blockers, dispatch, consignments, customer tracking link, same-day score. | — | Super Admin, CEO / Director, Sales, Store | Ready |
 | **Enquiry register** `enquiries` | Enquiries with stages, quotations, follow-ups due, owners, notes, repeat check, reports, import; won → CRM order. | crm | Super Admin, CEO / Director, Sales, Marketing, Manager | Ready |
-| **Quotations** `quotes` | Numbered quotations per branch, tax rules, revisions, won → order. | crm | Super Admin, CEO / Director, Sales | Porting |
+| **Quotations** `quotes` | Numbered quotations per branch, tax split by country rules, other charges, revisions, print / PDF, won → order, enquiry kept in step. | crm, enquiries | Super Admin, CEO / Director, Sales | Ready |
 | **Marketing & ROAS** `marketing` | Campaigns, ad spend imports, leads, consent, return on ad spend. | crm | Super Admin, CEO / Director, Marketing | Planned |
 | **Complaints & CAPA** `quality` | Customer complaints, repeats, root cause (5 whys), actions, effectiveness check. | crm | Super Admin, Quality, CEO / Director | Planned |
 

@@ -117,9 +117,36 @@ if (!function_exists('rp_in_tax_id')) {
     }
 }
 
+if (!function_exists('rp_in_sales_tax')) {
+    /** GST on a sale: same state as the seller → CGST + SGST (half each), else IGST. Regions are the two-digit state codes. */
+    function rp_in_sales_tax(string $seller, string $place): array {
+        return $seller !== '' && $seller === $place ? [['CGST', 0.5], ['SGST', 0.5]] : [['IGST', 1.0]];
+    }
+    /** Indian-style amount in words: lakh and crore ("One Lakh Twenty Thousand Rupees Only", "… And Fifty Paise"). */
+    function rp_in_words(float $amt, string $major = 'Rupees', string $minor = 'Paise'): string {
+        $ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+        $tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+        $two = fn(int $n) => $n < 20 ? $ones[$n] : trim($tens[intdiv($n, 10)] . ' ' . $ones[$n % 10]);
+        $three = fn(int $n) => trim(($n >= 100 ? $ones[intdiv($n, 100)] . ' Hundred ' : '') . $two($n % 100));
+        $amt = round(abs($amt), 2); $r = (int)floor($amt); $p = (int)round(($amt - $r) * 100); if ($p === 100) { $r++; $p = 0; }
+        $parts = [];
+        foreach ([[10000000, 'Crore'], [100000, 'Lakh'], [1000, 'Thousand']] as [$div, $w]) if ($r >= $div) { $n = intdiv($r, $div); $parts[] = ($n >= 100 ? preg_replace('/ ' . $major . ' Only$/', '', rp_in_words((float)$n, $major, $minor)) : $two($n)) . ' ' . $w; $r %= $div; }
+        if ($r > 0) $parts[] = $three($r);
+        return ($parts ? implode(' ', $parts) : 'Zero') . " $major" . ($p > 0 ? ' And ' . $two($p) . " $minor" : '') . ' Only';
+    }
+}
+
 return [
     'label' => 'India',
     'tax_id' => ['label' => 'GSTIN', 'fn' => 'rp_in_tax_id'],
+    // Sales tax on quotations / orders: regions are the GST state codes (the first two digits of a GSTIN).
+    'sales_tax' => ['label' => 'GST', 'fn' => 'rp_in_sales_tax', 'words' => 'rp_in_words', 'regions' => [
+        '01' => 'Jammu and Kashmir', '02' => 'Himachal Pradesh', '03' => 'Punjab', '04' => 'Chandigarh', '05' => 'Uttarakhand', '06' => 'Haryana', '07' => 'Delhi',
+        '08' => 'Rajasthan', '09' => 'Uttar Pradesh', '10' => 'Bihar', '11' => 'Sikkim', '12' => 'Arunachal Pradesh', '13' => 'Nagaland', '14' => 'Manipur', '15' => 'Mizoram',
+        '16' => 'Tripura', '17' => 'Meghalaya', '18' => 'Assam', '19' => 'West Bengal', '20' => 'Jharkhand', '21' => 'Odisha', '22' => 'Chhattisgarh', '23' => 'Madhya Pradesh',
+        '24' => 'Gujarat', '26' => 'Dadra and Nagar Haveli and Daman and Diu', '27' => 'Maharashtra', '29' => 'Karnataka', '30' => 'Goa', '31' => 'Lakshadweep', '32' => 'Kerala',
+        '33' => 'Tamil Nadu', '34' => 'Puducherry', '35' => 'Andaman and Nicobar Islands', '36' => 'Telangana', '37' => 'Andhra Pradesh', '38' => 'Ladakh'],
+        'aliases' => ['orissa' => '21', 'pondicherry' => '34', 'newdelhi' => '07', 'nctofdelhi' => '07', 'uttaranchal' => '05', 'jandk' => '01']],
     'fn' => 'rp_in_statutory',
     'defaults' => [
         'pf' => ['on' => true, 'emp_pct' => 12, 'er_pct' => 12, 'eps_pct' => 8.33, 'ceiling' => 15000, 'parts' => ['Basic'], 'charges' => true, 'edli_pct' => 0.5, 'admin_pct' => 0.5],
