@@ -1,4 +1,4 @@
-# Stock & inventory — porting notes (part 1)
+# Stock & inventory — porting notes
 
 ## Ported
 - One item list: code (STK-00001 … when blank), name, type (finished, semi-finished, raw material, bought-out, traded,
@@ -19,9 +19,20 @@
   period statement (opening, purchase, transfer in, other in, sale, issued, transfer out, other out, adjusted, closing;
   CSV), reorder list (buy or make).
 
+## Ported in part 2
+- Bills of materials for finished / semi-finished items: parts, quantities that make an output quantity, scrap %. Every
+  save is a new revision (A, B … Z, AA); the earlier one stays, switched off. A part may not be the item itself, twice on
+  one bill, switched off, or made from the item at any depth (no circles).
+- Production: the plan scales the active bill to the quantity made and shows stock and shortage (writes nothing);
+  posting is a PRD document — the made item in (costed from its parts when every part has a cost), the parts out
+  (the plan's quantities or what was really used). No bill / no parts → a note is needed. Statement shows Made.
+- CRM consignments from a start day (setting) come off stock once each as Sale / dispatch at the order's branch;
+  a CRM product needs a stock item once (link one or make a finished-goods item from it); reversing the entry frees the
+  consignment to be posted again.
+
 ## Became settings
-- Roles that see stock, keep the store, do counts and reversals; negative stock allowed; stock closed up to; units.
+- Roles that see stock, keep the store, do counts and reversals, do production; negative stock allowed; stock closed up
+  to; the day CRM dispatches start coming off stock; units.
 
 ## Not ported (next parts)
-- Bills of materials and production, CRM dispatch → goods out, Purchase receipts → goods in, monthly Excel stock sheet
-  import.
+- Purchase receipts → goods in (with the Purchase module), monthly Excel stock sheet import.

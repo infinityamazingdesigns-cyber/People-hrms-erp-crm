@@ -17,6 +17,7 @@ const STK_MOVES = [
     'OUT_SALE' => ['Sale / dispatch', -1], 'OUT_ISS' => ['Issue to production / department', -1], 'OUT_SMP' => ['Sample / demo', -1],
     'OUT_JOB' => ['Sent for job work', -1], 'OUT_SCRAP' => ['Scrap / damage', -1], 'OUT_OTH' => ['Other issue', -1],
     'XFR_OUT' => ['Transfer out', -1], 'XFR_IN' => ['Transfer in', 1], 'ADJ' => ['Stock count adjustment', 0],
+    'PRD_IN' => ['Production output', 1], 'PRD_USE' => ['Used in production', -1],
 ];
 /** document kind => [title, number code, right, move kinds it may carry] */
 const STK_DOCS = [
@@ -25,15 +26,16 @@ const STK_DOCS = [
     'OPN' => ['Opening stock', 'OPN', 'store', ['OPEN']],
     'XFR' => ['Transfer', 'STN', 'store', ['XFR_OUT', 'XFR_IN']],
     'CNT' => ['Stock count', 'ADJ', 'adjust', ['ADJ']],
+    'PRD' => ['Production', 'PRD', 'produce', ['PRD_IN', 'PRD_USE']],
     'REV' => ['Reversal', 'REV', 'adjust', []],
 ];
 const STK_DOC_STATUS = ['posted' => 'Posted', 'transit' => 'In transit', 'received' => 'Received', 'short' => 'Received short', 'reversed' => 'Reversed'];
 const STK_MAX_LINES = 300;
-const STK_DEFAULTS = ['view_roles' => ['SUPERADMIN', 'STORE', 'CEO'], 'store_roles' => ['SUPERADMIN', 'STORE'], 'adjust_roles' => ['SUPERADMIN', 'STORE'],
+const STK_DEFAULTS = ['view_roles' => ['SUPERADMIN', 'STORE', 'CEO'], 'store_roles' => ['SUPERADMIN', 'STORE'], 'adjust_roles' => ['SUPERADMIN', 'STORE'], 'produce_roles' => ['SUPERADMIN', 'STORE', 'PRODHEAD'], 'ship_from' => '',
                       'negative' => false, 'lock_until' => '', 'units' => "NOS\nPCS\nSET\nMTR\nKG\nLTR\nBOX\nROLL\nPAIR\nLOT"];
 /** Statement columns: key => move kinds. */
-const STK_STATEMENT = ['in_pur' => ['IN_PUR'], 'in_xfr' => ['XFR_IN'], 'in_oth' => ['IN_RET', 'IN_JOB', 'IN_OTH'],
-                       'out_sale' => ['OUT_SALE'], 'out_use' => ['OUT_ISS'], 'out_xfr' => ['XFR_OUT'], 'out_oth' => ['OUT_SMP', 'OUT_JOB', 'OUT_SCRAP', 'OUT_OTH'], 'adj' => ['ADJ', 'OPEN']];
+const STK_STATEMENT = ['in_pur' => ['IN_PUR'], 'in_prd' => ['PRD_IN'], 'in_xfr' => ['XFR_IN'], 'in_oth' => ['IN_RET', 'IN_JOB', 'IN_OTH'],
+                       'out_sale' => ['OUT_SALE'], 'out_use' => ['OUT_ISS', 'PRD_USE'], 'out_xfr' => ['XFR_OUT'], 'out_oth' => ['OUT_SMP', 'OUT_JOB', 'OUT_SCRAP', 'OUT_OTH'], 'adj' => ['ADJ', 'OPEN']];
 
 /* ---------------- pure ---------------- */
 
@@ -104,12 +106,15 @@ function stk_statement_calc(array $moves, string $from, string $to): array {
 function stk_settings(): array { $s = module_states()['stock']['settings'] ?? []; return array_replace(STK_DEFAULTS, array_intersect_key($s, STK_DEFAULTS)); }
 function stk_settings_check(array $in, array $roles): array {
     $o = []; $e = [];
-    foreach (['view_roles', 'store_roles', 'adjust_roles'] as $k) $o[$k] = array_values(array_intersect(array_keys($roles), (array)($in[$k] ?? [])));
+    foreach (['view_roles', 'store_roles', 'adjust_roles', 'produce_roles'] as $k) $o[$k] = array_values(array_intersect(array_keys($roles), (array)($in[$k] ?? [])));
     if (!$o['store_roles']) $e[] = 'Pick at least one role that keeps the store.';
     $o['negative'] = !empty($in['negative']);
     $l = trim((string)($in['lock_until'] ?? ''));
     if ($l !== '' && (!($d = DateTime::createFromFormat('!Y-m-d', $l)) || $d->format('Y-m-d') !== $l)) { $e[] = 'Closed up to: pick a date or leave it empty.'; $l = ''; }
     $o['lock_until'] = $l;
+    $sf = trim((string)($in['ship_from'] ?? ''));
+    if ($sf !== '' && (!($d = DateTime::createFromFormat('!Y-m-d', $sf)) || $d->format('Y-m-d') !== $sf)) { $e[] = 'Dispatches from: pick a date or leave it empty.'; $sf = ''; }
+    $o['ship_from'] = $sf;
     $o['units'] = implode("\n", array_slice(array_values(array_unique(array_map('strtoupper', crm_lines_s((string)($in['units'] ?? ''))))), 0, 40)) ?: 'NOS';
     return [$o, $e];
 }
@@ -117,7 +122,8 @@ function crm_lines_s(string $s): array { return array_values(array_unique(array_
 function stk_rights(array $u): array {
     $r = user_roles((int)$u['id'], !empty($u['is_owner'])); $s = stk_settings(); $h = fn($k) => (bool)array_intersect($r, $s[$k]);
     $store = $h('store_roles'); $adj = $h('adjust_roles');
-    return ['view' => $store || $adj || $h('view_roles'), 'store' => $store, 'adjust' => $adj, 'admin' => in_array('SUPERADMIN', $r, true)];
+    $prod = $h('produce_roles');
+    return ['view' => $store || $adj || $prod || $h('view_roles'), 'store' => $store, 'adjust' => $adj, 'produce' => $prod, 'admin' => in_array('SUPERADMIN', $r, true)];
 }
 /** Branches this login works with: every active branch inside its scope. */
 function stk_branches(array $u): array { $o = []; foreach (branches() as $b) if (emp_in_scope($u, ['branch_id' => (int)$b['id']])) $o[(int)$b['id']] = (string)$b['name']; return $o; }
@@ -179,9 +185,10 @@ function stk_post(PDO $db, array $u, array $doc, array $lines, array $opt = []):
             throw new RuntimeException("Not enough {$it['code']} · {$it['name']} at " . stk_branch_name($b) . ': ' . stk_show($short[$k]['have']) . ' ' . $it['uom'] . ' in stock, ' . stk_show($short[$k]['need']) . ' needed.');
         }
         $no = stk_next_no($db, $branch, STK_DOCS[$kind][1], $d);
-        $db->prepare('INSERT INTO stk_doc (doc_no, request_id, kind, sub, branch_id, to_branch_id, d, ref_no, party, note, status, rev_of, created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')
+        $db->prepare('INSERT INTO stk_doc (doc_no, request_id, kind, sub, branch_id, to_branch_id, d, ref_no, party, note, status, rev_of, out_item_id, out_qty, bom_id, created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
            ->execute([$no, $rid, $kind, (string)($doc['sub'] ?? ''), $branch, (int)($doc['to_branch_id'] ?? 0) ?: null, $d, mb_substr(trim((string)($doc['ref_no'] ?? '')), 0, 120),
-                      mb_substr(trim((string)($doc['party'] ?? '')), 0, 160), mb_substr(trim(strip_tags((string)($doc['note'] ?? ''))), 0, 500), (string)($doc['status'] ?? 'posted'), isset($doc['rev_of']) ? (int)$doc['rev_of'] : null, (int)$u['id']]);
+                      mb_substr(trim((string)($doc['party'] ?? '')), 0, 160), mb_substr(trim(strip_tags((string)($doc['note'] ?? ''))), 0, 500), (string)($doc['status'] ?? 'posted'), isset($doc['rev_of']) ? (int)$doc['rev_of'] : null,
+                      isset($doc['out_item_id']) ? (int)$doc['out_item_id'] : null, $doc['out_qty'] ?? null, isset($doc['bom_id']) ? (int)$doc['bom_id'] : null, (int)$u['id']]);
         $id = (int)$db->lastInsertId();
         $mv = $db->prepare('INSERT INTO stk_move (doc_id, line_no, branch_id, item_id, d, qty, kind, rate, note, created_by) VALUES (?,?,?,?,?,?,?,?,?,?)');
         $up = $db->prepare('UPDATE stk_bal SET qty = qty + ? WHERE branch_id = ? AND item_id = ?');
@@ -227,6 +234,7 @@ function stk_reverse(PDO $db, array $u, int $id, string $reason): int {
         $rev = stk_post($db, $u, ['kind' => 'REV', 'sub' => $d0['kind'], 'branch_id' => (int)$d0['branch_id'], 'd' => date('Y-m-d'), 'ref_no' => $d0['doc_no'], 'party' => $d0['party'], 'note' => $reason, 'request_id' => so_uuid(''), 'rev_of' => $id],
                         $lines, ['own_tx' => false, 'inactive_ok' => true, 'other_branch_ok' => true]);
         $db->prepare("UPDATE stk_doc SET status = 'reversed', reversed_by = ?, reversed_at = NOW(), reverse_doc = ? WHERE id = ?")->execute([(int)$u['id'], $rev, $id]);
+        $db->prepare('UPDATE stk_link SET live = NULL WHERE doc_id = ?')->execute([$id]);   // the consignment may be posted again
         $db->commit();
     } catch (Throwable $e) { if ($db->inTransaction()) $db->rollBack(); throw $e; }
     audit((int)$u['id'], 'stk_reverse', '#' . $id . ' > #' . $rev);
