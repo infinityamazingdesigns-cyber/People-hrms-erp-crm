@@ -168,7 +168,7 @@ return [
         'about' => 'Multi-line claims with bills, HR audit → CEO approval → Accounts pay; drafts; duplicate checks.',
         'roles' => ['EMPLOYEE', 'HRMANAGER', 'CEO', 'ACCOUNTS', 'SUPERADMIN'], 'entry' => 'modules/claims/',
         'ref' => ['expense_claims.php', 'lib/expense_claims.php']],
-    'daybook' => ['name' => 'Branch day book', 'group' => 'pay', 'status' => 'planned',
+    'daybook' => ['name' => 'Branch day book', 'group' => 'pay', 'status' => 'built',
         'about' => 'Daily cash sheet per branch: bills, dispatch, money received, petty cash, close the day.',
         'roles' => ['EMPLOYEE', 'HRMANAGER', 'CEO', 'SUPERADMIN'], 'entry' => 'modules/daybook/', 'ref' => ['daybook.php', 'lib/daybook.php']],
     'vendorbills' => ['name' => 'Vendor bills (HO)', 'group' => 'pay', 'status' => 'planned',

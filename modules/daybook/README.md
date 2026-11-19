@@ -1,6 +1,6 @@
 # Branch day book
 
-**Key:** `daybook` · **Group:** pay · **Status:** Planned — specification only
+**Key:** `daybook` · **Group:** pay · **Status:** Ready
 
 Daily cash sheet per branch: bills, dispatch, money received, petty cash, close the day.
 
