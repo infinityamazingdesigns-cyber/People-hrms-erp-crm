@@ -1,0 +1,53 @@
+-- Training register: trainings per person (verified by HR), certificates in the database, requests (manager → HR),
+-- feedback after a completed training, peer sessions colleagues join, and an append-only log. Nothing is deleted.
+
+CREATE TABLE IF NOT EXISTS tr_record (
+  id INT AUTO_INCREMENT PRIMARY KEY, emp_code VARCHAR(32) NOT NULL,
+  kind VARCHAR(40) NOT NULL, title VARCHAR(160) NOT NULL, status VARCHAR(10) NOT NULL DEFAULT 'completed',
+  start_on DATE NULL, end_on DATE NULL, hours DECIMAL(6,1) NULL, days DECIMAL(5,1) NULL,
+  trainer VARCHAR(120) NOT NULL DEFAULT '', venue VARCHAR(160) NOT NULL DEFAULT '', fee DECIMAL(12,2) NULL,
+  objectives TEXT NULL, outcome TEXT NULL, evaluated VARCHAR(160) NOT NULL DEFAULT '', result VARCHAR(80) NOT NULL DEFAULT '',
+  skills VARCHAR(400) NOT NULL DEFAULT '', link VARCHAR(400) NOT NULL DEFAULT '', fy CHAR(7) NOT NULL DEFAULT '',
+  verify VARCHAR(8) NOT NULL DEFAULT 'pending', verified_by INT NULL, verified_at DATETIME NULL, ask_note VARCHAR(500) NOT NULL DEFAULT '',
+  session_id INT NULL, request_id INT NULL,
+  created_by INT NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  removed_at DATETIME NULL, removed_by INT NULL, removed_reason VARCHAR(300) NOT NULL DEFAULT '',
+  KEY k_emp (emp_code), KEY k_fy (fy, status), KEY k_verify (verify)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS tr_file (
+  id CHAR(32) NOT NULL PRIMARY KEY, record_id INT NOT NULL, name VARCHAR(180) NOT NULL, type VARCHAR(60) NOT NULL, size INT NOT NULL,
+  data LONGBLOB NOT NULL, uploaded_by INT NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  removed_at DATETIME NULL, removed_by INT NULL, KEY k_rec (record_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS tr_request (
+  id INT AUTO_INCREMENT PRIMARY KEY, emp_code VARCHAR(32) NOT NULL, by_user INT NOT NULL,
+  title VARCHAR(160) NOT NULL, kind VARCHAR(40) NOT NULL, why TEXT NOT NULL, when_hint VARCHAR(80) NOT NULL DEFAULT '', provider VARCHAR(160) NOT NULL DEFAULT '', cost DECIMAL(12,2) NULL,
+  status VARCHAR(10) NOT NULL DEFAULT 'manager', mgr_code VARCHAR(32) NOT NULL DEFAULT '',
+  mgr_by INT NULL, mgr_at DATETIME NULL, mgr_note VARCHAR(500) NOT NULL DEFAULT '',
+  hr_by INT NULL, hr_at DATETIME NULL, hr_note VARCHAR(500) NOT NULL DEFAULT '', record_id INT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, KEY k_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS tr_feedback (
+  record_id INT NOT NULL PRIMARY KEY, rating TINYINT NOT NULL, recommend TINYINT(1) NOT NULL, learned TEXT NOT NULL, use_plan TEXT NOT NULL,
+  by_user INT NOT NULL, at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS tr_session (
+  id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(160) NOT NULL, trainer_code VARCHAR(32) NOT NULL, by_user INT NOT NULL,
+  at DATETIME NOT NULL, hours DECIMAL(4,1) NOT NULL, seats SMALLINT NOT NULL DEFAULT 20, venue VARCHAR(160) NOT NULL DEFAULT '', about TEXT NOT NULL,
+  status VARCHAR(10) NOT NULL DEFAULT 'open', held_at DATETIME NULL, held_by INT NULL, cancel_note VARCHAR(300) NOT NULL DEFAULT '',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, KEY k_at (at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS tr_attendee (
+  session_id INT NOT NULL, emp_code VARCHAR(32) NOT NULL, joined_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, left_at DATETIME NULL,
+  PRIMARY KEY (session_id, emp_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS tr_log (
+  id INT AUTO_INCREMENT PRIMARY KEY, kind VARCHAR(8) NOT NULL, ref_id INT NOT NULL, action VARCHAR(30) NOT NULL, fields VARCHAR(300) NOT NULL DEFAULT '',
+  user_id INT NOT NULL, at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, KEY k_ref (kind, ref_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

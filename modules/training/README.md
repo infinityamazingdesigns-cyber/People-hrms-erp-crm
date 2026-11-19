@@ -1,8 +1,8 @@
 # Training register
 
-**Key:** `training` · **Group:** onboard · **Status:** Porting from the reference build
+**Key:** `training` · **Group:** onboard · **Status:** Ready
 
-Trainings, certificates, requests, peer sessions, yearly report.
+Trainings verified by HR, certificates, requests (manager → HR), feedback, peer sessions, yearly report + CSV.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Employee master (`employees`).

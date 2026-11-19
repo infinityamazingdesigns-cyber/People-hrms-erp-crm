@@ -117,8 +117,8 @@ return [
         'about' => 'Tests by job family and level in several languages; score goes to HR only.',
         'roles' => ['EMPLOYEE', 'HRMANAGER', 'SUPERADMIN'], 'entry' => 'modules/aptitude/',
         'ref' => ['aptitude.php', 'lib/aptitude.php', 'lib/aptitude_view.php', 'lib/aptitude_import.php']],
-    'training' => ['name' => 'Training register', 'group' => 'onboard', 'needs' => ['employees'], 'status' => 'port',
-        'about' => 'Trainings, certificates, requests, peer sessions, yearly report.',
+    'training' => ['name' => 'Training register', 'group' => 'onboard', 'needs' => ['employees'], 'status' => 'built',
+        'about' => 'Trainings verified by HR, certificates, requests (manager → HR), feedback, peer sessions, yearly report + CSV.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN'], 'entry' => 'modules/training/',
         'ref' => ['training.php', 'lib/training.php']],
 
