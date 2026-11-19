@@ -49,6 +49,17 @@ function wn_base(): string {
     return $rel === '' ? '' : str_repeat('../', substr_count($rel, '/') + 1);
 }
 
+/** This site's absolute address with a trailing slash: config 'site_url', else the request's host and the site root's path. */
+function wn_site_url(): string {
+    $c = rtrim((string)cfg('site_url', ''), '/');
+    if ($c !== '') return $c . '/';
+    $path = dirname(str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? '/')));
+    for ($i = substr_count(wn_base(), '../'); $i > 0; $i--) $path = dirname($path);
+    $path = rtrim(str_replace('\\', '/', $path), '/') . '/';
+    $https = function_exists('is_https') ? is_https() : !empty($_SERVER['HTTPS']);
+    return ($https ? 'https://' : 'http://') . preg_replace('/[^A-Za-z0-9.:-]/', '', (string)($_SERVER['HTTP_HOST'] ?? 'localhost')) . $path;
+}
+
 /* ---------- Session ---------- */
 
 const SESSION_IDLE = 8 * 3600;

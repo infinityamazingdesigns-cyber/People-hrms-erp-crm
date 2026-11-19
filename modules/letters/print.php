@@ -14,7 +14,7 @@ $t = let_template($db, (int)$l['template_id']);
 $issued = $l['status'] === 'issued' || ($l['status'] === 'lapsed' && $l['body_html']);
 $html = $issued ? (string)$l['body_html'] : let_render($t['body'], let_vars($db, $l));
 $sg = $issued ? ['name' => $l['signer_name'], 'title' => $l['signer_title']] : let_signer_on(let_signers($db), $l['signer_role'], date('Y-m-d'));
-$verify = rtrim((is_https() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? ''), '/') . wn_base() . 'modules/letters/verify.php';
+$verify = wn_site_url() . 'modules/letters/verify.php';
 if ($own && !$staff) audit((int)$u['id'], 'letter_view_own', '#' . $l['id']);
 $logo = org('logo');
 header('Cache-Control: no-store');

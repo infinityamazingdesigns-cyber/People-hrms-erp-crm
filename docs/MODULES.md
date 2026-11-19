@@ -107,7 +107,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
 | Module | What it does | Needs | Default roles | Status |
 |---|---|---|---|---|
-| **CRM & orders** `crm` | Customers (contacts, mobiles, addresses), products, duplicate check and merge, imports. Orders and dispatch next. | — | Super Admin, CEO / Director, Sales | Ready |
+| **CRM & orders** `crm` | Customers, products, duplicate check, imports; orders, readiness blockers, dispatch, consignments, customer tracking link, same-day score. | — | Super Admin, CEO / Director, Sales, Store | Ready |
 | **Enquiry register** `enquiries` | Leads → enquiries → follow-ups; WhatsApp and ad lead intake. | crm | Super Admin, CEO / Director, Sales | Porting |
 | **Quotations** `quotes` | Numbered quotations per branch, tax rules, revisions, won → order. | crm | Super Admin, CEO / Director, Sales | Porting |
 | **Marketing & ROAS** `marketing` | Campaigns, ad spend imports, leads, consent, return on ad spend. | crm | Super Admin, CEO / Director, Marketing | Planned |

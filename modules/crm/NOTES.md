@@ -1,4 +1,4 @@
-# CRM — porting notes (part 1: customers and products)
+# CRM — porting notes
 
 ## Ported
 - Customers with any number of contact persons, mobiles (country code kept, WhatsApp yes / no, label), emails,
@@ -21,10 +21,31 @@
   reason; product import by code, else name.
 - Customer list CSV (formula-safe cells, audited).
 
+## Ported in part 2: orders and dispatch
+- Orders on a customer: where it came from + reference, received time, PO, contact, salesperson (own name unless the
+  login works on every customer), advance, payment due, delivery address (default the customer's), expected dispatch,
+  several products (list rate and tax by default, discount), value before and with tax. Numbers SO/<branch>/<year>/0001
+  per branch and year (year by the organisation's first month). A repeat submit returns the same order.
+- Moves by hand: Draft → Submitted → In progress → Ready for dispatch; cancel with a reason; Dispatched → Delivered →
+  Closed. Dispatch states follow the consignments. Changes only while Draft / Submitted, with a version check.
+- Readiness blockers (ours or the customer's) with who follows up; Ready for dispatch needs none open (setting).
+- Dispatch: give to a person with a dispatch role in the branch → they accept → packing → consignments (courier /
+  transport, number, dates, vehicle, e-way bill or permit, packages, weight, quantities — never more than is left,
+  checked under a row lock). Tracking updates by hand; all consignments delivered → order Delivered.
+- Customer stages (received → preparing → packing → handed to transport → on the way → delivered), never stepping back,
+  shown on the public tracking page (private link, only its SHA-256 kept, expires, stopped by staff, throttled, noindex,
+  no-store; customer-safe fields only) and emailed at each stage when the Email module is on (a link of its own each
+  time). "Send on WhatsApp" opens WhatsApp with the text and a new link — no WhatsApp service is called.
+- Same-day dispatch score: orders punched on a day (optional cut-off) whose first consignment left that day; customer
+  holds left out; next-day count and median minutes. Order CSV.
+- Couriers & transport kept by the admin, none seeded, no address filled in; {ref} in the tracking page.
+
 ## Became settings
 - Roles that work on every customer (in their branches), on their own customers, that only read, and that merge /
   import / archive. Customer categories, units, digits of a local mobile number. The tax ID rule comes from the country.
+- Dispatch roles, order number prefix, link days, same-day cut-off, order sources, blockers on our / the customer's side,
+  ready-needs-no-blockers, email the customer by default, PO and quantities on the tracking page.
 
 ## Not ported (next parts)
-- Orders, dispatch, consignments, tracking page and customer messages (part 2); enquiry register; quotations;
+- WhatsApp / carrier API sending, staff time tracking, dispatch photo proofs; enquiry register; quotations;
   marketing; complaints; bills import; CRM-own rights grid and change-history hash chain.
