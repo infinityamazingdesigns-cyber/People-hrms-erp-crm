@@ -78,7 +78,7 @@ $lateTag = fn(array $d) => (!empty($d['corrected']) ? ' <span class="pill planne
   <?php foreach ($days as $d): ?><tr><td><?= h(date('D j', strtotime($d['day']))) ?></td><td><?= $d['status'] !== '' ? $pill($d['status']) : '' ?><?= $d['holiday'] ? ' <small class="muted">' . h($d['holiday']) . '</small>' : '' ?><?= $lateTag($d) ?>
     <?php if ($d['day'] >= $openFrom && $d['day'] <= date('Y-m-d') && in_array(explode(' · ', $d['status'])[0], ['Missed punch', 'Absent', 'Short', 'Half day', 'Not in yet'], true) || (!empty($d['late']) && $d['day'] >= $openFrom)): ?> <a class="muted" href="requests.php?day=<?= h($d['day']) ?>">Ask to correct</a><?php endif; ?></td>
     <td><?= h(att_hm($d['in'])) ?></td><td><?= h(att_hm($d['out'])) ?></td><td><?= $d['hours'] !== null ? h((string)$d['hours']) : '' ?></td>
-    <td><?php foreach ($d['punches'] as $p): ?><a href="?selfie=<?= h($p['selfie_id']) ?>" target="_blank" title="<?= h($p['geofence'] . ($p['remarks'] ? ' · ' . $p['remarks'] : '')) ?>"><?= h($p['type'] . ' ' . att_hm($p['time'])) ?></a> <?php endforeach; ?></td></tr><?php endforeach; ?>
+    <td><?php foreach ($d['punches'] as $p): ?><?php if (($p['selfie_id'] ?? '') === ''): ?><span title="<?= h('Biometric machine · ' . ($p['machine'] ?? '')) ?>"><?= h($p['type'] . ' ' . att_hm($p['time'])) ?> ⧉</span><?php else: ?><a href="?selfie=<?= h($p['selfie_id']) ?>" target="_blank" title="<?= h($p['geofence'] . ($p['remarks'] ? ' · ' . $p['remarks'] : '')) ?>"><?= h($p['type'] . ' ' . att_hm($p['time'])) ?></a><?php endif; ?> <?php endforeach; ?></td></tr><?php endforeach; ?>
   </tbody></table>
 </section>
 
@@ -94,7 +94,7 @@ $lateTag = fn(array $d) => (!empty($d['corrected']) ? ' <span class="pill planne
     <h2><?= h($r['emp']['name'] . ' · ' . $r['emp']['code']) ?></h2>
     <table><thead><tr><th>Date</th><th>Status</th><th>In</th><th>Out</th><th>Hours</th><th>Punches</th></tr></thead><tbody>
     <?php foreach ($r['days'] as $d): ?><tr><td><?= h(date('D j M', strtotime($d['day']))) ?></td><td><?= $d['status'] !== '' ? $pill($d['status']) : '' ?><?= $lateTag($d) ?></td><td><?= h(att_hm($d['in'])) ?></td><td><?= h(att_hm($d['out'])) ?></td><td><?= h((string)($d['hours'] ?? '')) ?></td>
-      <td><?php foreach ($d['punches'] as $p): ?><a href="?selfie=<?= h($p['selfie_id']) ?>" target="_blank" title="<?= h($p['geofence'] . ($p['distance_m'] !== null ? ' · ' . $p['distance_m'] . ' m' : '') . ($p['remarks'] ? ' · ' . $p['remarks'] : '')) ?>"><?= h($p['type'] . ' ' . att_hm($p['time'])) ?></a> <?php endforeach; ?></td></tr><?php endforeach; ?>
+      <td><?php foreach ($d['punches'] as $p): ?><?php if (($p['selfie_id'] ?? '') === ''): ?><span title="<?= h('Biometric machine · ' . ($p['machine'] ?? '')) ?>"><?= h($p['type'] . ' ' . att_hm($p['time'])) ?> ⧉</span><?php else: ?><a href="?selfie=<?= h($p['selfie_id']) ?>" target="_blank" title="<?= h($p['geofence'] . ($p['distance_m'] !== null ? ' · ' . $p['distance_m'] . ' m' : '') . ($p['remarks'] ? ' · ' . $p['remarks'] : '')) ?>"><?= h($p['type'] . ' ' . att_hm($p['time'])) ?></a><?php endif; ?> <?php endforeach; ?></td></tr><?php endforeach; ?>
     </tbody></table>
   <?php else: ?>
   <table><thead><tr><th>Code</th><th>Name</th><th>Branch</th><th>Present</th><th>Half / short</th><th>Absent</th><th>Missed punch</th><th>Late / early</th><th>Leave</th><th>Off / holiday</th><th>Hours</th></tr></thead><tbody>

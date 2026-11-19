@@ -4,7 +4,11 @@ DirectoryIndex index.php
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  # Biometric machines (ADMS push) — many speak plain HTTP only, so /iclock alone is exempt from the HTTPS redirect
+  RewriteRule ^iclock/(cdata|getrequest|devicecmd)(\.aspx)?$ modules/biometric/iclock.php?op=$1 [QSA,L]
   # HTTPS everywhere
+  RewriteCond %{REQUEST_URI} !^/iclock/
+  RewriteCond %{REQUEST_URI} !modules/biometric/iclock\.php$
   RewriteCond %{HTTPS} off
   RewriteCond %{HTTP:X-Forwarded-Proto} !https
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

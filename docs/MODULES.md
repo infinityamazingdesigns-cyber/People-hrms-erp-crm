@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 42 ready · 2 porting · 12 planned
+**56 modules** — 43 ready · 1 porting · 12 planned
 
 ## For me
 
@@ -55,7 +55,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 | Module | What it does | Needs | Default roles | Status |
 |---|---|---|---|---|
 | **Attendance** `attendance` | Phone punch with live selfie + precise GPS, office geofence, register, corrections, month close. | employees, holidays, orgchart | Employee, Manager, HR Manager, Super Admin, CEO / Director | Ready |
-| **Biometric machines** `biometric` | ADMS push from machines of any make, vendor cloud APIs, key-based punch API. | attendance | Super Admin | Porting |
+| **Biometric machines** `biometric` | Machine-direct push (ADMS) from machines of any make, key-based punch API; punches join the attendance register. | attendance | Super Admin, HR Manager | Ready |
 | **Shifts & weekly offs** `shifts` | Shift, flexible hours and weekly offs per person from a date, over the branch's; drives attendance late / early. | attendance | Super Admin, HR Manager, HR Operations | Ready |
 | **Holiday calendar** `holidays` | Holidays by branch; drives attendance, payroll and the announcement board. | employees | Super Admin, HR Manager, Employee | Ready |
 | **Leave** `leave` | Apply (day / half / time), manager → HR approval, balances, withdraw, handover, categories. | employees | Employee, Manager, HR Manager, HR Operations, Super Admin | Ready |

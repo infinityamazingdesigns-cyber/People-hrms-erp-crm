@@ -1,12 +1,12 @@
 # Biometric machines
 
-**Key:** `biometric` · **Group:** time · **Status:** Porting from the reference build
+**Key:** `biometric` · **Group:** time · **Status:** Ready
 
-ADMS push from machines of any make, vendor cloud APIs, key-based punch API.
+Machine-direct push (ADMS) from machines of any make, key-based punch API; punches join the attendance register.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Attendance (`attendance`).
-- Default roles when first switched on: Super Admin. The Super Admin can change this and add per-person exceptions.
+- Default roles when first switched on: Super Admin, HR Manager. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('biometric')`; every API with `module_require('biometric', true)`.
 
 ## Reference build (port source)
