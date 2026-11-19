@@ -29,7 +29,8 @@ A product for **any** organisation. Nothing in this repository may belong to one
   `modules/candidates/portal.php` (applicant's private link: own stage, interviews, letters to their email, own details
   and CV — never pay, panel feedback or other candidates), `modules/biometric/iclock.php` (machine push, only for a
   registered serial; attendance lines only; the one page exempt from the HTTPS redirect) and `modules/biometric/punch.php`
-  (punches by API key, kept only as a hash).
+  (punches by API key, kept only as a hash) and `modules/marketing/lead.php` (website-form leads by key, kept only as a
+  hash; number / mail / name / campaign only, never message text).
 - Every page under `modules/` calls one of the gates first (test GT01).
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 

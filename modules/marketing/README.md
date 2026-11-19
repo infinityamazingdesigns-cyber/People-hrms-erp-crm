@@ -1,8 +1,8 @@
 # Marketing & ROAS
 
-**Key:** `marketing` · **Group:** sales · **Status:** Planned — specification only
+**Key:** `marketing` · **Group:** sales · **Status:** Ready
 
-Campaigns, ad spend imports, leads, consent, return on ad spend.
+Campaigns with codes and tracked links, ad spend typed or imported, leads (form hook, file, staff) into enquiries, consent per number, orders → campaigns, ROAS, content plan.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs CRM & orders (`crm`).
