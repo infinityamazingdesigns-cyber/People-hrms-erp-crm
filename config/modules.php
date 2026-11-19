@@ -78,8 +78,8 @@ return [
         'about' => 'Offer, appointment, confirmation, increment, relieving letters; approval, signed PDF, verify code, e-acceptance.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'HROPS', 'CEO'], 'entry' => 'modules/letters/',
         'ref' => ['super/apps/letters.html', 'lib/letters.php', 'lib/letter_issue.php', 'letter.php', 'verify.php', 'my_letters.php']],
-    'insurance' => ['name' => 'Group insurance', 'group' => 'people', 'needs' => ['employees'], 'status' => 'planned',
-        'about' => 'Who is covered, card numbers, nominees, policy copy requests.',
+    'insurance' => ['name' => 'Group insurance', 'group' => 'people', 'needs' => ['employees'], 'status' => 'built', 'self' => ['My insurance', 'modules/insurance/mine.php', 'Your cover, card and nominee; ask HR for the policy copy.'],
+        'about' => 'Health / accident / life policies with their copy and renewal reminder; who is covered, card numbers, nominees; insurer\'s list matched to codes; policy copy requests.',
         'roles' => ['SUPERADMIN', 'HRMANAGER'], 'entry' => 'modules/insurance/', 'ref' => ['mediclaim.php', 'lib/mediclaim.php']],
 
     /* ---------------- Attract & hire ---------------- */
