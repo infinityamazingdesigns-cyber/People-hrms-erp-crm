@@ -1,8 +1,8 @@
 # Group insurance
 
-**Key:** `insurance` · **Group:** people · **Status:** Planned — specification only
+**Key:** `insurance` · **Group:** people · **Status:** Ready
 
-Who is covered, card numbers, nominees, policy copy requests.
+Health / accident / life policies with their copy and renewal reminder; who is covered, card numbers, nominees; insurer's list matched to codes; policy copy requests.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Employee master (`employees`).

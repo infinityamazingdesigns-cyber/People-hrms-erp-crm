@@ -15,6 +15,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] My profile (`profile`)
 - [x] KYC & bank (`kyc`)
 - [x] Letter desk (`letters`)
+- [x] Group insurance (`insurance`)
 - [x] Recruitment pipeline (`recruitment`)
 - [x] Careers page (`careers`)
 - [x] Onboarding (`onboarding`)
@@ -51,7 +52,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 ## Later — planned
 
-- [ ] Group insurance (`insurance`)
 - [ ] Candidate portal (`candidates`)
 - [ ] Recruitment intelligence (`recintel`)
 - [ ] Staff movement (`movement`)
