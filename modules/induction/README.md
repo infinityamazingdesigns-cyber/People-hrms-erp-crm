@@ -1,8 +1,8 @@
 # Induction academy
 
-**Key:** `induction` · **Group:** onboard · **Status:** Porting from the reference build
+**Key:** `induction` · **Group:** onboard · **Status:** Ready
 
-Self-paced levels and quizzes; progress feeds onboarding.
+Levels with reading, video and a quiz, in order, for everyone or a department; progress per person, shown on onboarding.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Employee master (`employees`).

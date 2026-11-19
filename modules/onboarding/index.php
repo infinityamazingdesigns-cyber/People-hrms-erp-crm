@@ -52,6 +52,7 @@ $fields = function (?array $j) use ($u) { $v = fn($k) => h((string)($j[$k] ?? ''
 <p><a href="index.php">‹ All joiners</a></p>
 <section class="card"><h2><?= h($j['name']) ?> <span class="pill <?= $j['employee_id'] ? 'on' : 'port' ?>"><?= $j['employee_id'] ? 'On the employee master' : 'Joining' ?></span><?= $j['active'] ? '' : ' <span class="pill off">Off</span>' ?></h2>
   <p><b><?= $p['pct'] ?>%</b> done (<?= $p['done'] ?> of <?= $p['of'] ?>)<?= $j['join_date'] ? ' · joins ' . h(date('j M Y', strtotime($j['join_date']))) : '' ?><?= $j['branch_id'] ? ' · ' . h(branch_label((string)($brName[$j['branch_id']] ?? ''))) : '' ?></p>
+  <?php if ($j['emp_code'] !== '' && module_on('induction')): require_once WN_ROOT . '/lib/induction.php'; $ip = ind_path($db, (string)$j['emp_code']); ?><p class="muted">Induction academy: <?= $ip['of'] ? $ip['done'] . ' of ' . $ip['of'] . ' level(s) passed' : 'no levels set up for them' ?></p><?php endif; ?>
   <?php if ($j['active'] && $can && !$j['employee_id']): ?><form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="j" value="<?= $id ?>"><button class="btn sm" name="a" value="convert">Convert to employee</button>
     <small class="muted">Needs the code and joining date. Makes the employee master record.</small></form><?php endif; ?>
 </section>
