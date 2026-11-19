@@ -1,6 +1,6 @@
 # Vendor bills (HO)
 
-**Key:** `vendorbills` · **Group:** pay · **Status:** Planned — specification only
+**Key:** `vendorbills` · **Group:** pay · **Status:** Ready
 
 Rent, utilities and other branch bills paid from head office; repeating bills.
 

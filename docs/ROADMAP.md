@@ -37,6 +37,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Statutory compliance (`statutory`)
 - [x] Expense claims (`claims`)
 - [x] Branch day book (`daybook`)
+- [x] Vendor bills (HO) (`vendorbills`)
 - [x] Performance (KRA) (`pms`)
 - [x] Feedback & conduct (`conduct`)
 - [x] Asset register (`assets`)
@@ -56,7 +57,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 ## Later — planned
 
-- [ ] Vendor bills (HO) (`vendorbills`)
 - [ ] Video meetings (`meet`)
 - [ ] Help desk (`helpdesk`)
 - [ ] Marketing & ROAS (`marketing`)
