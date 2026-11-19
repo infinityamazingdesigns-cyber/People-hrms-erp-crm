@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 55 ready · 0 porting · 1 planned
+**56 modules** — 56 ready · 0 porting · 0 planned
 
 ## For me
 
@@ -120,7 +120,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 | **Stock & inventory** `stock` | Items, insert-only ledger, goods in / out, transfers, counts, reversals, bills of materials, production, CRM dispatches off stock, statement, reorder. | — | Super Admin, Store, CEO / Director | Ready |
 | **Purchase & procurement** `purchase` | Requisitions, vendor master, comparisons, PO approval, goods received + QC, vendor scorecards. | quotes, stock | Super Admin, Buyer, CEO / Director, Store, Quality, Accounts / Payment, Manager, Production Head, Employee | Ready |
 | **Production workers** `production` | Own register of hourly / piece-rate workers, hours grid, piece work by type, rate history, advances ledger, separate pay run with confirm / reopen. | — | Super Admin, Production Head | Ready |
-| **Third parties & contracts** `contracts` | Vendors, contractors, agreements with versioned PDFs, approval bound to file hash, e-signing. | — | Super Admin, HR Manager, CEO / Director | Planned |
+| **Third parties & contracts** `contracts` | Vendors, contractors and consultants with sealed tax / registration numbers, contacts, compliance documents with expiry, agreements with versioned PDFs and approval bound to the file, amendments, reminders. | — | Super Admin, HR Manager, CEO / Director | Ready |
 
 ## Insights
 

@@ -251,8 +251,8 @@ return [
     'production' => ['name' => 'Production workers', 'group' => 'ops', 'status' => 'built',
         'about' => 'Own register of hourly / piece-rate workers, hours grid, piece work by type, rate history, advances ledger, separate pay run with confirm / reopen.',
         'roles' => ['SUPERADMIN', 'PRODHEAD'], 'entry' => 'modules/production/', 'ref' => ['production.php', 'lib/production.php']],
-    'contracts' => ['name' => 'Third parties & contracts', 'group' => 'ops', 'status' => 'planned',
-        'about' => 'Vendors, contractors, agreements with versioned PDFs, approval bound to file hash, e-signing.',
+    'contracts' => ['name' => 'Third parties & contracts', 'group' => 'ops', 'status' => 'built',
+        'about' => 'Vendors, contractors and consultants with sealed tax / registration numbers, contacts, compliance documents with expiry, agreements with versioned PDFs and approval bound to the file, amendments, reminders.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'CEO'], 'entry' => 'modules/contracts/', 'ref' => ['thirdparty.php', 'lib/thirdparty.php', 'lib/leegality.php']],
 
     /* ---------------- Insights ---------------- */

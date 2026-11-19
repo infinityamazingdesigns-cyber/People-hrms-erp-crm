@@ -1,8 +1,8 @@
 # Third parties & contracts
 
-**Key:** `contracts` · **Group:** ops · **Status:** Planned — specification only
+**Key:** `contracts` · **Group:** ops · **Status:** Ready
 
-Vendors, contractors, agreements with versioned PDFs, approval bound to file hash, e-signing.
+Vendors, contractors and consultants with sealed tax / registration numbers, contacts, compliance documents with expiry, agreements with versioned PDFs and approval bound to the file, amendments, reminders.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs nothing.
