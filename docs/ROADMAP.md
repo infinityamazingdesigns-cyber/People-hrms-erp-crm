@@ -45,6 +45,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Team chat (`talk`)
 - [x] Video meetings (`meet`)
 - [x] Tasks (`tasks`)
+- [x] Help desk (`helpdesk`)
 - [x] Visitors (`visitors`)
 - [x] CRM & orders (`crm`)
 - [x] Enquiry register (`enquiries`)
@@ -58,7 +59,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 ## Later — planned
 
-- [ ] Help desk (`helpdesk`)
 - [ ] Marketing & ROAS (`marketing`)
 - [ ] Complaints & CAPA (`quality`)
 - [ ] Production workers (`production`)
