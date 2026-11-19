@@ -200,6 +200,7 @@ function meet_invite(PDO $db, array $room, int $me, array $users, bool $ring, ?i
         if ($m) $db->prepare('UPDATE meet_member SET state = ?, ring_at = ?, rung_by = ? WHERE room_id = ? AND user_id = ?')->execute([$state, $ring ? $now : null, $ring ? $me : null, $room['id'], $x]);
         else $db->prepare('INSERT INTO meet_member (room_id, user_id, state, ring_at, rung_by) VALUES (?,?,?,?,?)')->execute([$room['id'], $x, $state, $ring ? $now : null, $ring ? $me : null]);
         $name = meet_user_name($db, $x);
+        if ($ring && module_on('notify')) { require_once __DIR__ . '/push.php'; notify_user($db, $x, 'meet', "$from is calling you", (string)$room['title'], 'modules/meet/index.php?r=' . $room['code']); }
         if ($ring) $rung[] = $name; else { $added[] = $name; meet_mail($db, $x, "$from invited you to a video meeting", $room['title'] . "\n\nJoin: " . meet_link((string)$room['code'])); }
     }
     meet_bump($db, (int)$room['id']);

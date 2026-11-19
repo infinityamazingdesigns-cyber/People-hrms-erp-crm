@@ -307,6 +307,7 @@ function vb_people_for(PDO $db, array $roles, int $branch, int $skip): array {
     return $o;
 }
 function vb_mail(PDO $db, array $people, string $subject, string $text): void {
+    if (module_on('notify')) { require_once __DIR__ . '/push.php'; foreach ($people as $p) notify_user($db, (int)$p['id'], 'vendorbill', $subject, $text, 'modules/vendorbills/'); }
     if (!module_on('email') || !function_exists('mail_queue')) return;
     foreach ($people as $p) if (filter_var((string)$p['email'], FILTER_VALIDATE_EMAIL)) { try { mail_queue($db, ['to' => $p['email'], 'subject' => $subject, 'text' => $text . "\n\nOpen Vendor bills in " . org('name') . '.'], 'notice', 'vendorbill'); } catch (Throwable $e) {} }
 }

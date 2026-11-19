@@ -1,6 +1,6 @@
 # Browser notifications
 
-**Key:** `notify` · **Group:** comms · **Status:** Porting from the reference build
+**Key:** `notify` · **Group:** comms · **Status:** Ready
 
 Web push per device; text fetched with the person's own sign-in.
 
