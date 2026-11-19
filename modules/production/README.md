@@ -1,8 +1,8 @@
 # Production workers
 
-**Key:** `production` · **Group:** ops · **Status:** Planned — specification only
+**Key:** `production` · **Group:** ops · **Status:** Ready
 
-Hourly / piece-rate worker register, hours grid, separate pay run, advances.
+Own register of hourly / piece-rate workers, hours grid, piece work by type, rate history, advances ledger, separate pay run with confirm / reopen.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs nothing.

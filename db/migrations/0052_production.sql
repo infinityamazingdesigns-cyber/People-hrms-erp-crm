@@ -1,0 +1,54 @@
+-- Production workers: their own register (not the office employee master), hourly rates and piece rates with history,
+-- hours per worker per day, piece-rate work, an advances ledger, monthly inputs and a separate pay run (confirmed months
+-- are read from their snapshot). Money in whole paise / cents, hours in hundredths. Nothing is deleted.
+CREATE TABLE IF NOT EXISTS prd_worker (
+  code VARCHAR(20) NOT NULL PRIMARY KEY,
+  name VARCHAR(120) NOT NULL, name_local VARCHAR(120) NOT NULL DEFAULT '', guardian VARCHAR(120) NOT NULL DEFAULT '',
+  gender VARCHAR(10) NOT NULL DEFAULT '', mobile VARCHAR(20) NOT NULL DEFAULT '', dept VARCHAR(60) NOT NULL DEFAULT '',
+  branch_id INT NOT NULL, doj DATE NULL, card_no VARCHAR(30) NULL UNIQUE, skill VARCHAR(20) NOT NULL DEFAULT '',
+  paid_by VARCHAR(10) NOT NULL DEFAULT 'bank', note VARCHAR(255) NOT NULL DEFAULT '',
+  active TINYINT(1) NOT NULL DEFAULT 1, off_reason VARCHAR(255) NOT NULL DEFAULT '',
+  added_by INT NULL, added_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NULL,
+  KEY k_branch (branch_id, active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS prd_rate (
+  id INT AUTO_INCREMENT PRIMARY KEY, code VARCHAR(20) NOT NULL, eff_from DATE NOT NULL, minor_hr INT NOT NULL,
+  note VARCHAR(255) NOT NULL DEFAULT '', created_by INT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  removed_at DATETIME NULL, removed_by INT NULL, removed_why VARCHAR(255) NOT NULL DEFAULT '', KEY k_code (code, eff_from)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS prd_day (
+  code VARCHAR(20) NOT NULL, d DATE NOT NULL, centi INT NOT NULL, updated_by INT NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (code, d), KEY k_d (d)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS prd_piece_type (
+  id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(60) NOT NULL UNIQUE, active TINYINT(1) NOT NULL DEFAULT 1, sort INT NOT NULL DEFAULT 0,
+  created_by INT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS prd_piece_rate (
+  id INT AUTO_INCREMENT PRIMARY KEY, type_id INT NOT NULL, eff_from DATE NOT NULL, minor INT NOT NULL, note VARCHAR(255) NOT NULL DEFAULT '',
+  created_by INT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, KEY k_type (type_id, eff_from)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS prd_piece (
+  id INT AUTO_INCREMENT PRIMARY KEY, d DATE NOT NULL, code VARCHAR(20) NOT NULL, type_id INT NOT NULL, qty INT NOT NULL,
+  note VARCHAR(255) NOT NULL DEFAULT '', created_by INT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  removed_at DATETIME NULL, removed_by INT NULL, removed_why VARCHAR(255) NOT NULL DEFAULT '', KEY k_d (d), KEY k_code (code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS prd_adv (
+  id INT AUTO_INCREMENT PRIMARY KEY, code VARCHAR(20) NOT NULL, d DATE NOT NULL, kind VARCHAR(10) NOT NULL, minor INT NOT NULL,
+  ref VARCHAR(120) NOT NULL DEFAULT '', note VARCHAR(255) NOT NULL DEFAULT '', pay_ym CHAR(7) NULL,
+  created_by INT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  removed_at DATETIME NULL, removed_by INT NULL, removed_why VARCHAR(255) NOT NULL DEFAULT '', KEY k_code (code), KEY k_pay (pay_ym)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS prd_input (
+  ym CHAR(7) NOT NULL, code VARCHAR(20) NOT NULL, other_earn INT NOT NULL DEFAULT 0, adv_recover INT NOT NULL DEFAULT 0,
+  ded_a INT NOT NULL DEFAULT 0, ded_b INT NOT NULL DEFAULT 0, ded_c INT NOT NULL DEFAULT 0, other_ded INT NOT NULL DEFAULT 0,
+  note VARCHAR(255) NOT NULL DEFAULT '', updated_by INT NULL, updated_at DATETIME NULL, PRIMARY KEY (ym, code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS prd_month (
+  ym CHAR(7) NOT NULL PRIMARY KEY, status VARCHAR(12) NOT NULL DEFAULT 'draft', rules VARCHAR(400) NOT NULL DEFAULT '', snapshot MEDIUMTEXT NULL,
+  confirmed_by INT NULL, confirmed_at DATETIME NULL, reopened_by INT NULL, reopened_at DATETIME NULL, reopen_why VARCHAR(255) NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS prd_log (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY, at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, by_user INT NULL, what VARCHAR(40) NOT NULL,
+  code VARCHAR(20) NOT NULL DEFAULT '', ref VARCHAR(60) NOT NULL DEFAULT '', detail VARCHAR(400) NOT NULL DEFAULT '', KEY k_code (code), KEY k_at (at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
