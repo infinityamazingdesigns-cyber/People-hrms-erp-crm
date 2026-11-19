@@ -1,8 +1,8 @@
 # CRM & orders
 
-**Key:** `crm` · **Group:** sales · **Status:** Porting from the reference build
+**Key:** `crm` · **Group:** sales · **Status:** Ready
 
-Customers, products, orders, dispatch, tracking page, customer messages, same-day KPI.
+Customers (contacts, mobiles, addresses), products, duplicate check and merge, imports. Orders and dispatch next.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs nothing.

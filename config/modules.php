@@ -224,8 +224,8 @@ return [
         'ref' => ['visitors.php', 'lib/visitors.php']],
 
     /* ---------------- Sales & CRM ---------------- */
-    'crm' => ['name' => 'CRM & orders', 'group' => 'sales', 'status' => 'port',
-        'about' => 'Customers, products, orders, dispatch, tracking page, customer messages, same-day KPI.',
+    'crm' => ['name' => 'CRM & orders', 'group' => 'sales', 'status' => 'built',
+        'about' => 'Customers (contacts, mobiles, addresses), products, duplicate check and merge, imports. Orders and dispatch next.',
         'roles' => ['SUPERADMIN', 'CEO', 'SALES'], 'entry' => 'modules/crm/', 'ref' => ['crm/']],
     'enquiries' => ['name' => 'Enquiry register', 'group' => 'sales', 'needs' => ['crm'], 'status' => 'port',
         'about' => 'Leads → enquiries → follow-ups; WhatsApp and ad lead intake.',
