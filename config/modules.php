@@ -242,7 +242,7 @@ return [
 
     /* ---------------- Operations & supply ---------------- */
     'stock' => ['name' => 'Stock & inventory', 'group' => 'ops', 'status' => 'built',
-        'about' => 'Items, insert-only ledger, goods in / out, opening stock, transfers with receiving, counts, reversals, statement, reorder. Production and dispatch links next.',
+        'about' => 'Items, insert-only ledger, goods in / out, transfers, counts, reversals, bills of materials, production, CRM dispatches off stock, statement, reorder.',
         'roles' => ['SUPERADMIN', 'STORE', 'CEO'], 'entry' => 'modules/stock/', 'ref' => ['crm/lib/stock.php', 'crm/lib/stock_link.php']],
     'purchase' => ['name' => 'Purchase & procurement', 'group' => 'ops', 'status' => 'port',
         'about' => 'Requisitions, vendor master, comparisons, PO approval, goods received + QC, vendor scorecards.',
