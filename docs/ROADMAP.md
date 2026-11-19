@@ -57,6 +57,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Purchase & procurement (`purchase`)
 - [x] HR dashboard (MIS) (`mis`)
 - [x] My day (`myday`)
+- [x] Lite mode (`lite`)
 
 ## Next — porting
 
@@ -65,4 +66,3 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 - [ ] Production workers (`production`)
 - [ ] Third parties & contracts (`contracts`)
-- [ ] Lite mode (`lite`)

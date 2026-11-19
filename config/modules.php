@@ -262,7 +262,7 @@ return [
     'myday' => ['name' => 'My day', 'group' => 'insights', 'status' => 'built', 'self' => ['My day', 'modules/myday/index.php', 'Your punches today, where each of your requests stands, letters, tasks, quick actions.'],
         'about' => 'Each person\'s own day: today\'s punches, every request of theirs on one tracker, letters, tasks, notices, quick actions — own data only.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN'], 'entry' => 'modules/myday/', 'ref' => ['my_day.php', 'lib/my_day.php']],
-    'lite' => ['name' => 'Lite mode', 'group' => 'insights', 'status' => 'planned',
-        'about' => 'Tiny server-built pages for slow internet: punch, leave, requests, letters.',
+    'lite' => ['name' => 'Lite mode', 'group' => 'insights', 'status' => 'built', 'self' => ['Lite mode', 'modules/lite/index.php', 'Small pages for slow internet: punch, attendance, leave, requests, letters.'],
+        'about' => 'Small server-built pages for slow internet (chosen at sign-in): home, punch, own attendance, leave, attendance corrections, letters — same rules as the full screens.',
         'roles' => ['EMPLOYEE', 'MANAGER'], 'entry' => 'modules/lite/', 'ref' => ['lite/', 'lib/lite.php']],
 ];

@@ -30,6 +30,7 @@ DirectoryIndex index.php
 # Camera and location only on the punch page (everything else keeps them off).
 <IfModule mod_setenvif.c>
   SetEnvIf Request_URI "modules/attendance/punch\.php$" WN_DEVICE_PAGE
+  SetEnvIf Request_URI "modules/lite/punch\.php$" WN_DEVICE_PAGE
   SetEnvIf Request_URI "modules/meet/(index\.php)?$" WN_MEET_PAGE WN_DEVICE_PAGE
 </IfModule>
 <IfModule mod_headers.c>
