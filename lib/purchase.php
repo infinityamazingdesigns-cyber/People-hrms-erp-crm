@@ -15,6 +15,8 @@ const PUR_ORD_STATUS = ['draft' => 'Draft', 'mgr' => 'With the approver', 'ceo' 
 const PUR_REQ_STATUS = ['hod' => 'With the manager', 'open' => 'Open', 'rejected' => 'Not approved', 'done' => 'Ordered', 'cancelled' => 'Cancelled'];
 const PUR_DEFAULTS = [
     'buyer_roles' => ['SUPERADMIN', 'BUYER'], 'approver_roles' => ['SUPERADMIN'], 'see_roles' => ['CEO'],
+    'recv_roles' => ['SUPERADMIN', 'STORE'], 'qc_roles' => ['SUPERADMIN', 'QUALITY'], 'dn_roles' => ['SUPERADMIN', 'ACCOUNTS'],
+    'po_days' => 3, 'reject_reasons' => "Dimension\nMaterial / grade\nDamaged in transit\nSurface finish\nWrong item\nShort / excess\nNo test certificate\nOther",
     'limit_value' => 25000, 'hod_value' => 10000, 'prefix_po' => 'PO', 'prefix_jw' => 'JW', 'prefix_pr' => 'PR', 'prefix_cmp' => 'CMP',
     'w_price' => 50, 'w_quality' => 20, 'w_delivery' => 20, 'w_payment' => 10, 'new_quality' => 70,
     'terms' => "Payment: 30 days from the invoice\nDelivery: within 15 days of this order\nFreight: delivered to our site, paid by the supplier\nMention this order number on the invoice and the delivery challan",
@@ -32,6 +34,7 @@ function pur_req_needs_hod(float $known, int $unpriced, float $limit): bool { re
  * payment = these credit days ÷ the longest. No history → `new_quality` for the history parts.
  */
 function pur_qcd(array $quotes, array $stats, array $S): array {
+    // $stats from pur_vendor_stats(): rej_pct / ontime_pct are null when the vendor has no checked receipts yet
     if (!$quotes) return [];
     $land = fn($q) => (float)$q['rate'] + (float)($q['freight'] ?? 0);
     $minL = min(array_map($land, $quotes));
@@ -94,7 +97,7 @@ function pur_ord_step(array $o, int $uid, bool $approver, bool $ceo): array {
 function pur_settings(): array { $s = module_states()['purchase']['settings'] ?? []; return array_replace(PUR_DEFAULTS, array_intersect_key($s, PUR_DEFAULTS)); }
 function pur_settings_check(array $in, array $roles): array {
     $o = []; $e = [];
-    foreach (['buyer_roles', 'approver_roles', 'see_roles'] as $k) $o[$k] = array_values(array_intersect(array_keys($roles), (array)($in[$k] ?? [])));
+    foreach (['buyer_roles', 'approver_roles', 'see_roles', 'recv_roles', 'qc_roles', 'dn_roles'] as $k) $o[$k] = array_values(array_intersect(array_keys($roles), (array)($in[$k] ?? [])));
     if (!$o['buyer_roles']) $e[] = 'Pick at least one buyer role.';
     if (!$o['approver_roles']) $e[] = 'Pick at least one approver role.';
     foreach (['limit_value', 'hod_value'] as $k) $o[$k] = max(0, round((float)str_replace(',', '', (string)($in[$k] ?? 0)), 2));
@@ -103,12 +106,16 @@ function pur_settings_check(array $in, array $roles): array {
     if (!array_sum(array_intersect_key($o, array_flip(['w_price', 'w_quality', 'w_delivery', 'w_payment'])))) { $e[] = 'The score weights cannot all be zero.'; $o['w_price'] = 50; }
     $o['new_quality'] = max(0, min(100, (int)($in['new_quality'] ?? 70)));
     $o['terms'] = implode("\n", array_slice(crm_lines((string)($in['terms'] ?? '')), 0, 40));
+    $o['po_days'] = max(1, min(60, (int)($in['po_days'] ?? 3)));
+    $o['reject_reasons'] = implode("\n", array_slice(crm_lines((string)($in['reject_reasons'] ?? '')), 0, 30)) ?: 'Other';
     return [$o, $e];
 }
 function pur_rights(array $u): array {
     $r = user_roles((int)$u['id'], !empty($u['is_owner'])); $s = pur_settings(); $h = fn($k) => (bool)array_intersect($r, $s[$k]);
     $admin = in_array('SUPERADMIN', $r, true);
-    return ['buyer' => $h('buyer_roles'), 'approver' => $h('approver_roles'), 'ceo' => in_array('CEO', $r, true) || $admin, 'see' => $admin || $h('buyer_roles') || $h('approver_roles') || $h('see_roles') || in_array('CEO', $r, true), 'admin' => $admin];
+    $recv = $h('recv_roles'); $qc = $h('qc_roles'); $dn = $h('dn_roles');
+    return ['buyer' => $h('buyer_roles'), 'approver' => $h('approver_roles'), 'ceo' => in_array('CEO', $r, true) || $admin, 'recv' => $recv, 'qc' => $qc, 'dn' => $dn,
+            'see' => $admin || $h('buyer_roles') || $h('approver_roles') || $h('see_roles') || $recv || $qc || $dn || in_array('CEO', $r, true), 'admin' => $admin];
 }
 function pur_branches(array $u): array { return stk_branches($u); }
 function pur_log(PDO $db, ?int $uid, string $what, string $ref = '', string $note = ''): void { $db->prepare('INSERT INTO pur_log (by_user, what, ref, note) VALUES (?,?,?,?)')->execute([$uid, $what, mb_substr($ref, 0, 60), mb_substr($note, 0, 300)]); }
@@ -332,7 +339,8 @@ function pur_quote_off(PDO $db, array $u, int $quote): void {
 function pur_cmp_get(PDO $db, int $id): ?array {
     $s = $db->prepare('SELECT * FROM pur_cmp WHERE id = ?'); $s->execute([$id]); if (!$c = $s->fetch()) return null;
     $s = $db->prepare('SELECT q.*, v.name AS vendor, v.status AS vstatus FROM pur_quote q JOIN pur_vendor v ON v.id = q.vendor_id WHERE q.cmp_id = ? AND q.active = 1 ORDER BY q.id'); $s->execute([$id]); $c['quotes'] = $s->fetchAll();
-    $c['score'] = pur_qcd($c['quotes'], [], pur_settings());
+    $st = []; if (function_exists('pur_vendor_stats')) foreach ($c['quotes'] as $q) $st[(int)$q['vendor_id']] = pur_vendor_stats($db, (int)$q['vendor_id']);
+    $c['score'] = pur_qcd($c['quotes'], array_filter($st, fn($x) => $x['n'] > 0), pur_settings());
     return $c;
 }
 /** Finish: the chosen quote; not the best-scored one (or not the cheapest) needs a reason. */
@@ -481,3 +489,4 @@ function pur_waiting(PDO $db, array $u): array {
     $vens = $R['approver'] ? array_values(array_filter(pur_vendors($db, 'pending'), fn($v) => !in_array($uid, [(int)$v['created_by'], (int)$v['submitted_by']], true))) : [];
     return ['reqs' => $reqs, 'orders' => $ords, 'vendors' => $vens];
 }
+require_once __DIR__ . '/purchase_grn.php';

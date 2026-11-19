@@ -6,7 +6,7 @@ Requisitions, vendor master, comparisons, PO approval, goods received + QC, vend
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Quotations (`quotes`), Stock & inventory (`stock`).
-- Default roles when first switched on: Super Admin, Buyer, CEO / Director, Store, Manager, Production Head, Employee. The Super Admin can change this and add per-person exceptions.
+- Default roles when first switched on: Super Admin, Buyer, CEO / Director, Store, Quality, Accounts / Payment, Manager, Production Head, Employee. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('purchase')`; every API with `module_require('purchase', true)`.
 
 ## Reference build (port source)

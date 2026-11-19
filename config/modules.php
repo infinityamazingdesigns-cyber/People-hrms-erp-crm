@@ -246,7 +246,7 @@ return [
         'roles' => ['SUPERADMIN', 'STORE', 'CEO'], 'entry' => 'modules/stock/', 'ref' => ['crm/lib/stock.php', 'crm/lib/stock_link.php']],
     'purchase' => ['name' => 'Purchase & procurement', 'group' => 'ops', 'status' => 'built', 'needs' => ['quotes', 'stock'],
         'about' => 'Requisitions, vendor master, comparisons, PO approval, goods received + QC, vendor scorecards.',
-        'roles' => ['SUPERADMIN', 'BUYER', 'CEO', 'STORE', 'MANAGER', 'PRODHEAD', 'EMPLOYEE'], 'entry' => 'modules/purchase/',
+        'roles' => ['SUPERADMIN', 'BUYER', 'CEO', 'STORE', 'QUALITY', 'ACCOUNTS', 'MANAGER', 'PRODHEAD', 'EMPLOYEE'], 'entry' => 'modules/purchase/',
         'ref' => ['purchase.php', 'lib/purchase.php', 'lib/purchase_docs.php', 'lib/purchase_pipeline.php']],
     'production' => ['name' => 'Production workers', 'group' => 'ops', 'status' => 'planned',
         'about' => 'Hourly / piece-rate worker register, hours grid, separate pay run, advances.',
