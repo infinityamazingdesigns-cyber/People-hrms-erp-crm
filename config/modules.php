@@ -256,8 +256,8 @@ return [
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'CEO'], 'entry' => 'modules/contracts/', 'ref' => ['thirdparty.php', 'lib/thirdparty.php', 'lib/leegality.php']],
 
     /* ---------------- Insights ---------------- */
-    'mis' => ['name' => 'HR dashboard (MIS)', 'group' => 'insights', 'needs' => ['employees'], 'status' => 'planned',
-        'about' => 'Headcount, joiners / exits, attendance totals, pending work by desk, statutory dues.',
+    'mis' => ['name' => 'HR dashboard (MIS)', 'group' => 'insights', 'needs' => ['employees'], 'status' => 'built',
+        'about' => 'Headcount, joiners / exits, notice, attrition and retention, trend, by branch / department, attendance and leave totals, probation, pending work by desk, statutory dues — counts only.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'CEO'], 'entry' => 'modules/mis/', 'ref' => ['lib/mis_access.php', 'lib/mis_desk.php']],
     'myday' => ['name' => 'My day', 'group' => 'insights', 'status' => 'planned',
         'about' => 'Each person\'s own day: punches, requests tracker, letters, quick actions.',

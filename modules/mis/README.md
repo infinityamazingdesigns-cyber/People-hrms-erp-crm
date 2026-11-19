@@ -1,8 +1,8 @@
 # HR dashboard (MIS)
 
-**Key:** `mis` · **Group:** insights · **Status:** Planned — specification only
+**Key:** `mis` · **Group:** insights · **Status:** Ready
 
-Headcount, joiners / exits, attendance totals, pending work by desk, statutory dues.
+Headcount, joiners / exits, notice, attrition and retention, trend, by branch / department, attendance and leave totals, probation, pending work by desk, statutory dues — counts only.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Employee master (`employees`).
