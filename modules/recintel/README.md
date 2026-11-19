@@ -1,12 +1,12 @@
 # Recruitment intelligence
 
-**Key:** `recintel` · **Group:** hiring · **Status:** Planned — specification only
+**Key:** `recintel` · **Group:** hiring · **Status:** Ready
 
-Institutes, consultants, market openings, WhatsApp CV intake, erasure requests.
+Institutes, consultants and contractors with list import, companies, recruitment projects, vacancies with job codes, outside hiring trends.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Recruitment pipeline (`recruitment`).
-- Default roles when first switched on: Super Admin, HR Recruitment. The Super Admin can change this and add per-person exceptions.
+- Default roles when first switched on: Super Admin, HR Manager, HR Recruitment. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('recintel')`; every API with `module_require('recintel', true)`.
 
 ## Reference build (port source)
