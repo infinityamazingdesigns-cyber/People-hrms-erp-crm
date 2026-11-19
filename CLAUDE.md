@@ -25,7 +25,9 @@ A product for **any** organisation. Nothing in this repository may belong to one
 - Public pages (no sign-in) call `module_public('<key>')` first, are throttled, send `noindex`, and show only what
   the page's rule allows: `modules/letters/respond.php` (answer link), `modules/letters/verify.php` (verification),
   `modules/careers/apply.php` (job board + application form; public details of open positions only, never pay),
-  `modules/crm/track.php` (order tracking by private link; stage, items, consignments — never prices or internal remarks).
+  `modules/crm/track.php` (order tracking by private link; stage, items, consignments — never prices or internal remarks),
+  `modules/candidates/portal.php` (applicant's private link: own stage, interviews, letters to their email, own details
+  and CV — never pay, panel feedback or other candidates).
 - Every page under `modules/` calls one of the gates first (test GT01).
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 

@@ -91,7 +91,7 @@ return [
         'about' => 'Public job board + application form, CV reading on the server, consent, spam checks, employer ratings.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'HRRECRUIT'], 'entry' => 'modules/careers/',
         'ref' => ['careers.php', 'lib/apply.php', 'lib/apply_form.php', 'lib/cv_parse.php', 'applications.php']],
-    'candidates' => ['name' => 'Candidate portal', 'group' => 'hiring', 'needs' => ['recruitment'], 'status' => 'planned',
+    'candidates' => ['name' => 'Candidate portal', 'group' => 'hiring', 'needs' => ['recruitment', 'letters'], 'status' => 'built',
         'about' => 'Private link per applicant: stage, interviews, letters, documents — no password.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'HRRECRUIT'], 'entry' => 'modules/candidates/',
         'ref' => ['candidates.php', 'candidate.php', 'lib/candidate_access.php']],

@@ -1,11 +1,11 @@
 # Candidate portal
 
-**Key:** `candidates` · **Group:** hiring · **Status:** Planned — specification only
+**Key:** `candidates` · **Group:** hiring · **Status:** Ready
 
 Private link per applicant: stage, interviews, letters, documents — no password.
 
 ## Access
-- Switched on by the Super Admin on **Admin → Modules**; needs Recruitment pipeline (`recruitment`).
+- Switched on by the Super Admin on **Admin → Modules**; needs Recruitment pipeline (`recruitment`), Letter desk (`letters`).
 - Default roles when first switched on: Super Admin, HR Manager, HR Recruitment. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('candidates')`; every API with `module_require('candidates', true)`.
 

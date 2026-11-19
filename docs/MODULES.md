@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 38 ready · 4 porting · 14 planned
+**56 modules** — 39 ready · 4 porting · 13 planned
 
 ## For me
 
@@ -37,7 +37,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 |---|---|---|---|---|
 | **Recruitment pipeline** `recruitment` | Requisitions, vacancies, candidate pipeline, interviews, offers, ATS match score. | employees | Super Admin, HR Manager, HR Recruitment, CEO / Director, Manager | Ready |
 | **Careers page** `careers` | Public job board + application form, CV reading on the server, consent, spam checks, employer ratings. | recruitment | Super Admin, HR Manager, HR Recruitment | Ready |
-| **Candidate portal** `candidates` | Private link per applicant: stage, interviews, letters, documents — no password. | recruitment | Super Admin, HR Manager, HR Recruitment | Planned |
+| **Candidate portal** `candidates` | Private link per applicant: stage, interviews, letters, documents — no password. | recruitment, letters | Super Admin, HR Manager, HR Recruitment | Ready |
 | **Recruitment intelligence** `recintel` | Institutes, consultants, market openings, WhatsApp CV intake, erasure requests. | recruitment | Super Admin, HR Recruitment | Planned |
 
 ## Onboard & grow
