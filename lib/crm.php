@@ -12,7 +12,12 @@ const CRM_NAME_STOP = ['m', 's', 'ms', 'mss', 'messrs', 'pvt', 'private', 'ltd',
 const CRM_DUP_NAME_MIN = 85;     // similar name with the same city / postcode
 const CRM_DUP_NAME_ALONE = 93;   // similar name when either side has no place
 const CRM_DEFAULTS = ['all_roles' => ['SUPERADMIN', 'CEO'], 'own_roles' => ['SALES'], 'view_roles' => [], 'admin_roles' => ['SUPERADMIN', 'CEO'],
-                      'categories' => "Dealer\nEnd user\nContractor\nOEM\nGovernment", 'units' => "pcs\nset\nkg\nm\nlitre\nbox", 'phone_digits' => 10];
+                      'categories' => "Dealer\nEnd user\nContractor\nOEM\nGovernment", 'units' => "pcs\nset\nkg\nm\nlitre\nbox", 'phone_digits' => 10,
+                      // orders and dispatch (part 2)
+                      'dispatch_roles' => ['SUPERADMIN', 'STORE'], 'order_prefix' => 'SO', 'link_days' => 30, 'public_po' => true, 'public_qty' => true,
+                      'same_day_cutoff' => '', 'notify_default' => true, 'ready_needs_no_blockers' => true,
+                      'order_sources' => "Phone call\nEmail\nWhatsApp\nWalk-in\nQuotation\nTender\nOnline marketplace\nOther",
+                      'internal_blockers' => "Waiting for production\nWaiting for purchase", 'customer_blockers' => "Waiting for the customer's advance\nWaiting for the customer to confirm the dispatch date"];
 const CRM_IMPORT_COLS = [
     'name' => ['name', 'customer', 'customername', 'company', 'companyname', 'party', 'partyname', 'client', 'clientname', 'firm'],
     'contact' => ['contact', 'contactperson', 'contactname', 'person', 'attention'],
@@ -36,6 +41,16 @@ function crm_settings_check(array $in, array $roles): array {
     $o['categories'] = implode("\n", array_slice(crm_lines((string)($in['categories'] ?? '')), 0, 60));
     $o['units'] = implode("\n", array_slice(crm_lines((string)($in['units'] ?? '')), 0, 40)) ?: 'pcs';
     $o['phone_digits'] = max(6, min(12, (int)($in['phone_digits'] ?? 10)));
+    $o['dispatch_roles'] = array_values(array_intersect(array_keys($roles), (array)($in['dispatch_roles'] ?? [])));
+    $o['order_prefix'] = strtoupper((string)preg_replace('/[^A-Za-z0-9]/', '', (string)($in['order_prefix'] ?? 'SO'))) ?: 'SO';
+    $o['order_prefix'] = substr($o['order_prefix'], 0, 6);
+    $o['link_days'] = max(1, min(365, (int)($in['link_days'] ?? 30)));
+    foreach (['public_po', 'public_qty', 'notify_default', 'ready_needs_no_blockers'] as $k) $o[$k] = !empty($in[$k]);
+    $c = trim((string)($in['same_day_cutoff'] ?? ''));
+    if ($c !== '' && !preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $c)) { $e[] = 'Same-day cut-off is a time like 17:00, or empty.'; $c = ''; }
+    $o['same_day_cutoff'] = $c;
+    foreach (['order_sources' => 30, 'internal_blockers' => 20, 'customer_blockers' => 20] as $k => $max) $o[$k] = implode("\n", array_slice(crm_lines((string)($in[$k] ?? '')), 0, $max));
+    if ($o['order_sources'] === '') $o['order_sources'] = 'Other';
     return [$o, $e];
 }
 
@@ -147,7 +162,7 @@ function crm_roles(array $u): array { return user_roles((int)$u['id'], !empty($u
 function crm_rights(array $u): array {
     $r = crm_roles($u); $s = crm_settings(); $h = fn($k) => (bool)array_intersect($r, $s[$k]);
     $all = $h('all_roles') || $h('admin_roles');
-    return ['all' => $all, 'own' => $all || $h('own_roles'), 'view' => $all || $h('own_roles') || $h('view_roles'), 'admin' => $h('admin_roles'), 'edit' => $all || $h('own_roles')];
+    return ['all' => $all, 'own' => $all || $h('own_roles'), 'view' => $all || $h('own_roles') || $h('view_roles'), 'admin' => $h('admin_roles'), 'edit' => $all || $h('own_roles'), 'dispatch' => $h('dispatch_roles')];
 }
 function crm_need(array $u, string $k): void { if (!crm_rights($u)[$k]) throw new RuntimeException('Your role cannot do this.'); }
 

@@ -61,7 +61,7 @@ $st = fn($l) => '<span class="pill ' . (in_array($l['status'], ['issued', 'appro
 <section class="card"><h2><?= h($t['name'] . ' · ' . $l['person']) ?> <?= $st($l) ?></h2>
   <p class="muted"><?= $l['ref'] ? h($l['ref']) . ' · ' : '' ?>Signs: <?= h(role_labels()[$l['signer_role']] ?? $l['signer_role']) ?><?= $l['signer_name'] ? ' (' . h($l['signer_name']) . ')' : '' ?><?= $t['needs_approval'] ? ' · needs approval' : '' ?><?= $l['accept_by'] ? ' · accept by ' . h(date('j M Y', strtotime($l['accept_by']))) : '' ?></p>
   <?php if ($miss && $open): ?><p class="note">Still to fill in: <?= h(implode(', ', $miss)) ?></p><?php endif; ?>
-  <?php if (!empty($_SESSION['let_link'][$id])): $link = rtrim((is_https() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? ''), '/') . $base . 'modules/letters/respond.php?t=' . $_SESSION['let_link'][$id]; unset($_SESSION['let_link'][$id]); ?>
+  <?php if (!empty($_SESSION['let_link'][$id])): $link = wn_site_url() . 'modules/letters/respond.php?t=' . $_SESSION['let_link'][$id]; unset($_SESSION['let_link'][$id]); ?>
     <p class="note">Answer link (copy now, valid <?= LET_LINK_DAYS ?> days): <input readonly value="<?= h($link) ?>" onclick="this.select()" style="width:100%"></p><?php endif; ?>
   <p class="row"><a class="btn sm ghost" href="print.php?id=<?= $id ?>" target="_blank" rel="noopener"><?= $l['status'] === 'issued' ? 'Open / print' : 'Preview' ?></a>
   <?php if ($isHr && $l['status'] === 'draft' && $t['needs_approval']): ?><form method="post"><?= csrf_field() ?><input type="hidden" name="id" value="<?= $id ?>"><button class="btn sm" name="a" value="ask">Send for approval</button></form><?php endif; ?>

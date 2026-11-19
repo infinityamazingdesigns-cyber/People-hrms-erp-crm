@@ -225,8 +225,8 @@ return [
 
     /* ---------------- Sales & CRM ---------------- */
     'crm' => ['name' => 'CRM & orders', 'group' => 'sales', 'status' => 'built',
-        'about' => 'Customers (contacts, mobiles, addresses), products, duplicate check and merge, imports. Orders and dispatch next.',
-        'roles' => ['SUPERADMIN', 'CEO', 'SALES'], 'entry' => 'modules/crm/', 'ref' => ['crm/']],
+        'about' => 'Customers, products, duplicate check, imports; orders, readiness blockers, dispatch, consignments, customer tracking link, same-day score.',
+        'roles' => ['SUPERADMIN', 'CEO', 'SALES', 'STORE'], 'entry' => 'modules/crm/', 'ref' => ['crm/']],
     'enquiries' => ['name' => 'Enquiry register', 'group' => 'sales', 'needs' => ['crm'], 'status' => 'port',
         'about' => 'Leads → enquiries → follow-ups; WhatsApp and ad lead intake.',
         'roles' => ['SUPERADMIN', 'CEO', 'SALES'], 'entry' => 'modules/enquiries/', 'ref' => ['crm/lib/lead_enquiry.php', 'super/apps/enq.html']],

@@ -2,11 +2,11 @@
 
 **Key:** `crm` · **Group:** sales · **Status:** Ready
 
-Customers (contacts, mobiles, addresses), products, duplicate check and merge, imports. Orders and dispatch next.
+Customers, products, duplicate check, imports; orders, readiness blockers, dispatch, consignments, customer tracking link, same-day score.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs nothing.
-- Default roles when first switched on: Super Admin, CEO / Director, Sales. The Super Admin can change this and add per-person exceptions.
+- Default roles when first switched on: Super Admin, CEO / Director, Sales, Store. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('crm')`; every API with `module_require('crm', true)`.
 
 ## Reference build (port source)

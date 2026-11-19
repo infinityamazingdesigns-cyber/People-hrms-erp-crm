@@ -374,9 +374,7 @@ function let_signer_save(PDO $db, array $u, array $in): void {
 
 /** This site's address: config 'site_url', else the request's host. */
 function let_site_url(): string {
-    $c = rtrim((string)cfg('site_url', ''), '/');
-    if ($c !== '') return $c . '/';
-    return (is_https() ? 'https://' : 'http://') . preg_replace('/[^A-Za-z0-9.:-]/', '', (string)($_SERVER['HTTP_HOST'] ?? 'localhost')) . wn_base();
+    return wn_site_url();
 }
 
 /** Email an issued letter to the person (Email module). A letter waiting for an answer gets a new link inside. */
