@@ -1,12 +1,12 @@
 # Aptitude test
 
-**Key:** `aptitude` · **Group:** onboard · **Status:** Porting from the reference build
+**Key:** `aptitude` · **Group:** onboard · **Status:** Ready
 
-Tests by job family and level in several languages; score goes to HR only.
+Papers drawn from HR's question bank by job family and level, timed and scored on the server; the result goes to HR only.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Induction academy (`induction`).
-- Default roles when first switched on: Employee, HR Manager, Super Admin. The Super Admin can change this and add per-person exceptions.
+- Default roles when first switched on: HR Manager, Super Admin, CEO / Director. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('aptitude')`; every API with `module_require('aptitude', true)`.
 
 ## Reference build (port source)

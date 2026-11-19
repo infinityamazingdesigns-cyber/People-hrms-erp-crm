@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 41 ready · 3 porting · 12 planned
+**56 modules** — 42 ready · 2 porting · 12 planned
 
 ## For me
 
@@ -47,7 +47,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 | **Onboarding** `onboarding` | Checklist per joiner from offer to first week; convert candidate to employee. | employees | Super Admin, HR Manager, HR Operations | Ready |
 | **Probation** `probation` | Check-ins, manager review before the end date, HR confirms / extends. | employees | Super Admin, HR Manager, HR Operations, Manager | Ready |
 | **Induction academy** `induction` | Levels with reading, video and a quiz, in order, for everyone or a department; progress per person, shown on onboarding. | employees | Employee, Manager, HR Manager, Super Admin | Ready |
-| **Aptitude test** `aptitude` | Tests by job family and level in several languages; score goes to HR only. | induction | Employee, HR Manager, Super Admin | Porting |
+| **Aptitude test** `aptitude` | Papers drawn from HR's question bank by job family and level, timed and scored on the server; the result goes to HR only. | induction | HR Manager, Super Admin, CEO / Director | Ready |
 | **Training register** `training` | Trainings verified by HR, certificates, requests (manager → HR), feedback, peer sessions, yearly report + CSV. | employees | Employee, Manager, HR Manager, Super Admin | Ready |
 
 ## Time & attendance
