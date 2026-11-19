@@ -200,7 +200,7 @@ return [
         'about' => 'One-to-one and group chat, files, read receipts, admin policies; nobody reads chats they are not in.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN', 'CEO'], 'entry' => 'modules/talk/',
         'ref' => ['talk.php', 'lib/talk.php', 'api/talk.php']],
-    'meet' => ['name' => 'Video meetings', 'group' => 'comms', 'needs' => ['talk'], 'status' => 'planned',
+    'meet' => ['name' => 'Video meetings', 'group' => 'comms', 'needs' => ['talk'], 'status' => 'built',
         'about' => 'Browser-to-browser video, screen share, waiting room, transcript, minutes.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN', 'CEO'], 'entry' => 'modules/meet/',
         'ref' => ['meet.php', 'lib/meet.php', 'api/meet.php']],
