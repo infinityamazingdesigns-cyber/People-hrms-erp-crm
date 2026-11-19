@@ -292,7 +292,7 @@ function mv_alert_tick(PDO $db, ?int $now = null): int {
                 $ins->execute([(int)$m['id'], $k, (int)$p['id']]);
                 if (!$ins->rowCount()) continue;
                 $aid = (int)$db->lastInsertId(); $n++;
-                if (!$set['alert_email'] || !mail_valid((string)$p['email'])) continue;
+                if (!$set['alert_email'] || !module_on('email') || !mail_valid((string)$p['email'])) continue;
                 try {
                     $mid = mail_queue($db, ['to' => $p['email'], 'subject' => 'Staff movement: ' . $m['emp_name'] . ' — ' . MV_ALERT_KINDS[$k],
                         'text' => $m['emp_name'] . ' (' . $m['emp_code'] . ') went out at ' . substr((string)$m['out_at'], 11, 5) . ' on ' . substr((string)$m['out_at'], 0, 10)

@@ -171,7 +171,7 @@ return [
     'daybook' => ['name' => 'Branch day book', 'group' => 'pay', 'status' => 'built',
         'about' => 'Daily cash sheet per branch: bills, dispatch, money received, petty cash, close the day.',
         'roles' => ['EMPLOYEE', 'HRMANAGER', 'CEO', 'SUPERADMIN'], 'entry' => 'modules/daybook/', 'ref' => ['daybook.php', 'lib/daybook.php']],
-    'vendorbills' => ['name' => 'Vendor bills (HO)', 'group' => 'pay', 'status' => 'planned',
+    'vendorbills' => ['name' => 'Vendor bills (HO)', 'group' => 'pay', 'status' => 'built',
         'about' => 'Rent, utilities and other branch bills paid from head office; repeating bills.',
         'roles' => ['HRMANAGER', 'CEO', 'ACCOUNTS', 'SUPERADMIN'], 'entry' => 'modules/vendorbills/', 'ref' => ['vendor_bills.php', 'lib/vendor_pay.php']],
 
