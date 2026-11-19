@@ -105,8 +105,21 @@ if (!function_exists('rp_in_statutory')) {
     }
 }
 
+if (!function_exists('rp_in_tax_id')) {
+    /** GSTIN: pattern + mod-36 check character over the first 14; the state code and the PAN inside it. */
+    function rp_in_tax_id(string $g): array {
+        $g = strtoupper(preg_replace('/\s+/', '', $g));
+        if (!preg_match('/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/', $g)) return ['ok' => false, 'why' => 'A GSTIN is 15 characters: 2 digits, the PAN (10), an entity number, Z and a check character.'];
+        $chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'; $sum = 0;
+        for ($i = 0; $i < 14; $i++) { $p = strpos($chars, $g[$i]) * ($i % 2 ? 2 : 1); $sum += intdiv($p, 36) + $p % 36; }
+        if ($chars[(36 - $sum % 36) % 36] !== $g[14]) return ['ok' => false, 'why' => 'The last character does not match — check the GSTIN for a typing slip.'];
+        return ['ok' => true, 'why' => '', 'value' => $g, 'region' => substr($g, 0, 2), 'inner' => substr($g, 2, 10)];
+    }
+}
+
 return [
     'label' => 'India',
+    'tax_id' => ['label' => 'GSTIN', 'fn' => 'rp_in_tax_id'],
     'fn' => 'rp_in_statutory',
     'defaults' => [
         'pf' => ['on' => true, 'emp_pct' => 12, 'er_pct' => 12, 'eps_pct' => 8.33, 'ceiling' => 15000, 'parts' => ['Basic'], 'charges' => true, 'edli_pct' => 0.5, 'admin_pct' => 0.5],

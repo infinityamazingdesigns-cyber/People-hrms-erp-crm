@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 32 ready · 9 porting · 15 planned
+**56 modules** — 33 ready · 8 porting · 15 planned
 
 ## For me
 
@@ -107,7 +107,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
 | Module | What it does | Needs | Default roles | Status |
 |---|---|---|---|---|
-| **CRM & orders** `crm` | Customers, products, orders, dispatch, tracking page, customer messages, same-day KPI. | — | Super Admin, CEO / Director, Sales | Porting |
+| **CRM & orders** `crm` | Customers (contacts, mobiles, addresses), products, duplicate check and merge, imports. Orders and dispatch next. | — | Super Admin, CEO / Director, Sales | Ready |
 | **Enquiry register** `enquiries` | Leads → enquiries → follow-ups; WhatsApp and ad lead intake. | crm | Super Admin, CEO / Director, Sales | Porting |
 | **Quotations** `quotes` | Numbered quotations per branch, tax rules, revisions, won → order. | crm | Super Admin, CEO / Director, Sales | Porting |
 | **Marketing & ROAS** `marketing` | Campaigns, ad spend imports, leads, consent, return on ad spend. | crm | Super Admin, CEO / Director, Marketing | Planned |

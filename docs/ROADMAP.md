@@ -36,6 +36,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Team chat (`talk`)
 - [x] Tasks (`tasks`)
 - [x] Visitors (`visitors`)
+- [x] CRM & orders (`crm`)
 
 ## Next — porting
 
@@ -43,7 +44,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [ ] Aptitude test (`aptitude`)
 - [ ] Biometric machines (`biometric`)
 - [ ] Browser notifications (`notify`)
-- [ ] CRM & orders (`crm`)
 - [ ] Enquiry register (`enquiries`)
 - [ ] Quotations (`quotes`)
 - [ ] Stock & inventory (`stock`)
