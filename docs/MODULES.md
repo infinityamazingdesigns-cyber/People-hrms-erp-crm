@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 52 ready · 0 porting · 4 planned
+**56 modules** — 53 ready · 0 porting · 3 planned
 
 ## For me
 
@@ -127,5 +127,5 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 | Module | What it does | Needs | Default roles | Status |
 |---|---|---|---|---|
 | **HR dashboard (MIS)** `mis` | Headcount, joiners / exits, notice, attrition and retention, trend, by branch / department, attendance and leave totals, probation, pending work by desk, statutory dues — counts only. | employees | Super Admin, HR Manager, CEO / Director | Ready |
-| **My day** `myday` | Each person's own day: punches, requests tracker, letters, quick actions. | — | Employee, Manager, HR Manager, Super Admin | Planned |
+| **My day** `myday` | Each person's own day: today's punches, every request of theirs on one tracker, letters, tasks, notices, quick actions — own data only. | — | Employee, Manager, HR Manager, Super Admin | Ready |
 | **Lite mode** `lite` | Tiny server-built pages for slow internet: punch, leave, requests, letters. | — | Employee, Manager | Planned |

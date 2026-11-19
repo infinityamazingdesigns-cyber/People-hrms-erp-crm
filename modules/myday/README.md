@@ -1,8 +1,8 @@
 # My day
 
-**Key:** `myday` · **Group:** insights · **Status:** Planned — specification only
+**Key:** `myday` · **Group:** insights · **Status:** Ready
 
-Each person's own day: punches, requests tracker, letters, quick actions.
+Each person's own day: today's punches, every request of theirs on one tracker, letters, tasks, notices, quick actions — own data only.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs nothing.
