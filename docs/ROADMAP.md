@@ -19,6 +19,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Careers page (`careers`)
 - [x] Onboarding (`onboarding`)
 - [x] Probation (`probation`)
+- [x] Training register (`training`)
 - [x] Attendance (`attendance`)
 - [x] Shifts & weekly offs (`shifts`)
 - [x] Holiday calendar (`holidays`)
@@ -40,7 +41,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 - [ ] Induction academy (`induction`)
 - [ ] Aptitude test (`aptitude`)
-- [ ] Training register (`training`)
 - [ ] Biometric machines (`biometric`)
 - [ ] Browser notifications (`notify`)
 - [ ] CRM & orders (`crm`)
