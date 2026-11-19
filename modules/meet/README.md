@@ -1,6 +1,6 @@
 # Video meetings
 
-**Key:** `meet` · **Group:** comms · **Status:** Planned — specification only
+**Key:** `meet` · **Group:** comms · **Status:** Ready
 
 Browser-to-browser video, screen share, waiting room, transcript, minutes.
 

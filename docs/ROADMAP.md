@@ -43,6 +43,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Asset register (`assets`)
 - [x] Announcement board (`board`)
 - [x] Team chat (`talk`)
+- [x] Video meetings (`meet`)
 - [x] Tasks (`tasks`)
 - [x] Visitors (`visitors`)
 - [x] CRM & orders (`crm`)
@@ -57,7 +58,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 ## Later — planned
 
-- [ ] Video meetings (`meet`)
 - [ ] Help desk (`helpdesk`)
 - [ ] Marketing & ROAS (`marketing`)
 - [ ] Complaints & CAPA (`quality`)
