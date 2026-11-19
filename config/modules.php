@@ -236,8 +236,8 @@ return [
     'marketing' => ['name' => 'Marketing & ROAS', 'group' => 'sales', 'needs' => ['crm'], 'status' => 'built',
         'about' => 'Campaigns with codes and tracked links, ad spend typed or imported, leads (form hook, file, staff) into enquiries, consent per number, orders → campaigns, ROAS, content plan.',
         'roles' => ['SUPERADMIN', 'CEO', 'MARKETING'], 'entry' => 'modules/marketing/', 'ref' => ['crm/lib/campaigns.php', 'crm/lib/marketing.php']],
-    'quality' => ['name' => 'Complaints & CAPA', 'group' => 'sales', 'needs' => ['crm'], 'status' => 'planned',
-        'about' => 'Customer complaints, repeats, root cause (5 whys), actions, effectiveness check.',
+    'quality' => ['name' => 'Complaints & CAPA', 'group' => 'sales', 'needs' => ['crm'], 'status' => 'built',
+        'about' => 'Complaints and internal problems with a fixed flow, owners and target dates, evidence, repeat suggestions, CAPA with 5 whys, actions and an effectiveness check, reminders, dashboard.',
         'roles' => ['SUPERADMIN', 'QUALITY', 'CEO'], 'entry' => 'modules/quality/', 'ref' => ['crm/lib/quality.php', 'crm/lib/quality_capa.php']],
 
     /* ---------------- Operations & supply ---------------- */

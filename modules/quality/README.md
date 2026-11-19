@@ -1,8 +1,8 @@
 # Complaints & CAPA
 
-**Key:** `quality` · **Group:** sales · **Status:** Planned — specification only
+**Key:** `quality` · **Group:** sales · **Status:** Ready
 
-Customer complaints, repeats, root cause (5 whys), actions, effectiveness check.
+Complaints and internal problems with a fixed flow, owners and target dates, evidence, repeat suggestions, CAPA with 5 whys, actions and an effectiveness check, reminders, dashboard.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs CRM & orders (`crm`).
