@@ -1,8 +1,8 @@
 # Lite mode
 
-**Key:** `lite` · **Group:** insights · **Status:** Planned — specification only
+**Key:** `lite` · **Group:** insights · **Status:** Ready
 
-Tiny server-built pages for slow internet: punch, leave, requests, letters.
+Small server-built pages for slow internet (chosen at sign-in): home, punch, own attendance, leave, attendance corrections, letters — same rules as the full screens.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs nothing.

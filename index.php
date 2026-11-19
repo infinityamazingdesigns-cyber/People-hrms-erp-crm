@@ -3,6 +3,10 @@ declare(strict_types=1);
 require __DIR__ . '/lib/bootstrap.php';
 $u = require_login();
 migrate(pdo());   // new migrations land on the first page after a deploy
+require_once __DIR__ . '/lib/lite.php';
+$lr = lite_route(module_on('lite'), $_COOKIE, $_GET);
+if ($lr === 'lite') redirect('modules/lite/');
+if ($lr === 'full') { lite_pref(false); redirect('index.php'); }
 
 ui_head('Home', $u);
 $menu = module_menu($u);

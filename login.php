@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require __DIR__ . '/lib/bootstrap.php';
 require_once __DIR__ . '/lib/two_step.php';
+require_once __DIR__ . '/lib/lite.php';
 
 const LOCK_TRIES = 5;
 const LOCK_MINUTES = 15;
@@ -25,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $db) {
     } else {
         $login = strtolower(trim((string)($_POST['login'] ?? '')));
         $pass = (string)($_POST['password'] ?? '');
+        if (module_on('lite')) lite_pref(!empty($_POST['lite']));
         if (ip_throttled($db, $ip)) $err = 'Too many attempts from this network. Try again in 15 minutes.';
         else {
             $s = $db->prepare('SELECT * FROM users WHERE username = ? OR (email <> "" AND email = ?) LIMIT 1');
@@ -83,6 +85,7 @@ ui_head('Sign in');
   <label>Email or username <input name="login" autocomplete="username" required autofocus></label>
   <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
   <?php if ($db && module_on('email') && mail_settings()['tfa'] && (int)mail_settings()['trust_days'] > 0): ?><label class="tick"><input type="checkbox" name="remember" value="1"> Trust this browser for <?= (int)mail_settings()['trust_days'] ?> days</label><?php endif; ?>
+  <?php if ($db && module_on('lite')): ?><label class="tick"><input type="checkbox" name="lite" value="1"<?= lite_suggest($_SERVER, $_COOKIE) ? ' checked' : '' ?>> Use Lite (slow internet)</label><?php endif; ?>
   <button class="btn">Sign in</button>
 </form>
 <?php endif;
