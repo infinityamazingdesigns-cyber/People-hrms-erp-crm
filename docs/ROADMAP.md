@@ -51,6 +51,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] CRM & orders (`crm`)
 - [x] Enquiry register (`enquiries`)
 - [x] Quotations (`quotes`)
+- [x] Marketing & ROAS (`marketing`)
 - [x] Stock & inventory (`stock`)
 - [x] Purchase & procurement (`purchase`)
 
@@ -59,7 +60,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 ## Later — planned
 
-- [ ] Marketing & ROAS (`marketing`)
 - [ ] Complaints & CAPA (`quality`)
 - [ ] Production workers (`production`)
 - [ ] Third parties & contracts (`contracts`)
