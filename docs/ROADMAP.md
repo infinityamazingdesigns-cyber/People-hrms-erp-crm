@@ -19,6 +19,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Recruitment pipeline (`recruitment`)
 - [x] Careers page (`careers`)
 - [x] Candidate portal (`candidates`)
+- [x] Recruitment intelligence (`recintel`)
 - [x] Onboarding (`onboarding`)
 - [x] Probation (`probation`)
 - [x] Training register (`training`)
@@ -53,7 +54,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 ## Later — planned
 
-- [ ] Recruitment intelligence (`recintel`)
 - [ ] Staff movement (`movement`)
 - [ ] Branch day book (`daybook`)
 - [ ] Vendor bills (HO) (`vendorbills`)

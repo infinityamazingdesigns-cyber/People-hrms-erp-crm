@@ -95,9 +95,9 @@ return [
         'about' => 'Private link per applicant: stage, interviews, letters, documents — no password.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'HRRECRUIT'], 'entry' => 'modules/candidates/',
         'ref' => ['candidates.php', 'candidate.php', 'lib/candidate_access.php']],
-    'recintel' => ['name' => 'Recruitment intelligence', 'group' => 'hiring', 'needs' => ['recruitment'], 'status' => 'planned',
-        'about' => 'Institutes, consultants, market openings, WhatsApp CV intake, erasure requests.',
-        'roles' => ['SUPERADMIN', 'HRRECRUIT'], 'entry' => 'modules/recintel/',
+    'recintel' => ['name' => 'Recruitment intelligence', 'group' => 'hiring', 'needs' => ['recruitment'], 'status' => 'built',
+        'about' => 'Institutes, consultants and contractors with list import, companies, recruitment projects, vacancies with job codes, outside hiring trends.',
+        'roles' => ['SUPERADMIN', 'HRMANAGER', 'HRRECRUIT'], 'entry' => 'modules/recintel/',
         'ref' => ['recruit_intel.php', 'lib/recruit_intel.php', 'lib/recruit_inbox.php']],
 
     /* ---------------- Onboard & grow ---------------- */
