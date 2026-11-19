@@ -1,12 +1,12 @@
 # Staff movement
 
-**Key:** `movement` · **Group:** time · **Status:** Planned — specification only
+**Key:** `movement` · **Group:** time · **Status:** Ready
 
 Gate log of staff going out during working hours, late-return alerts.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs Attendance (`attendance`).
-- Default roles when first switched on: Super Admin, Reception / Security, Production Head. The Super Admin can change this and add per-person exceptions.
+- Default roles when first switched on: Super Admin, HR Manager, CEO / Director, Reception / Security, Production Head. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('movement')`; every API with `module_require('movement', true)`.
 
 ## Reference build (port source)

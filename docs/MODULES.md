@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 43 ready · 1 porting · 12 planned
+**56 modules** — 44 ready · 1 porting · 11 planned
 
 ## For me
 
@@ -59,7 +59,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 | **Shifts & weekly offs** `shifts` | Shift, flexible hours and weekly offs per person from a date, over the branch's; drives attendance late / early. | attendance | Super Admin, HR Manager, HR Operations | Ready |
 | **Holiday calendar** `holidays` | Holidays by branch; drives attendance, payroll and the announcement board. | employees | Super Admin, HR Manager, Employee | Ready |
 | **Leave** `leave` | Apply (day / half / time), manager → HR approval, balances, withdraw, handover, categories. | employees | Employee, Manager, HR Manager, HR Operations, Super Admin | Ready |
-| **Staff movement** `movement` | Gate log of staff going out during working hours, late-return alerts. | attendance | Super Admin, Reception / Security, Production Head | Planned |
+| **Staff movement** `movement` | Gate log of staff going out during working hours, late-return alerts. | attendance | Super Admin, HR Manager, CEO / Director, Reception / Security, Production Head | Ready |
 
 ## Pay & expenses
 

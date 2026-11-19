@@ -143,9 +143,9 @@ return [
         'about' => 'Apply (day / half / time), manager → HR approval, balances, withdraw, handover, categories.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'HROPS', 'SUPERADMIN'], 'entry' => 'modules/leave/',
         'ref' => ['leave.php', 'lib/leave.php', 'lib/leave_balance.php']],
-    'movement' => ['name' => 'Staff movement', 'group' => 'time', 'needs' => ['attendance'], 'status' => 'planned',
+    'movement' => ['name' => 'Staff movement', 'group' => 'time', 'needs' => ['attendance'], 'status' => 'built',
         'about' => 'Gate log of staff going out during working hours, late-return alerts.',
-        'roles' => ['SUPERADMIN', 'RECEPTION', 'PRODHEAD'], 'entry' => 'modules/movement/',
+        'roles' => ['SUPERADMIN', 'HRMANAGER', 'CEO', 'RECEPTION', 'PRODHEAD'], 'entry' => 'modules/movement/',
         'ref' => ['movement.php', 'lib/staff_movement.php']],
 
     /* ---------------- Pay & expenses ---------------- */

@@ -30,6 +30,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Shifts & weekly offs (`shifts`)
 - [x] Holiday calendar (`holidays`)
 - [x] Leave (`leave`)
+- [x] Staff movement (`movement`)
 - [x] Payroll (`payroll`)
 - [x] Payslips (`payslips`)
 - [x] Full & final (`fnf`)
@@ -54,7 +55,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 ## Later — planned
 
-- [ ] Staff movement (`movement`)
 - [ ] Branch day book (`daybook`)
 - [ ] Vendor bills (HO) (`vendorbills`)
 - [ ] Video meetings (`meet`)
