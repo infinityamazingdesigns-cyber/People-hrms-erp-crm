@@ -55,6 +55,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Complaints & CAPA (`quality`)
 - [x] Stock & inventory (`stock`)
 - [x] Purchase & procurement (`purchase`)
+- [x] HR dashboard (MIS) (`mis`)
 
 ## Next — porting
 
@@ -63,6 +64,5 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 
 - [ ] Production workers (`production`)
 - [ ] Third parties & contracts (`contracts`)
-- [ ] HR dashboard (MIS) (`mis`)
 - [ ] My day (`myday`)
 - [ ] Lite mode (`lite`)
