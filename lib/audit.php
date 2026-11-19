@@ -6,7 +6,7 @@
  */
 declare(strict_types=1);
 
-const AUDIT_CHAINED_PREFIXES = ['login', 'logout', 'user_', 'role_', 'module_', 'org_', 'owner_', 'pay_', 'fnf_', 'kyc_', 'bank_', 'seal_', 'dc_', 'qc_'];
+const AUDIT_CHAINED_PREFIXES = ['login', 'logout', 'user_', 'role_', 'module_', 'org_', 'owner_', 'pay_', 'fnf_', 'kyc_', 'bank_', 'seal_', 'dc_', 'qc_', 'prd_'];
 
 function audit_is_sensitive(string $action): bool {
     foreach (AUDIT_CHAINED_PREFIXES as $p) if (str_starts_with($action, $p)) return true;
