@@ -1,11 +1,11 @@
 # Quotations
 
-**Key:** `quotes` · **Group:** sales · **Status:** Porting from the reference build
+**Key:** `quotes` · **Group:** sales · **Status:** Ready
 
-Numbered quotations per branch, tax rules, revisions, won → order.
+Numbered quotations per branch, tax split by country rules, other charges, revisions, print / PDF, won → order, enquiry kept in step.
 
 ## Access
-- Switched on by the Super Admin on **Admin → Modules**; needs CRM & orders (`crm`).
+- Switched on by the Super Admin on **Admin → Modules**; needs CRM & orders (`crm`), Enquiry register (`enquiries`).
 - Default roles when first switched on: Super Admin, CEO / Director, Sales. The Super Admin can change this and add per-person exceptions.
 - Every page starts with `module_require('quotes')`; every API with `module_require('quotes', true)`.
 

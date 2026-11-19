@@ -38,6 +38,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Visitors (`visitors`)
 - [x] CRM & orders (`crm`)
 - [x] Enquiry register (`enquiries`)
+- [x] Quotations (`quotes`)
 
 ## Next — porting
 
@@ -45,7 +46,6 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [ ] Aptitude test (`aptitude`)
 - [ ] Biometric machines (`biometric`)
 - [ ] Browser notifications (`notify`)
-- [ ] Quotations (`quotes`)
 - [ ] Stock & inventory (`stock`)
 - [ ] Purchase & procurement (`purchase`)
 
