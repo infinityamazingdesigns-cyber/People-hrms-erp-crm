@@ -212,7 +212,7 @@ return [
         'about' => 'Answers on policies and screens in several languages, team contacts, office locations.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN'], 'entry' => 'modules/helpdesk/',
         'ref' => ['help.php', 'lib/help_desk.php', 'lib/help_desk.json']],
-    'notify' => ['name' => 'Browser notifications', 'group' => 'comms', 'status' => 'port',
+    'notify' => ['name' => 'Browser notifications', 'group' => 'comms', 'status' => 'built', 'self' => ['Notifications', 'modules/notify/', 'Turn notifications on for this device; your notices.'],
         'about' => 'Web push per device; text fetched with the person\'s own sign-in.',
         'roles' => ['EMPLOYEE', 'MANAGER', 'HRMANAGER', 'SUPERADMIN'], 'entry' => 'modules/notify/',
         'ref' => ['sw.js', 'lib/push.php', 'api/push.php']],

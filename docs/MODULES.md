@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**56 modules** — 48 ready · 1 porting · 7 planned
+**56 modules** — 49 ready · 0 porting · 7 planned
 
 ## For me
 
@@ -95,7 +95,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 | **Video meetings** `meet` | Browser-to-browser video, screen share, waiting room, transcript, minutes. | talk | Employee, Manager, HR Manager, Super Admin, CEO / Director | Ready |
 | **Tasks** `tasks` | Personal and assigned tasks, approval loop, reminders, repeat, voice entry, calendar. | — | Employee, Manager, HR Manager, Super Admin, CEO / Director | Ready |
 | **Help desk** `helpdesk` | Answers on policies and screens in several languages, team contacts, office locations. | — | Employee, Manager, HR Manager, Super Admin | Ready |
-| **Browser notifications** `notify` | Web push per device; text fetched with the person's own sign-in. | — | Employee, Manager, HR Manager, Super Admin | Porting |
+| **Browser notifications** `notify` | Web push per device; text fetched with the person's own sign-in. | — | Employee, Manager, HR Manager, Super Admin | Ready |
 
 ## Front desk & security
 

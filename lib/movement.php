@@ -292,6 +292,7 @@ function mv_alert_tick(PDO $db, ?int $now = null): int {
                 $ins->execute([(int)$m['id'], $k, (int)$p['id']]);
                 if (!$ins->rowCount()) continue;
                 $aid = (int)$db->lastInsertId(); $n++;
+                if (module_on('notify')) { require_once __DIR__ . '/push.php'; notify_user($db, (int)$p['id'], 'movement', $m['emp_name'] . ' — ' . MV_ALERT_KINDS[$k], 'Out since ' . substr((string)$m['out_at'], 11, 5), 'modules/movement/index.php?view=entry&id=' . (int)$m['id']); }
                 if (!$set['alert_email'] || !module_on('email') || !mail_valid((string)$p['email'])) continue;
                 try {
                     $mid = mail_queue($db, ['to' => $p['email'], 'subject' => 'Staff movement: ' . $m['emp_name'] . ' — ' . MV_ALERT_KINDS[$k],

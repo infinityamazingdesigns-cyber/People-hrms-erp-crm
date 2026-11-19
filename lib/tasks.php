@@ -151,6 +151,7 @@ function tk_log(PDO $db, int $id, int $round, string $act, int $by, string $note
 
 function tk_notice(PDO $db, int $uid, int $taskId, string $title): void {
     $db->prepare('INSERT INTO task_notice (user_id, task_id, title) VALUES (?,?,?)')->execute([$uid, $taskId, mb_substr($title, 0, 160)]);
+    if (module_on('notify')) { require_once __DIR__ . '/push.php'; notify_user($db, $uid, 'task', $title, '', 'modules/tasks/'); }
 }
 
 function tk_get(PDO $db, int $id): ?array { $q = $db->prepare('SELECT * FROM task WHERE id = ?'); $q->execute([$id]); return $q->fetch() ?: null; }
