@@ -1,13 +1,151 @@
 <?php
-// Stock & inventory — entry page. Gated by the module switch and role access (Admin → Modules).
+// Stock & inventory — stock now, entries (goods in / out, opening, transfers, counts, reversals), items with levels and
+// ledger, period statement, reorder list, settings.
 declare(strict_types=1);
 require __DIR__ . '/../../lib/bootstrap.php';
+require_once WN_ROOT . '/lib/stock.php';
 $u = module_require('stock');
-ui_head('Stock & inventory', $u, 'stock');
-?>
-<section class="card">
-  <h2>Stock & inventory</h2>
-  <p><?= h(module_catalog()['stock']['about']) ?></p>
-  <p class="note">This module is being prepared. See <code>modules/stock/README.md</code> for its specification and porting status.</p>
-</section>
-<?php ui_foot();
+$db = pdo(); $R = stk_rights($u); $set = stk_settings(); $uid = (int)$u['id']; $brs = stk_branches($u);
+if (!$R['view']) { http_response_code(403); ui_head('Stock', $u, 'stock'); echo '<div class="card">Your role does not see stock. Ask the Super Admin (Stock → Settings).</div>'; ui_foot(); exit; }
+$view = (string)($_GET['view'] ?? 'now'); $br = (int)($_GET['b'] ?? 0); if ($br && !isset($brs[$br])) $br = 0;
+$rows = function (string $qty = 'lq'): array { $o = []; foreach ((array)($_POST['li'] ?? []) as $i => $it) $o[] = ['item_id' => (int)$it, 'qty' => $_POST[$qty][$i] ?? '', 'rate' => $_POST['lr'][$i] ?? '', 'note' => $_POST['ln'][$i] ?? '']; return $o; };
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    check_csrf();
+    $a = (string)($_POST['a'] ?? ''); $to = 'index.php?view=docs';
+    try {
+        switch ($a) {
+            case 'entry': $id = stk_entry($db, $u, $_POST + ['lines' => $rows()]); flash('Posted.'); $to = 'index.php?view=doc&id=' . $id; break;
+            case 'xfer': $id = stk_xfer_send($db, $u, $_POST + ['lines' => $rows()]); flash('Sent — waiting for the other branch to receive it.'); $to = 'index.php?view=doc&id=' . $id; break;
+            case 'receive': stk_xfer_receive($db, $u, (int)$_POST['id'], $_POST); flash('Received.'); $to = 'index.php?view=doc&id=' . (int)$_POST['id']; break;
+            case 'count': $in = $_POST; if ((int)($in['extra_item'] ?? 0) && trim((string)($in['counted_x'] ?? '')) !== '') $in['counted'][(int)$in['extra_item']] = $in['counted_x']; $id = stk_count($db, $u, $in); flash('Count saved — only the differences were posted.'); $to = 'index.php?view=doc&id=' . $id; break;
+            case 'reverse': $id = stk_reverse($db, $u, (int)$_POST['id'], (string)($_POST['reason'] ?? '')); flash('Reversed.'); $to = 'index.php?view=doc&id=' . $id; break;
+            case 'item': $id = stk_item_save($db, $u, $_POST, (int)($_POST['id'] ?? 0)); flash('Item saved.'); $to = 'index.php?view=item&id=' . $id; break;
+            case 'itemon': stk_item_active($db, $u, (int)$_POST['id'], ($_POST['on'] ?? '') === '1', (string)($_POST['reason'] ?? '')); flash('Saved.'); $to = 'index.php?view=item&id=' . (int)$_POST['id']; break;
+            case 'level': stk_level_save($db, $u, (int)$_POST['id'], (int)$_POST['branch_id'], $_POST); flash('Levels saved.'); $to = 'index.php?view=item&id=' . (int)$_POST['id']; break;
+            case 'settings':
+                if (!$R['admin']) throw new RuntimeException('Only the Super Admin changes these.');
+                [$new, $err] = stk_settings_check($_POST, role_labels()); if ($err) throw new RuntimeException(implode(' ', $err));
+                $st = module_states()['stock'] ?? ['roles' => module_roles('stock')];
+                $db->prepare('INSERT INTO module_state (module_key, enabled, roles, settings, updated_by) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE settings = VALUES(settings), updated_by = VALUES(updated_by)')
+                   ->execute(['stock', 1, implode(',', $st['roles'] ?: module_roles('stock')), json_encode($new), $uid]);
+                audit($uid, 'module_settings', 'stock'); flash('Settings saved.'); $to = 'index.php?view=settings'; break;
+        }
+    } catch (Throwable $e) {
+        flash($e->getMessage(), 'err');
+        $to = ['entry' => 'index.php?view=' . ['IN' => 'in', 'OUT' => 'out', 'OPN' => 'open'][$_POST['kind'] ?? 'IN'], 'xfer' => 'index.php?view=xfer', 'count' => 'index.php?view=count', 'item' => 'index.php?view=item&id=' . (int)($_POST['id'] ?? 0), 'settings' => 'index.php?view=settings'][$a] ?? ((int)($_POST['id'] ?? 0) ? 'index.php?view=' . ($a === 'level' || $a === 'itemon' ? 'item' : 'doc') . '&id=' . (int)$_POST['id'] : 'index.php');
+        if (in_array($a, ['entry', 'xfer', 'count'], true)) $_SESSION['stk_form'] = $_POST;
+    }
+    redirect($to);
+}
+
+$opts = fn(array $o, string $c = '', string $none = '') => ($none !== '' ? '<option value="">' . h($none) . '</option>' : '') . implode('', array_map(fn($k, $l) => '<option value="' . h((string)$k) . '"' . ((string)$k === $c ? ' selected' : '') . '>' . h((string)$l) . '</option>', array_keys($o), $o));
+$items = $db->query('SELECT id, code, name, uom FROM stk_item WHERE active = 1 ORDER BY name')->fetchAll();
+$itemOpts = fn(string $c = '') => '<option value="">—</option>' . implode('', array_map(fn($i) => '<option value="' . (int)$i['id'] . '"' . ((string)$i['id'] === $c ? ' selected' : '') . '>' . h($i['code'] . ' · ' . $i['name'] . ' (' . $i['uom'] . ')') . '</option>', $items));
+$f = $_SESSION['stk_form'] ?? []; unset($_SESSION['stk_form']);
+$lineRows = function (bool $rate = false) use ($itemOpts, $f): void { $n = max(4, count((array)($f['li'] ?? [])) + 1); ?>
+<table><tr><th>Item</th><th>Quantity</th><?php if ($rate): ?><th>Rate</th><?php endif; ?><th>Note</th></tr><?php for ($i = 0; $i < $n; $i++): ?><tr><td><select name="li[<?= $i ?>]"><?= $itemOpts((string)($f['li'][$i] ?? '')) ?></select></td><td><input name="lq[<?= $i ?>]" value="<?= h((string)($f['lq'][$i] ?? '')) ?>" size="8" inputmode="decimal"></td>
+<?php if ($rate): ?><td><input name="lr[<?= $i ?>]" value="<?= h((string)($f['lr'][$i] ?? '')) ?>" size="8"></td><?php endif; ?><td><input name="ln[<?= $i ?>]" value="<?= h((string)($f['ln'][$i] ?? '')) ?>"></td></tr><?php endfor; ?></table>
+<?php };
+$head = fn(string $a, string $kind = '') => csrf_field() . '<input type="hidden" name="a" value="' . $a . '">' . ($kind !== '' ? '<input type="hidden" name="kind" value="' . $kind . '">' : '') . '<input type="hidden" name="request_id" value="' . h(so_uuid('')) . '">';
+$brSel = fn(string $name = 'branch_id', string $c = '') => '<select name="' . $name . '" required>' . $opts($brs, $c !== '' ? $c : (string)array_key_first($brs)) . '</select>';
+$tab = fn(string $v, string $l) => ' <a class="btn sm' . ($view === $v ? '' : ' ghost') . '" href="?view=' . $v . '">' . h($l) . '</a>';
+ui_head('Stock', $u, 'stock'); ?>
+<nav class="row" style="flex-wrap:wrap"><?= $tab('now', 'Stock now') . $tab('docs', 'Entries') ?><?php if ($R['store']): ?><?= $tab('in', 'Goods in') . $tab('out', 'Goods out') . $tab('xfer', 'Transfer') . $tab('open', 'Opening stock') ?><?php endif; ?><?php if ($R['adjust']): ?><?= $tab('count', 'Stock count') ?><?php endif; ?>
+<?= $tab('items', 'Items') . $tab('statement', 'Statement') . $tab('reorder', 'Reorder') ?><?php if ($R['admin']): ?><?= $tab('settings', 'Settings') ?><?php endif; ?></nav>
+<?php if (!$brs && $view !== 'settings'): ?><div class="card">You have no branch to work with. Ask the Super Admin to tick your branches on Users & access.</div><?php ui_foot(); exit; endif; ?>
+
+<?php if ($view === 'now'): $st = (string)($_GET['state'] ?? ''); $now = stk_now($db, $u, $br ?: null, ['q' => (string)($_GET['q'] ?? ''), 'kind' => (string)($_GET['kind'] ?? ''), 'state' => $st]); $c = $now['counts']; ?>
+<form class="card row" style="flex-wrap:wrap"><input type="hidden" name="view" value="now"><select name="b"><?= $opts($brs, (string)$br, 'All my branches') ?></select><select name="kind"><?= $opts(STK_KINDS, (string)($_GET['kind'] ?? ''), 'Any type') ?></select><input name="q" value="<?= h((string)($_GET['q'] ?? '')) ?>" placeholder="Code, name or group"><button class="btn sm">Show</button></form>
+<div class="card row" style="flex-wrap:wrap"><?php foreach (['' => 'All', 'below_min' => 'Below minimum', 'below_zero' => 'Below zero', 'zero' => 'Nil', 'ok' => 'In stock'] as $k => $l): ?><a class="btn sm<?= $st === $k ? '' : ' ghost' ?>" href="?view=now&b=<?= $br ?>&state=<?= $k ?>"><?= h($l) ?><?= $k !== '' ? ' · ' . (int)($c[$k] ?? 0) : '' ?></a> <?php endforeach; ?> <span class="muted">Value at cost: <?= number_format($now['value'], 2) ?></span></div>
+<div class="card"><table><tr><th>Item</th><th>Group</th><th>In stock</th><th>Minimum</th><th>In transit</th><th>Value</th><th>Last entry</th></tr>
+<?php foreach ($now['rows'] as $r): ?><tr><td><a href="?view=item&id=<?= (int)$r['id'] ?>"><?= h($r['code']) ?></a> <?= h($r['name']) ?></td><td><?= h($r['grp']) ?></td><td><?= ['below_zero' => '<b>', 'below_min' => '<b>'][$r['state']] ?? '' ?><?= stk_show((float)$r['qty']) ?> <?= h($r['uom']) ?><?= in_array($r['state'], ['below_zero', 'below_min'], true) ? '</b>' : '' ?></td>
+<td><?= (float)$r['min_qty'] ? stk_show((float)$r['min_qty']) : '' ?></td><td><?= (float)$r['transit'] ? stk_show((float)$r['transit']) : '' ?></td><td><?= $r['value'] === null ? '' : number_format($r['value'], 2) ?></td><td><?= h((string)$r['last_move']) ?></td></tr><?php endforeach; ?>
+<?php if (!$now['rows']): ?><tr><td colspan="7" class="muted">No stock here yet — add items, then opening stock or goods in.</td></tr><?php endif; ?></table></div>
+
+<?php elseif ($view === 'docs'): $ds = stk_docs($db, $u, ['kind' => (string)($_GET['kind'] ?? ''), 'status' => (string)($_GET['status'] ?? ''), 'q' => (string)($_GET['q'] ?? '')]); ?>
+<form class="card row" style="flex-wrap:wrap"><input type="hidden" name="view" value="docs"><select name="kind"><?= $opts(array_map(fn($d) => $d[0], STK_DOCS), (string)($_GET['kind'] ?? ''), 'Any entry') ?></select><select name="status"><?= $opts(STK_DOC_STATUS, (string)($_GET['status'] ?? ''), 'Any status') ?></select><input name="q" value="<?= h((string)($_GET['q'] ?? '')) ?>" placeholder="Number, reference, party"><button class="btn sm">Show</button></form>
+<div class="card"><table><tr><th>Number</th><th>Date</th><th>Entry</th><th>Branch</th><th>Reference / party</th><th>Lines</th><th>Status</th></tr>
+<?php foreach ($ds as $d): ?><tr><td><a href="?view=doc&id=<?= (int)$d['id'] ?>"><?= h($d['doc_no']) ?></a></td><td><?= h($d['d']) ?></td><td><?= h(STK_DOCS[$d['kind']][0]) ?><?= isset(STK_MOVES[$d['sub']]) ? ' · ' . h(STK_MOVES[$d['sub']][0]) : '' ?></td><td><?= h(stk_branch_name((int)$d['branch_id'])) ?><?= $d['to_branch_id'] ? ' → ' . h(stk_branch_name((int)$d['to_branch_id'])) : '' ?></td>
+<td><?= h(trim($d['ref_no'] . ' ' . $d['party'])) ?></td><td><?= (int)$d['nlines'] ?></td><td><?= h(STK_DOC_STATUS[$d['status']] ?? $d['status']) ?></td></tr><?php endforeach; ?>
+<?php if (!$ds): ?><tr><td colspan="7" class="muted">No entries.</td></tr><?php endif; ?></table></div>
+
+<?php elseif ($view === 'doc'): try { $d = stk_doc_row($db, (int)($_GET['id'] ?? 0)); } catch (Throwable $e) { $d = null; }
+    if (!$d || (!isset($brs[(int)$d['branch_id']]) && !isset($brs[(int)$d['to_branch_id']]))): ?><div class="card">Not found.</div><?php else:
+    $m = $db->prepare('SELECT m.*, i.code, i.name, i.uom FROM stk_move m JOIN stk_item i ON i.id = m.item_id WHERE m.doc_id = ? ORDER BY m.line_no'); $m->execute([(int)$d['id']]); $mv = $m->fetchAll();
+    $x = []; if ($d['kind'] === 'XFR') { $s = $db->prepare('SELECT x.*, i.code, i.name, i.uom FROM stk_xfer_line x JOIN stk_item i ON i.id = x.item_id WHERE x.doc_id = ?'); $s->execute([(int)$d['id']]); $x = $s->fetchAll(); }
+    $cl = []; if ($d['kind'] === 'CNT') { $s = $db->prepare('SELECT c.*, i.code, i.name FROM stk_count_line c JOIN stk_item i ON i.id = c.item_id WHERE c.doc_id = ?'); $s->execute([(int)$d['id']]); $cl = $s->fetchAll(); }
+    $rel = $d['reverse_doc'] ?: $d['rev_of']; ?>
+<div class="card"><h2><?= h($d['doc_no']) ?> · <?= h(STK_DOCS[$d['kind']][0]) ?><?= isset(STK_MOVES[$d['sub']]) ? ' · ' . h(STK_MOVES[$d['sub']][0]) : '' ?></h2>
+<p><?= h($d['d']) ?> · <?= h(stk_branch_name((int)$d['branch_id'])) ?><?= $d['to_branch_id'] ? ' → ' . h(stk_branch_name((int)$d['to_branch_id'])) : '' ?> · <b><?= h(STK_DOC_STATUS[$d['status']] ?? $d['status']) ?></b><?= $d['ref_no'] !== '' ? ' · ref ' . h($d['ref_no']) : '' ?><?= $d['party'] !== '' ? ' · ' . h($d['party']) : '' ?></p>
+<?php if ($d['note'] !== ''): ?><p><?= h($d['note']) ?></p><?php endif; ?><?php if ($rel): ?><p><a href="?view=doc&id=<?= (int)$rel ?>"><?= $d['reverse_doc'] ? 'Its reversal' : 'The entry it reverses' ?></a></p><?php endif; ?>
+<?php if ($d['recv_note'] !== ''): ?><p class="muted">Received <?= h((string)$d['recv_d']) ?>: <?= h($d['recv_note']) ?></p><?php endif; ?>
+<table><tr><th>#</th><th>Item</th><th>Branch</th><th>Date</th><th>Entry</th><th>Quantity</th><th>Note</th></tr><?php foreach ($mv as $l): ?><tr><td><?= (int)$l['line_no'] ?></td><td><?= h($l['code'] . ' ' . $l['name']) ?></td><td><?= h(stk_branch_name((int)$l['branch_id'])) ?></td><td><?= h($l['d']) ?></td><td><?= h(STK_MOVES[$l['kind']][0] ?? $l['kind']) ?></td><td><?= stk_show((float)$l['qty']) ?> <?= h($l['uom']) ?></td><td><?= h($l['note']) ?></td></tr><?php endforeach; ?></table>
+<?php if ($cl): ?><h3>Counted</h3><table><tr><th>Item</th><th>Books</th><th>Counted</th></tr><?php foreach ($cl as $c): ?><tr><td><?= h($c['code'] . ' ' . $c['name']) ?></td><td><?= stk_show((float)$c['system_qty']) ?></td><td><?= stk_show((float)$c['counted']) ?></td></tr><?php endforeach; ?></table><?php endif; ?></div>
+<?php if ($d['kind'] === 'XFR' && $d['status'] === 'transit' && $R['store'] && isset($brs[(int)$d['to_branch_id']])): ?><form method="post" class="card"><?= csrf_field() ?><input type="hidden" name="a" value="receive"><input type="hidden" name="id" value="<?= (int)$d['id'] ?>"><h3>Receive at <?= h(stk_branch_name((int)$d['to_branch_id'])) ?></h3>
+<table><tr><th>Item</th><th>Sent</th><th>Received so far</th><th>Received now</th></tr><?php foreach ($x as $l): $open = (float)$l['sent'] - (float)$l['received']; ?><tr><td><?= h($l['code'] . ' ' . $l['name']) ?></td><td><?= stk_show((float)$l['sent']) ?></td><td><?= stk_show((float)$l['received']) ?></td><td><input name="recv[<?= (int)$l['item_id'] ?>]" value="<?= $open > 0 ? stk_show($open) : '' ?>" size="8"></td></tr><?php endforeach; ?></table>
+<div class="row"><input type="date" name="d" value="<?= date('Y-m-d') ?>"><label><input type="checkbox" name="close" value="1"> Nothing more will arrive</label><input name="note" placeholder="Why the rest did not arrive (when closing short)"><button class="btn sm">Receive</button></div></form><?php endif; ?>
+<?php if ($R['adjust'] && $d['kind'] !== 'REV' && $d['status'] !== 'reversed' && isset($brs[(int)$d['branch_id']])): ?><form method="post" class="card row"><?= csrf_field() ?><input type="hidden" name="a" value="reverse"><input type="hidden" name="id" value="<?= (int)$d['id'] ?>"><input name="reason" placeholder="Why it is reversed" required><button class="btn sm ghost" onclick="return confirm('Post a reversal of this entry?')">Reverse</button></form><?php endif; ?>
+<?php endif;
+
+elseif (in_array($view, ['in', 'out', 'open'], true) && $R['store']): $k = ['in' => 'IN', 'out' => 'OUT', 'open' => 'OPN'][$view]; ?>
+<form method="post" class="card"><?= $head('entry', $k) ?><h2><?= h(STK_DOCS[$k][0]) ?></h2><div class="grid"><label>Branch <?= $brSel('branch_id', (string)($f['branch_id'] ?? '')) ?></label><label>Date <input type="date" name="d" value="<?= h((string)($f['d'] ?? date('Y-m-d'))) ?>"></label>
+<?php if ($k !== 'OPN'): ?><label>Kind <select name="sub"><?= $opts(array_combine(STK_DOCS[$k][3], array_map(fn($x) => STK_MOVES[$x][0], STK_DOCS[$k][3])), (string)($f['sub'] ?? '')) ?></select></label><?php endif; ?>
+<label><?= $k === 'OUT' ? 'Invoice / challan no.' : 'Reference (bill, challan …)' ?> <input name="ref_no" value="<?= h((string)($f['ref_no'] ?? '')) ?>"></label><label><?= $k === 'IN' ? 'From (supplier / customer)' : ($k === 'OUT' ? 'To (customer / department)' : 'Note') ?> <input name="party" value="<?= h((string)($f['party'] ?? '')) ?>"></label></div>
+<?php $lineRows($k !== 'OUT'); ?><input name="note" value="<?= h((string)($f['note'] ?? '')) ?>" placeholder="Note (needed for scrap, other receipt / issue)"><button class="btn">Post</button>
+<?php if ($k === 'OPN'): ?><p class="muted">Opening stock is only for items with no entry at that branch yet; later corrections are stock counts.</p><?php endif; ?></form>
+
+<?php elseif ($view === 'xfer' && $R['store']): ?>
+<form method="post" class="card"><?= $head('xfer') ?><h2>Transfer to another branch</h2><div class="grid"><label>From <?= $brSel('branch_id', (string)($f['branch_id'] ?? '')) ?></label><label>To <select name="to_branch_id" required><?= $opts(array_column(branches(), 'name', 'id'), (string)($f['to_branch_id'] ?? ''), '—') ?></select></label>
+<label>Date <input type="date" name="d" value="<?= date('Y-m-d') ?>"></label><label>Reference (challan, vehicle …) <input name="ref_no"></label></div><?php $lineRows(); ?><input name="note" placeholder="Note"><button class="btn">Send</button>
+<p class="muted">The goods leave this branch now and wait in transit until the other branch receives them.</p></form>
+
+<?php elseif ($view === 'count' && $R['adjust']): $cb = (int)($_GET['b'] ?? array_key_first($brs)); if (!isset($brs[$cb])) $cb = (int)array_key_first($brs); $list = stk_now($db, $u, $cb)['rows']; ?>
+<form class="card row"><input type="hidden" name="view" value="count">Branch <select name="b" onchange="this.form.submit()"><?= $opts($brs, (string)$cb) ?></select><span class="muted">Items with stock entries or levels here; leave a box empty to skip it.</span></form>
+<form method="post" class="card"><?= $head('count') ?><input type="hidden" name="branch_id" value="<?= $cb ?>"><h2>Stock count at <?= h($brs[$cb]) ?></h2>
+<table><tr><th>Item</th><th>Books say</th><th>Counted</th></tr><?php foreach ($list as $r): ?><tr><td><?= h($r['code'] . ' ' . $r['name']) ?></td><td><?= stk_show((float)$r['qty']) ?> <?= h($r['uom']) ?></td><td><input name="counted[<?= (int)$r['id'] ?>]" size="8" inputmode="decimal"></td></tr><?php endforeach; ?>
+<tr><td><select name="extra_item"><?= $itemOpts() ?></select></td><td class="muted">another item</td><td><input name="counted_x" size="8"></td></tr></table>
+<input name="note" placeholder="What this count was, e.g. monthly count, store A" required><button class="btn">Save count</button></form>
+
+<?php elseif ($view === 'items'): $all = $db->query('SELECT * FROM stk_item ORDER BY active DESC, grp, name')->fetchAll(); ?>
+<?php if ($R['store']): ?><form method="post" class="card"><?= csrf_field() ?><input type="hidden" name="a" value="item"><h2>New item</h2><div class="grid"><label>Code <input name="code" placeholder="given when blank"></label><label>Name * <input name="name" required></label><label>Type <select name="kind"><?= $opts(STK_KINDS) ?></select></label>
+<label>Group <input name="grp"></label><label>Unit <select name="uom"><?= $opts(array_combine(crm_lines_s($set['units']), crm_lines_s($set['units']))) ?></select></label><label>Tax code <input name="tax_code"></label><label>Cost per unit <input name="std_cost"></label>
+<?php if (module_on('crm')): ?><label>CRM product <select name="product_id"><?= $opts($db->query('SELECT id, name FROM crm_product WHERE active = 1 AND merged_into IS NULL ORDER BY name')->fetchAll(PDO::FETCH_KEY_PAIR), '', '—') ?></select></label><?php endif; ?></div><button class="btn">Add</button></form><?php endif; ?>
+<div class="card"><table><tr><th>Code</th><th>Name</th><th>Type</th><th>Group</th><th>Unit</th></tr><?php foreach ($all as $i): ?><tr><td><a href="?view=item&id=<?= (int)$i['id'] ?>"><?= h($i['code']) ?></a></td><td><?= h($i['name']) ?><?= (int)$i['active'] ? '' : ' <span class="muted">(off)</span>' ?></td><td><?= h(STK_KINDS[$i['kind']] ?? $i['kind']) ?></td><td><?= h($i['grp']) ?></td><td><?= h($i['uom']) ?></td></tr><?php endforeach; ?>
+<?php if (!$all): ?><tr><td colspan="5" class="muted">No items yet.</td></tr><?php endif; ?></table></div>
+
+<?php elseif ($view === 'item'): try { $it = stk_item_row($db, (int)($_GET['id'] ?? 0)); } catch (Throwable $e) { $it = null; } if (!$it): ?><div class="card">Not found.</div><?php else:
+    $lv = $db->prepare('SELECT * FROM stk_level WHERE item_id = ?'); $lv->execute([(int)$it['id']]); $lvs = array_column($lv->fetchAll(), null, 'branch_id');
+    $bal = $db->prepare('SELECT branch_id, qty FROM stk_bal WHERE item_id = ?'); $bal->execute([(int)$it['id']]); $bals = $bal->fetchAll(PDO::FETCH_KEY_PAIR); $lb = (int)($_GET['b'] ?? array_key_first($brs)); if (!isset($brs[$lb])) $lb = (int)array_key_first($brs); ?>
+<form method="post" class="card"><?= csrf_field() ?><input type="hidden" name="a" value="item"><input type="hidden" name="id" value="<?= (int)$it['id'] ?>"><h2><?= h($it['code']) ?> · <?= h($it['name']) ?><?= (int)$it['active'] ? '' : ' <span class="muted">(off — ' . h($it['off_why']) . ')</span>' ?></h2>
+<div class="grid"><label>Code <input name="code" value="<?= h($it['code']) ?>"></label><label>Name <input name="name" value="<?= h($it['name']) ?>"></label><label>Type <select name="kind"><?= $opts(STK_KINDS, $it['kind']) ?></select></label><label>Group <input name="grp" value="<?= h($it['grp']) ?>"></label>
+<label>Unit <input name="uom" value="<?= h($it['uom']) ?>"></label><label>Tax code <input name="tax_code" value="<?= h($it['tax_code']) ?>"></label><label>Cost per unit <input name="std_cost" value="<?= h((string)$it['std_cost']) ?>"></label><label>Notes <input name="notes" value="<?= h($it['notes']) ?>"></label>
+<?php if (module_on('crm')): ?><label>CRM product <select name="product_id"><?= $opts($db->query('SELECT id, name FROM crm_product WHERE merged_into IS NULL ORDER BY name')->fetchAll(PDO::FETCH_KEY_PAIR), (string)$it['product_id'], '—') ?></select></label><?php endif; ?></div><?php if ($R['store']): ?><button class="btn sm">Save</button><?php endif; ?></form>
+<div class="card"><h3>By branch</h3><table><tr><th>Branch</th><th>In stock</th><th>Minimum</th><th>Reorder qty</th><th>Rack / bin</th><th></th></tr><?php foreach ($brs as $b => $n): $l = $lvs[$b] ?? []; ?><tr><td><?= h($n) ?></td><td><?= stk_show((float)($bals[$b] ?? 0)) ?> <?= h($it['uom']) ?></td>
+<?php if ($R['store']): ?><td colspan="4"><form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="level"><input type="hidden" name="id" value="<?= (int)$it['id'] ?>"><input type="hidden" name="branch_id" value="<?= $b ?>"><input name="min_qty" value="<?= stk_show((float)($l['min_qty'] ?? 0)) ?>" size="6"><input name="reorder_qty" value="<?= stk_show((float)($l['reorder_qty'] ?? 0)) ?>" size="6"><input name="bin" value="<?= h((string)($l['bin'] ?? '')) ?>" size="8"><button class="btn sm ghost">Save</button></form></td>
+<?php else: ?><td><?= stk_show((float)($l['min_qty'] ?? 0)) ?></td><td><?= stk_show((float)($l['reorder_qty'] ?? 0)) ?></td><td><?= h((string)($l['bin'] ?? '')) ?></td><td></td><?php endif; ?></tr><?php endforeach; ?></table></div>
+<div class="card"><form class="row"><input type="hidden" name="view" value="item"><input type="hidden" name="id" value="<?= (int)$it['id'] ?>"><h3>Ledger at</h3><select name="b" onchange="this.form.submit()"><?= $opts($brs, (string)$lb) ?></select></form>
+<table><tr><th>Date</th><th>Entry</th><th>Quantity</th><th>Stock after</th><th>Note</th></tr><?php foreach (stk_ledger($db, $u, (int)$it['id'], $lb) as $l): ?><tr><td><?= h($l['d']) ?></td><td><a href="?view=doc&id=<?= (int)$l['doc_id'] ?>"><?= h($l['doc_no']) ?></a> <?= h(STK_MOVES[$l['kind']][0] ?? '') ?></td><td><?= stk_show((float)$l['qty']) ?></td><td><?= stk_show((float)$l['after']) ?></td><td><?= h(trim($l['note'] . ' ' . $l['party'])) ?></td></tr><?php endforeach; ?></table></div>
+<?php if ($R['store']): ?><form method="post" class="card row"><?= csrf_field() ?><input type="hidden" name="a" value="itemon"><input type="hidden" name="id" value="<?= (int)$it['id'] ?>"><input type="hidden" name="on" value="<?= (int)$it['active'] ? '0' : '1' ?>"><?php if ((int)$it['active']): ?><input name="reason" placeholder="Why switch it off"><?php endif; ?><button class="btn sm ghost"><?= (int)$it['active'] ? 'Switch off' : 'Switch on' ?></button></form><?php endif; ?>
+<?php endif;
+
+elseif ($view === 'statement'): $sb = (int)($_GET['b'] ?? array_key_first($brs)); if (!isset($brs[$sb])) $sb = (int)array_key_first($brs); $from = (string)($_GET['from'] ?? date('Y-m-01')); $to = (string)($_GET['to'] ?? date('Y-m-d'));
+    try { $rowsS = stk_statement($db, $u, $sb, $from, $to); } catch (Throwable $e) { $rowsS = []; flash($e->getMessage(), 'err'); }
+    if (($_GET['csv'] ?? '') === '1') { header('Content-Type: text/csv; charset=utf-8'); header('Content-Disposition: attachment; filename="stock-statement.csv"'); echo "\xEF\xBB\xBF" . 'Code,Item,Unit,Opening,Purchase,Transfer in,Other in,Sale,Issued,Transfer out,Other out,Adjusted,Closing' . "\r\n"; foreach ($rowsS as $r) echo implode(',', array_map(fn($v) => '"' . str_replace('"', '""', (string)$v) . '"', [$r['code'], $r['name'], $r['uom'], $r['opening'], $r['in_pur'], $r['in_xfr'], $r['in_oth'], $r['out_sale'], $r['out_use'], $r['out_xfr'], $r['out_oth'], $r['adj'], $r['closing']])) . "\r\n"; exit; } ?>
+<form class="card row" style="flex-wrap:wrap"><input type="hidden" name="view" value="statement"><select name="b"><?= $opts($brs, (string)$sb) ?></select>From <input type="date" name="from" value="<?= h($from) ?>"> to <input type="date" name="to" value="<?= h($to) ?>"><button class="btn sm">Show</button> <a class="btn sm ghost" href="?view=statement&b=<?= $sb ?>&from=<?= h($from) ?>&to=<?= h($to) ?>&csv=1">CSV</a></form>
+<div class="card"><table><tr><th>Item</th><th>Opening</th><th>Purchase</th><th>Transfer in</th><th>Other in</th><th>Sale</th><th>Issued</th><th>Transfer out</th><th>Other out</th><th>Adjusted</th><th>Closing</th></tr>
+<?php foreach ($rowsS as $r): ?><tr><td><?= h($r['code'] . ' ' . $r['name']) ?></td><?php foreach (['opening', 'in_pur', 'in_xfr', 'in_oth', 'out_sale', 'out_use', 'out_xfr', 'out_oth', 'adj', 'closing'] as $k): ?><td><?= (float)$r[$k] ? stk_show((float)$r[$k]) : '' ?></td><?php endforeach; ?></tr><?php endforeach; ?>
+<?php if (!$rowsS): ?><tr><td colspan="11" class="muted">Nothing moved here up to that day.</td></tr><?php endif; ?></table></div>
+
+<?php elseif ($view === 'reorder'): $ro = stk_reorder($db, $u, $br ?: null); ?>
+<form class="card row"><input type="hidden" name="view" value="reorder"><select name="b"><?= $opts($brs, (string)$br, 'All my branches') ?></select><button class="btn sm">Show</button><span class="muted">Items under their minimum (stock + in transit), with the quantity to buy or make.</span></form>
+<div class="card"><table><tr><th>Branch</th><th>Item</th><th>In stock</th><th>In transit</th><th>Minimum</th><th>Suggest</th><th></th></tr><?php foreach ($ro as $r): ?><tr><td><?= h($r['branch']) ?></td><td><a href="?view=item&id=<?= (int)$r['id'] ?>"><?= h($r['code']) ?></a> <?= h($r['name']) ?></td><td><?= stk_show((float)$r['qty']) ?></td><td><?= stk_show((float)$r['transit']) ?></td><td><?= stk_show((float)$r['min_qty']) ?></td><td><b><?= stk_show($r['suggest']) ?></b> <?= h($r['uom']) ?></td><td><?= $r['action'] === 'make' ? 'Make' : 'Buy' ?></td></tr><?php endforeach; ?>
+<?php if (!$ro): ?><tr><td colspan="7" class="muted">Nothing under its minimum.</td></tr><?php endif; ?></table></div>
+
+<?php elseif ($view === 'settings' && $R['admin']): ?><form method="post" class="card"><?= csrf_field() ?><input type="hidden" name="a" value="settings"><h2>Settings</h2>
+<?php foreach (['view_roles' => 'See stock', 'store_roles' => 'Keep the store: goods in / out, transfers, opening stock, items, levels', 'adjust_roles' => 'Stock counts and reversals'] as $k => $l): ?><h3><?= h($l) ?></h3>
+<div class="row" style="flex-wrap:wrap"><?php foreach (role_labels() as $code => $n): ?><label><input type="checkbox" name="<?= $k ?>[]" value="<?= h($code) ?>"<?= in_array($code, $set[$k], true) ? ' checked' : '' ?>> <?= h($n) ?></label><?php endforeach; ?></div><?php endforeach; ?>
+<div class="grid"><label>Stock closed up to (entries on or before this day are refused) <input type="date" name="lock_until" value="<?= h($set['lock_until']) ?>"></label><label>Units (one a line) <textarea name="units" rows="5"><?= h($set['units']) ?></textarea></label></div>
+<label><input type="checkbox" name="negative" value="1"<?= $set['negative'] ? ' checked' : '' ?>> Allow stock to go below zero</label><br><button class="btn">Save</button></form>
+<?php else: ?><div class="card">Not available.</div><?php endif;
+ui_foot();

@@ -1,8 +1,8 @@
 # Stock & inventory
 
-**Key:** `stock` · **Group:** ops · **Status:** Porting from the reference build
+**Key:** `stock` · **Group:** ops · **Status:** Ready
 
-Items, insert-only ledger, goods in/out, transfers, counts, BOM, production, reorder.
+Items, insert-only ledger, goods in / out, opening stock, transfers with receiving, counts, reversals, statement, reorder. Production and dispatch links next.
 
 ## Access
 - Switched on by the Super Admin on **Admin → Modules**; needs nothing.
