@@ -29,6 +29,7 @@ $on = count(array_filter(array_keys(module_catalog()), 'module_on'));
 
 ui_head('Modules', $u, 'modules');
 ?>
+<?php if (is_superadmin($u)): ?><p><a href="module_map.php">Module map — how modules connect and who opens what</a></p><?php endif; ?>
 <section class="card"><p><b><?= $on ?></b> of <?= count(module_catalog()) ?> modules are on. Switching a module on also switches on what it needs.
 Tick which roles may use each module; per-person exceptions are at the foot of the page.</p></section>
 <?php foreach (MODULE_GROUPS as $g => $glabel): ?>
