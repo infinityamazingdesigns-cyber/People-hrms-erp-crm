@@ -26,6 +26,7 @@ function ui_head(string $title, ?array $u = null, string $active = ''): void {
 </head><body>
 <?php if ($u && wn_installed() && module_allowed($u, 'meet') && !str_contains((string)($_SERVER['SCRIPT_NAME'] ?? ''), 'modules/meet/')): ?><link rel="stylesheet" href="<?= $b ?>assets/meet.css?v=<?= h(WN_VERSION) ?>"><script src="<?= $b ?>assets/meet-ring.js?v=<?= h(WN_VERSION) ?>" data-base="<?= h($b) ?>" data-csrf="<?= h(csrf_token()) ?>" defer></script><?php endif; ?>
 <?php if (wn_installed() && is_stage()): ?><div class="stage-bar">Staging copy — no email, WhatsApp or notifications leave this site.</div><?php endif; ?>
+<?php if ($u) echo va_banner($u); ?>
 <div class="shell<?= $u ? '' : ' no-side' ?>">
 <?php if ($u): ?>
 <aside class="side" id="side">

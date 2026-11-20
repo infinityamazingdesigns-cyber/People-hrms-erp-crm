@@ -13,6 +13,10 @@ A product for **any** organisation. Nothing in this repository may belong to one
 - `users.is_owner = 1` is the installer. Always holds SUPERADMIN (`user_roles()` adds it), always active, never
   deleted. `owner_guard()` decides every action on the owner's login; every new screen that changes a login calls it.
   Only the owner changes the owner's own password. Tests O01–O04.
+- **Access preview** (`admin/view_as.php`, `lib/view_as.php`): only a Super Admin opens the site as one role, through a
+  synthetic `preview.<code>` login (switched off, no employee code, no usable password; sign-in refuses it) — never a
+  real person's login. The swap is in `current_user()` after the real checks; every request while previewing is
+  read-only (`va_guard()`); sign-out ends the preview. Start / stop are audited. Tests VA01–VA10.
 
 ## Modules
 - `config/modules.php` is the one catalog. A new module = one entry there + `php tools/gen_modules.php`.

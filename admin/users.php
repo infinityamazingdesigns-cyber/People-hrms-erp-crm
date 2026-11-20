@@ -64,12 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $roles = role_labels();
 $brs = branches();
-$list = $db->query('SELECT id, username, name, email, active, is_owner, last_login FROM users ORDER BY is_owner DESC, active DESC, name')->fetchAll();
+$list = $db->query('SELECT id, username, name, email, active, is_owner, last_login FROM users WHERE username NOT LIKE "preview.%" ORDER BY is_owner DESC, active DESC, name')->fetchAll();
 $rmap = []; foreach ($db->query('SELECT user_id, role_code FROM user_role') as $r) $rmap[(int)$r['user_id']][] = $r['role_code'];
 $bmap = []; foreach ($db->query('SELECT user_id, branch_id FROM user_branch') as $r) $bmap[(int)$r['user_id']][] = (int)$r['branch_id'];
 
 ui_head('Users & access', $u, 'users');
 if ($shown): ?><div class="flash ok">Password for <b><?= h($shown[0]) ?></b>: <code><?= h($shown[1]) ?></code> — shown once. They set their own at first sign-in.</div><?php endif; ?>
+<?php if (is_superadmin($u)): ?><p><a href="view_as.php">Access preview — open the site as a role (read-only)</a></p><?php endif; ?>
 <form method="post" class="card"><h2>New login</h2><?= csrf_field() ?><input type="hidden" name="a" value="create">
   <div class="grid"><label>Full name <input name="name" required></label><label>Username <input name="username" required></label><label>Email <input name="email" type="email"></label></div>
   <div class="roles"><?php foreach ($roles as $rc => $rl): if (!can_assign($u, $rc)) continue; ?><label class="tick"><input type="checkbox" name="roles[]" value="<?= h($rc) ?>"<?= $rc === 'EMPLOYEE' ? ' checked' : '' ?>><?= h($rl) ?></label><?php endforeach; ?></div>

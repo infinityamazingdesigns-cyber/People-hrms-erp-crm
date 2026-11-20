@@ -22,6 +22,7 @@ require_once __DIR__ . '/rbac.php';
 require_once __DIR__ . '/modules.php';
 require_once __DIR__ . '/migrate.php';
 require_once __DIR__ . '/ui.php';
+require_once __DIR__ . '/view_as.php';
 
 if (PHP_SAPI !== 'cli') {
     send_security_headers();
@@ -93,7 +94,9 @@ function current_user(bool $touch = true): ?array {
         unset($u['pass_hash']);
         $u['roles'] = user_roles((int)$u['id'], (bool)$u['is_owner']);
         $u['branches'] = user_branch_ids((int)$u['id']);
+        if (!empty($_SESSION['view_as'])) $u = va_apply($u);   // Super Admin's read-only access preview
     }
+    if ($u) va_guard($u);
     if ($u && !empty($u['must_change']) && !in_array(basename((string)($_SERVER['SCRIPT_NAME'] ?? '')), ['account.php', 'logout.php'], true)) {
         header('Location: ' . wn_base() . 'account.php?first=1'); exit;
     }
