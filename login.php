@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $db) {
             $s->execute([$login, $login]);
             $u = $s->fetch();
             if ($u && $u['locked_until'] && strtotime((string)$u['locked_until']) > time()) $err = 'This login is locked for a few minutes after wrong passwords.';
-            elseif (!$u || (!$u['active'] && !$u['is_owner'])) { ip_fail($db, $ip); $err = 'Wrong sign-in or password.'; audit(null, 'login_fail', 'unknown'); }
+            elseif (!$u || va_is_preview((string)$u['username']) || (!$u['active'] && !$u['is_owner'])) { ip_fail($db, $ip); $err = 'Wrong sign-in or password.'; audit(null, 'login_fail', 'unknown'); }
             else {
                 [$ok, $newHash] = pw_verify_upgrade($pass, (string)$u['pass_hash']);
                 if (!$ok) {
