@@ -1,0 +1,14 @@
+/* Ctrl + K palette (assets/cmdk.js) */
+.ck-open{margin-left:auto;margin-right:12px;display:inline-flex;gap:8px;align-items:center;font:inherit;font-size:13px;padding:5px 10px;border:1px solid rgba(0,0,0,.15);border-radius:8px;background:#fff;color:#334;cursor:pointer}
+.ck-open kbd{font:11px ui-monospace,monospace;background:#F1F3F7;border:1px solid #DDE1E8;border-radius:4px;padding:1px 5px}
+.ck-back{position:fixed;inset:0;background:rgba(10,18,40,.45);z-index:1000;display:flex;justify-content:center;align-items:flex-start;padding-top:12vh}
+.ck-box{width:min(620px,94vw);background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden}
+.ck-box input{width:100%;box-sizing:border-box;border:0;border-bottom:1px solid #E3E6EC;padding:14px 16px;font-size:16px;outline:0}
+.ck-list{max-height:55vh;overflow:auto;margin:0;padding:6px 0;list-style:none}
+.ck-g{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#7A8394;padding:8px 16px 4px}
+.ck-i{padding:8px 16px;cursor:pointer;display:flex;justify-content:space-between;gap:10px}
+.ck-i small{color:#7A8394}
+.ck-i[aria-selected=true]{background:var(--brand,#13265C);color:#fff}.ck-i[aria-selected=true] small{color:#dfe4f0}
+.ck-none{padding:14px 16px;color:#7A8394}
+@media (max-width:640px){.ck-open kbd{display:none}}
+@media (prefers-reduced-motion:no-preference){.ck-box{animation:ck-in .12s ease-out}@keyframes ck-in{from{transform:translateY(-6px);opacity:.6}}}

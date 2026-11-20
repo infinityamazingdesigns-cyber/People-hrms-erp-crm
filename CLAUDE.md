@@ -36,6 +36,9 @@ A product for **any** organisation. Nothing in this repository may belong to one
   (punches by API key, kept only as a hash) and `modules/marketing/lead.php` (website-form leads by key, kept only as a
   hash; number / mail / name / campaign only, never message text).
 - Every page under `modules/` calls one of the gates first (test GT01).
+- **Ctrl + K palette** (`assets/cmdk.js`, every signed-in page): searches only the menu links drawn for that login, the
+  account links and — behind Team chat's gate, never while previewing — `modules/talk/index.php?people=1`
+  (`talk_people()`); a person opens a chat through Team chat's own POST. Nothing typed is sent. Tests CK01–CK06.
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 
 ## Organisation values come from settings

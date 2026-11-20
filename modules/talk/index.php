@@ -10,6 +10,10 @@ $set = talk_settings(); $R = talk_rights($db, $me);
 $view = (string)($_GET['view'] ?? 'chat');
 $cid = (int)($_GET['c'] ?? $_POST['c'] ?? 0);
 $isAdmin = has_role($u, 'SUPERADMIN');
+if (($_GET['people'] ?? '') === '1') {   // the Ctrl + K palette's people list: the same projection as the picker
+    header('Content-Type: application/json'); header('Cache-Control: no-store, private');
+    echo json_encode(['people' => talk_people($db, $me)]); exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     check_csrf();

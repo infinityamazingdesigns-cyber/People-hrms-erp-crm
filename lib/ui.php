@@ -22,6 +22,7 @@ function ui_head(string $title, ?array $u = null, string $active = ''): void {
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title><?= h($title . ' · ' . $name) ?></title>
 <link rel="stylesheet" href="<?= $b ?>assets/app.css?v=<?= h(WN_VERSION) ?>">
+<?php if ($u): ?><link rel="stylesheet" href="<?= $b ?>assets/cmdk.css?v=<?= h(WN_VERSION) ?>"><script src="<?= $b ?>assets/cmdk.js?v=<?= h(WN_VERSION) ?>" data-base="<?= h($b) ?>" data-csrf="<?= h(csrf_token()) ?>" data-talk="<?= wn_installed() && module_allowed($u, 'talk') && empty($u['preview']) ? '1' : '0' ?>" defer></script><?php endif; ?>
 <style>:root{--brand:<?= h($p) ?>;--accent:<?= h($a) ?>}</style>
 </head><body>
 <?php if ($u && wn_installed() && module_allowed($u, 'meet') && !str_contains((string)($_SERVER['SCRIPT_NAME'] ?? ''), 'modules/meet/')): ?><link rel="stylesheet" href="<?= $b ?>assets/meet.css?v=<?= h(WN_VERSION) ?>"><script src="<?= $b ?>assets/meet-ring.js?v=<?= h(WN_VERSION) ?>" data-base="<?= h($b) ?>" data-csrf="<?= h(csrf_token()) ?>" defer></script><?php endif; ?>
@@ -48,6 +49,7 @@ function ui_head(string $title, ?array $u = null, string $active = ''): void {
   <header class="top">
     <?php if ($u): ?><button class="menu-btn" type="button" onclick="document.body.classList.toggle('side-open')" aria-label="Menu">☰</button><?php endif; ?>
     <h1><?= h($title) ?></h1>
+    <?php if ($u): ?><button class="ck-open" type="button" data-ck-open aria-label="Search screens and people">Search <kbd>Ctrl K</kbd></button><?php endif; ?>
     <?php if ($u): ?><div class="who"><span><?= h($u['name']) ?><small><?= h(implode(' · ', array_map(fn($r) => role_labels()[$r] ?? $r, $u['roles'])) ?: 'No role yet') ?><?= is_owner($u) ? ' · Owner' : '' ?></small></span>
       <a href="<?= $b ?>account.php">Account</a><a href="<?= $b ?>logout.php">Sign out</a></div><?php endif; ?>
   </header>
