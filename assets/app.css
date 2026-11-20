@@ -54,3 +54,12 @@ th,td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
   body.side-open .side{left:0}.menu-btn{display:block}.grid2{grid-template-columns:1fr}.main{padding:0 14px 14px}.top .who span{display:none}
   table{display:block;overflow-x:auto}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Home (index.php) */
+.hm{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:18px;align-items:start}
+.hm .card{margin:0}.hm h3{margin:0 0 8px}.hm h3 small{color:var(--muted,#7A8394);font-weight:400}
+.hm-list{list-style:none;margin:0 0 8px;padding:0}.hm-list li{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}
+.hm-list li:first-child{border-top:0}.hm-list li>a{flex:1;min-width:0}.hm-list small{color:var(--muted,#7A8394);white-space:nowrap}.hm-list b{min-width:24px;text-align:right}
+.hm-list form{margin:0}.hm-tick{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-size:12px;line-height:1;color:transparent}
+.hm-tick:hover,.hm-tick:focus{color:#1E7A43;border-color:#1E7A43}
+.hm-late{box-shadow:inset 3px 0 #C0392B;padding-left:6px!important}.hm-list li.hm-today{box-shadow:inset 3px 0 #E5A00D;padding-left:6px}

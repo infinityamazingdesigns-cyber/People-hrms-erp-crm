@@ -15,6 +15,7 @@ try { tk_remind_tick($db); } catch (Throwable $e) { error_log('task remind: ' . 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     check_csrf();
     $a = (string)($_POST['a'] ?? ''); $id = (int)($_POST['id'] ?? 0); $to = 'index.php?view=' . urlencode((string)($_POST['view'] ?? $view)) . ($id ? '#t' . $id : '');
+    if (($_POST['back'] ?? '') === 'home' && $a === 'done') $to = '../../index.php';   // ticked on the home page
     try {
         switch ($a) {
             case 'add': $ids = tk_add($db, $u, $_POST); flash(count($ids) > 1 ? count($ids) . ' tasks given.' : 'Added.'); break;
