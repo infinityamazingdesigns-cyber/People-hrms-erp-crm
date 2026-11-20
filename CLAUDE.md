@@ -42,6 +42,11 @@ A product for **any** organisation. Nothing in this repository may belong to one
 - **Module map** (`admin/module_map.php`, `lib/module_map.php`): Super Admin only, read-only — modules by group with
   needs / needed by, roles × modules and data classes, built by `mm_build()` from the catalog, saved module states and
   `config/rbac.php` each time (nothing to keep in step by hand). No person's data, no counts. Tests MM01–MM08.
+- **Home page** (`index.php`, `lib/home.php`): each login's own day — today's punches, up to 10 urgent tasks
+  (`hm_task_pick()`; the tick posts to Tasks with `back=home`, so Tasks' own done / approval rule runs) and **Waiting
+  for you** (`hm_waiting()`: each count from that module's own waiting function, only when `module_allowed()`, HR desks
+  also behind their HR rule). Own data only, never an amount. A new module with an approval queue adds one `$try()`
+  line there. Tests HM01–HM07.
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 
 ## Organisation values come from settings
