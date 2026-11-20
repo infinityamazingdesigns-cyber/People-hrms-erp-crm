@@ -39,6 +39,9 @@ A product for **any** organisation. Nothing in this repository may belong to one
 - **Ctrl + K palette** (`assets/cmdk.js`, every signed-in page): searches only the menu links drawn for that login, the
   account links and — behind Team chat's gate, never while previewing — `modules/talk/index.php?people=1`
   (`talk_people()`); a person opens a chat through Team chat's own POST. Nothing typed is sent. Tests CK01–CK06.
+- **Module map** (`admin/module_map.php`, `lib/module_map.php`): Super Admin only, read-only — modules by group with
+  needs / needed by, roles × modules and data classes, built by `mm_build()` from the catalog, saved module states and
+  `config/rbac.php` each time (nothing to keep in step by hand). No person's data, no counts. Tests MM01–MM08.
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 
 ## Organisation values come from settings
