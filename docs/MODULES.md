@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**57 modules** — 57 ready · 0 porting · 0 planned
+**58 modules** — 58 ready · 0 porting · 0 planned
 
 ## For me
 
@@ -85,6 +85,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 | Module | What it does | Needs | Default roles | Status |
 |---|---|---|---|---|
 | **Asset register** `assets` | Laptops, phones, SIMs, office assets; allot / return; no deletion; yearly audit; IT accounts. | employees | Super Admin, HR Manager, IT Admin | Ready |
+| **Office registers** `officereg` | Counted property each branch holds, and the office library: books, copies, lending and history. | employees | Super Admin, HR Manager | Ready |
 
 ## Communication
 

@@ -41,6 +41,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Performance (KRA) (`pms`)
 - [x] Feedback & conduct (`conduct`)
 - [x] Asset register (`assets`)
+- [x] Office registers (`officereg`)
 - [x] Announcement board (`board`)
 - [x] Team chat (`talk`)
 - [x] Video meetings (`meet`)
