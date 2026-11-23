@@ -46,6 +46,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Video meetings (`meet`)
 - [x] Tasks (`tasks`)
 - [x] Help desk (`helpdesk`)
+- [x] Inbox (`inbox`)
 - [x] Browser notifications (`notify`)
 - [x] Visitors (`visitors`)
 - [x] CRM & orders (`crm`)

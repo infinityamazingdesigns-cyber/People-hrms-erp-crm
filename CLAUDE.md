@@ -34,7 +34,9 @@ A product for **any** organisation. Nothing in this repository may belong to one
   and CV — never pay, panel feedback or other candidates), `modules/biometric/iclock.php` (machine push, only for a
   registered serial; attendance lines only; the one page exempt from the HTTPS redirect) and `modules/biometric/punch.php`
   (punches by API key, kept only as a hash) and `modules/marketing/lead.php` (website-form leads by key, kept only as a
-  hash; number / mail / name / campaign only, never message text).
+  hash; number / mail / name / campaign only, never message text) and `modules/inbox/wa_hook.php` (WhatsApp Business
+  webhook: GET answers only a login's own verify token, POST only when signed with a connected login's app secret;
+  throttled; filed under the login whose number Meta names).
 - Every page under `modules/` calls one of the gates first (test GT01).
 - **Ctrl + K palette** (`assets/cmdk.js`, every signed-in page): searches only the menu links drawn for that login, the
   account links and — behind Team chat's gate, never while previewing — `modules/talk/index.php?people=1`
@@ -47,6 +49,10 @@ A product for **any** organisation. Nothing in this repository may belong to one
   for you** (`hm_waiting()`: each count from that module's own waiting function, only when `module_allowed()`, HR desks
   also behind their HR rule). Own data only, never an amount. A new module with an approval queue adds one `$try()`
   line there. Tests HM01–HM07.
+- **Inbox** (`modules/inbox/`, `lib/inbox.php`): each login's own mail / Cliq / WhatsApp — connections keyed by login +
+  service, messages per login, nobody (Super Admin included) sees another login's. Secrets sealed, last 4 shown; mail
+  read live and shown sandboxed; replies refused on a staging copy; WhatsApp replies only within 24 h. Every outside
+  call through `ib_http()` (injectable). Tests IB01–IB18.
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 
 ## Organisation values come from settings
