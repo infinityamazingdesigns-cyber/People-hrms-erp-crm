@@ -85,3 +85,5 @@ body.lg-panel .main{padding:0}body.lg-panel .main>form.login{margin:0 0 0 auto;m
 body.lg-panel .main>form.narrow{margin-left:auto}
 @media (max-width:760px){.lg-cap{display:none}body.lg-right .main>form.login{margin:auto}body.lg-panel .main{padding:16px}body.lg-panel .main>form.login{min-height:0;border-radius:var(--r)}}
 @media (prefers-reduced-motion:reduce){.lg-slide{transition:none}}
+.foot a{color:inherit}body.lg .foot{position:relative;z-index:3;color:rgba(255,255,255,.8)}
+.legal{max-width:820px;margin:0 auto}.legal h2{font-size:17px;margin:18px 0 6px}.legal p,.legal li{line-height:1.6}.legal ul{padding-left:20px}
