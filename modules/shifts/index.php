@@ -68,7 +68,7 @@ if ($code !== ''):
   <?php endforeach; ?><?= $hist ? '' : '<tr><td colspan="7" class="muted">No own rule — the branch\'s shift and weekly off apply.</td></tr>' ?></tbody></table></section>
 <?php if ($canEdit): $form("New rule", false); endif;
 else: ?>
-<form class="card row"><input name="q" placeholder="Find a person" value="<?= h($q) ?>"><select name="only"><option value="">Everyone</option><option value="rule"<?= $only === 'rule' ? ' selected' : '' ?>>With an own rule</option><option value="flex"<?= $only === 'flex' ? ' selected' : '' ?>>Flexible hours</option></select><button class="btn sm">Show</button></form>
+<form class="card row"><input name="q" placeholder="Find a person" value="<?= h($q) ?>"><select name="only" aria-label="Show"><option value="">Everyone</option><option value="rule"<?= $only === 'rule' ? ' selected' : '' ?>>With an own rule</option><option value="flex"<?= $only === 'flex' ? ' selected' : '' ?>>Flexible hours</option></select><button class="btn sm">Show</button></form>
 <section class="card"><table><thead><tr><th>Code</th><th>Name</th><th>Branch</th><th>Today</th><th></th></tr></thead><tbody>
 <?php foreach ($people as $p):
     $eff = shift_effective($rules[strtoupper($p['code'])] ?? [], $brById[(int)$p['branch_id']] ?? shift_branch(null), $today);

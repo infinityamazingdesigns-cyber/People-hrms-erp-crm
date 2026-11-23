@@ -81,7 +81,7 @@ ui_head('Visitors', $u, 'visitors'); ?>
 
 <?php if ($view === 'desk'): $rows = vis_desk($db, $scope, $fb); $now = time();
     $groups = []; foreach ($rows as $r) if ($r['group_id']) $groups[(int)$r['group_id']][] = $r; ?>
-<form class="row"><select name="branch" onchange="this.form.submit()"><option value="0">All my branches</option><?php foreach ($bn as $i => $n): ?><option value="<?= $i ?>"<?= $fb === $i ? ' selected' : '' ?>><?= h($n) ?></option><?php endforeach; ?></select></form>
+<form class="row"><select name="branch" onchange="this.form.submit()" aria-label="Branch"><option value="0">All my branches</option><?php foreach ($bn as $i => $n): ?><option value="<?= $i ?>"<?= $fb === $i ? ' selected' : '' ?>><?= h($n) ?></option><?php endforeach; ?></select></form>
 <?php foreach (['waiting' => 'At reception', 'inside' => 'Inside', 'expected' => 'Expected (next 7 days)', 'done' => 'Earlier today'] as $grp => $title):
     $list = array_filter($rows, fn($r) => $grp === 'done' ? in_array($r['status'], ['out', 'cancelled'], true) : $r['status'] === $grp); ?>
 <div class="card"><h2><?= h($title) ?> <span class="muted"><?= count($list) ?></span></h2>
@@ -100,7 +100,7 @@ ui_head('Visitors', $u, 'visitors'); ?>
 <form method="post" class="card" id="nv"><?= csrf_field() ?><input type="hidden" name="a" value="new"><input type="hidden" name="token" value="<?= bin2hex(random_bytes(16)) ?>"><input type="hidden" name="visitor_id" id="vid" value="">
 <h2>New visitor</h2>
 <div class="row"><label><input type="radio" name="when" value="now" checked> Here now</label> <label><input type="radio" name="when" value="later"> Expected later</label>
-<span id="later" style="display:none"><input type="date" name="exp_on" min="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d', strtotime('+' . VIS_EXPECT_DAYS . ' days')) ?>"> <input type="time" name="exp_time"></span></div>
+<span id="later" style="display:none"><input type="date" name="exp_on" min="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d', strtotime('+' . VIS_EXPECT_DAYS . ' days')) ?>" aria-label="Expected on"> <input type="time" name="exp_time" aria-label="Expected at"></span></div>
 <div class="grid"><label>Mobile <input name="mobile" id="mob" inputmode="tel"></label><span id="lk" class="muted"></span>
 <label>Name * <input name="name" required maxlength="120"></label><label>Company <input name="company"></label><label>Designation <input name="designation"></label>
 <label>Email <input type="email" name="email"></label><label>Address <input name="address"></label></div>
@@ -162,15 +162,15 @@ ui_head('Visitors', $u, 'visitors'); ?>
 <div class="card"><h3>Host answers</h3><?php foreach ($ap as $a): ?><div class="muted"><?= h((string)$a['at']) ?> · <?= h(VIS_APPROVAL[$a['approval']] ?? $a['approval']) ?> · <?= h((string)$a['who']) ?><?= $a['note'] !== '' ? ' — ' . h($a['note']) : '' ?></div><?php endforeach; ?></div>
 <?php if ($R['configure'] && $v['purged_at'] === null): ?>
 <details class="card"><summary>Edit details (earlier values are kept)</summary><form method="post"><?= $hid('edit', (int)$v['id']) ?><div class="grid"><?php foreach (VIS_EDIT_FIELDS as $k => $l): ?><label><?= h($l) ?> <input name="<?= $k ?>" value="<?= h((string)$v[$k]) ?>"></label><?php endforeach; ?></div><input name="reason" placeholder="Reason" required><button class="btn sm">Save</button></form></details>
-<details class="card"><summary>Correct a time (the original is kept)</summary><form method="post" class="row"><?= $hid('correct', (int)$v['id']) ?><?= $sel(['check_in_at' => 'Check-in', 'check_out_at' => 'Check-out'], 'field', 'check_in_at') ?><input type="datetime-local" name="value" required><input name="reason" placeholder="Reason" required><button class="btn sm">Correct</button></form></details>
+<details class="card"><summary>Correct a time (the original is kept)</summary><form method="post" class="row"><?= $hid('correct', (int)$v['id']) ?><?= $sel(['check_in_at' => 'Check-in', 'check_out_at' => 'Check-out'], 'field', 'check_in_at') ?><input type="datetime-local" name="value" required aria-label="Value"><input name="reason" placeholder="Reason" required><button class="btn sm">Correct</button></form></details>
 <?php endif; ?>
 <?php $cl = $co->fetchAll(); if ($cl || $ed): ?><div class="card"><h3>Changes</h3><?php foreach ($cl as $c): ?><div class="muted"><?= h((string)$c['at']) ?> · <?= h((string)$c['who']) ?> · <?= h($c['field'] === 'check_in_at' ? 'Check-in' : 'Check-out') ?> <?= h((string)$c['old_value']) ?> → <?= h((string)$c['new_value']) ?> — <?= h($c['reason']) ?></div><?php endforeach; ?>
 <?php foreach ($ed as $c): ?><div class="muted"><?= h((string)$c['at']) ?> · <?= h((string)$c['who']) ?> · <?= h(VIS_EDIT_FIELDS[$c['field']] ?? $c['field']) ?> was “<?= h((string)$c['old_value']) ?>” — <?= h($c['reason']) ?></div><?php endforeach; ?></div><?php endif; ?>
 <?php endif;
 
 elseif ($view === 'register' && $R['report']): $rows = vis_list($db, $scope, $from, $tod, $fb, $fc, $fq); $rep = vis_report($rows); ?>
-<form class="card row" style="flex-wrap:wrap"><input type="hidden" name="view" value="register"><input type="date" name="from" value="<?= h($from) ?>"><input type="date" name="to" value="<?= h($tod) ?>">
-<select name="branch"><option value="0">All my branches</option><?php foreach ($bn as $i => $n): ?><option value="<?= $i ?>"<?= $fb === $i ? ' selected' : '' ?>><?= h($n) ?></option><?php endforeach; ?></select>
+<form class="card row" style="flex-wrap:wrap"><input type="hidden" name="view" value="register"><input type="date" name="from" value="<?= h($from) ?>" aria-label="From"><input type="date" name="to" value="<?= h($tod) ?>" aria-label="To">
+<select name="branch" aria-label="Branch"><option value="0">All my branches</option><?php foreach ($bn as $i => $n): ?><option value="<?= $i ?>"<?= $fb === $i ? ' selected' : '' ?>><?= h($n) ?></option><?php endforeach; ?></select>
 <?= $sel(['0' => 'All categories'] + array_column($cats, 'label', 'id'), 'cat', (string)$fc) ?><input name="q" value="<?= h($fq) ?>" placeholder="Name, company, host or mobile"><button class="btn sm">Show</button>
 <a class="btn sm ghost" href="?view=csv&from=<?= h($from) ?>&to=<?= h($tod) ?>&branch=<?= $fb ?>&cat=<?= $fc ?>&q=<?= h(urlencode($fq)) ?>">Download CSV</a></form>
 <div class="grid"><div class="card"><b><?= $rep['total'] ?></b><div class="muted">Visits</div></div><div class="card"><b><?= $rep['avg_min'] ?? '—' ?></b><div class="muted">Average minutes inside</div></div>
@@ -194,8 +194,8 @@ elseif ($view === 'register' && $R['report']): $rows = vis_list($db, $scope, $fr
 <?php if (!vis_reauth_fresh()): ?><p class="muted">You will be asked for your password.</p><?php endif; ?></div>
 
 <?php elseif ($view === 'settings' && $R['configure']): $roles = role_labels(); ?>
-<div class="card"><h2>Categories</h2><table><?php foreach (vis_categories($db, false) as $c): ?><tr><td><form method="post" class="row"><?= $hid('cat', (int)$c['id']) ?><input name="label" value="<?= h($c['label']) ?>"><input type="number" name="sort" value="<?= (int)$c['sort'] ?>" style="width:70px"><label><input type="checkbox" name="active" value="1"<?= (int)$c['active'] ? ' checked' : '' ?>> In use</label><button class="btn sm ghost">Save</button></form></td></tr><?php endforeach; ?>
-<tr><td><form method="post" class="row"><?= $hid('cat', 0) ?><input name="label" placeholder="New category"><input type="number" name="sort" value="50" style="width:70px"><input type="hidden" name="active" value="1"><button class="btn sm">Add</button></form></td></tr></table></div>
+<div class="card"><h2>Categories</h2><table><?php foreach (vis_categories($db, false) as $c): ?><tr><td><form method="post" class="row"><?= $hid('cat', (int)$c['id']) ?><input name="label" value="<?= h($c['label']) ?>" aria-label="Label"><input type="number" name="sort" value="<?= (int)$c['sort'] ?>" style="width:70px" aria-label="Order"><label><input type="checkbox" name="active" value="1"<?= (int)$c['active'] ? ' checked' : '' ?>> In use</label><button class="btn sm ghost">Save</button></form></td></tr><?php endforeach; ?>
+<tr><td><form method="post" class="row"><?= $hid('cat', 0) ?><input name="label" placeholder="New category"><input type="number" name="sort" value="50" style="width:70px" aria-label="Order"><input type="hidden" name="active" value="1"><button class="btn sm">Add</button></form></td></tr></table></div>
 <?php if ($isAdmin): ?><form method="post" class="card"><?= csrf_field() ?><input type="hidden" name="a" value="settings"><h2>Settings</h2>
 <?php foreach (['desk_roles' => 'The desk (register, host answer, check in / out)', 'report_roles' => 'Register, reports and CSV', 'configure_roles' => 'Categories, edit details, correct times', 'purge_roles' => 'Remove old details'] as $k => $l): ?>
 <h3><?= h($l) ?></h3><div class="row" style="flex-wrap:wrap"><?php foreach ($roles as $code => $n): ?><label><input type="checkbox" name="<?= $k ?>[]" value="<?= h($code) ?>"<?= in_array($code, $set[$k], true) ? ' checked' : '' ?>> <?= h($n) ?></label><?php endforeach; ?></div><?php endforeach; ?>

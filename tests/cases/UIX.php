@@ -6,3 +6,7 @@ t('UX02 wide tables scroll in their own box with the first column kept in view',
 t('UX03 module tabs are one sideways row on a phone', str_contains($css, '.main>nav.row:first-of-type{flex-wrap:nowrap!important;overflow-x:auto'));
 t('UX04 fields in table cells get a name from their column and row', str_contains($ui, "i.setAttribute('aria-label',n.slice(0,80))"));
 t('UX05 grids never push a phone page sideways', str_contains($css, 'minmax(min(220px,100%),1fr)') && str_contains($css, '.grid2>*,.grid>*{min-width:0}'));
+$ui = file_get_contents(WN_ROOT . '/lib/ui.php');
+t('UX06 a field with no label at all is named from its field name', str_contains($ui, 'function byName()') && str_contains($ui, '"branch":"Branch"'));
+$bad = 0; foreach (glob(WN_ROOT . '/modules/*/*.php') as $f) $bad += preg_match_all('/<input type="date" name="d"[^>]*aria-label="Department"/', file_get_contents($f));
+t('UX07 named fields match what they hold (a date is never called a department)', $bad === 0);

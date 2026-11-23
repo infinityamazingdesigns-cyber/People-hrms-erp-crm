@@ -95,8 +95,8 @@ ui_head('Vendor bills', $u, 'vendorbills'); ?>
 <table><?php foreach ($rows as $b) echo $row($b); ?></table><p class="muted">Bills you entered are not listed here; someone else decides on them.</p></div>
 
 <?php elseif ($view === 'all' && $seeAll): $rows = vb_list($db, $c, 'all', ['branch' => $fb, 'status' => $fs, 'from' => $from, 'to' => $tod]); $S = vb_summary($rows); ?>
-<form class="card row" style="flex-wrap:wrap"><input type="hidden" name="v" value="all"><input type="date" name="from" value="<?= h($from) ?>"><input type="date" name="to" value="<?= h($tod) ?>">
-<select name="branch"><option value="0">All branches</option><?php foreach ($allBn as $i => $n): if ($c['see'] === null || in_array($i, (array)$c['see'], true)): ?><option value="<?= $i ?>"<?= $fb === $i ? ' selected' : '' ?>><?= h($n) ?></option><?php endif; endforeach; ?></select>
+<form class="card row" style="flex-wrap:wrap"><input type="hidden" name="v" value="all"><input type="date" name="from" value="<?= h($from) ?>" aria-label="From"><input type="date" name="to" value="<?= h($tod) ?>" aria-label="To">
+<select name="branch" aria-label="Branch"><option value="0">All branches</option><?php foreach ($allBn as $i => $n): if ($c['see'] === null || in_array($i, (array)$c['see'], true)): ?><option value="<?= $i ?>"<?= $fb === $i ? ' selected' : '' ?>><?= h($n) ?></option><?php endif; endforeach; ?></select>
 <?= $sel(VB_STATUSES, 'status', $fs) ?><button class="btn sm">Show</button> <a class="btn sm ghost" href="?<?= h(http_build_query(['v' => 'csv', 'from' => $from, 'to' => $tod, 'branch' => $fb, 'status' => $fs])) ?>">CSV</a></form>
 <div class="card"><p>Paid <b><?= $m($S['paid']) ?></b> · still coming <b><?= $m($S['coming']) ?></b></p><div class="grid">
 <div><h3>Paid by branch</h3><table><?php foreach ($S['byBranch'] as $i => $v): ?><tr><td><?= h($allBn[$i] ?? '') ?></td><td><?= $m($v) ?></td></tr><?php endforeach; ?></table></div>

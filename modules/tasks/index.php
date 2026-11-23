@@ -54,7 +54,7 @@ $sel = fn(array $o, string $n, string $c) => '<select name="' . $n . '">' . impl
 $fields = function (?array $t) use ($sel): string {
     $t ??= ['title' => '', 'notes' => '', 'label' => '', 'prio' => 2, 'due_date' => '', 'due_time' => '', 'remind' => 'auto', 'rep' => '', 'nag' => ''];
     return '<div class="grid"><input name="title" placeholder="What needs doing" value="' . h($t['title']) . '" required maxlength="200">' . $sel(TK_PRIOS, 'prio', (string)$t['prio'])
-         . '<input type="date" name="due_date" value="' . h((string)$t['due_date']) . '"><input type="time" name="due_time" value="' . h(substr((string)$t['due_time'], 0, 5)) . '">'
+         . '<input type="date" name="due_date" value="' . h((string)$t['due_date']) . '" aria-label="Due date"><input type="time" name="due_time" value="' . h(substr((string)$t['due_time'], 0, 5)) . '" aria-label="Due time">'
          . $sel(['auto' => 'Remind: suggested'] + TK_REMINDS, 'remind', (string)$t['remind']) . $sel(TK_NAGS, 'nag', (string)$t['nag']) . $sel(TK_REPEATS, 'rep', (string)$t['rep'])
          . '<input name="label" placeholder="List (Work, Personal …)" value="' . h($t['label']) . '"></div><input name="notes" placeholder="Notes" value="' . h((string)$t['notes']) . '">';
 };

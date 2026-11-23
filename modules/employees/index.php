@@ -170,7 +170,7 @@ if (isset($_GET['import']) && $canEdit) {
     <form method="post" enctype="multipart/form-data" class="card"><?= csrf_field() ?><input type="hidden" name="a" value="check">
       <h2>Import from a file</h2>
       <p class="muted">CSV with a header row; columns are found by their titles (<a href="index.php?template=1">download the template</a>). Check writes nothing. Blank cells never wipe what is on record.</p>
-      <input type="file" name="file" accept=".csv,text/csv" required> <button class="btn sm">Check file</button></form>
+      <input type="file" name="file" accept=".csv,text/csv" required aria-label="File"> <button class="btn sm">Check file</button></form>
     <?php if ($imp && $imp['uid'] === $u['id']): $cnt = array_count_values(array_column($imp['plan'], 0)); ?>
     <form method="post" class="card"><?= csrf_field() ?><input type="hidden" name="a" value="import">
       <h2>Check result</h2>
@@ -218,9 +218,9 @@ ui_head('Employee master', $u, 'employees');
 <section class="card">
   <form class="row">
     <input name="q" value="<?= h($q) ?>" placeholder="Name, code or designation">
-    <select name="b"><option value="0">All branches</option><?php foreach ($brs as $b): if (!emp_in_scope($u, ['branch_id' => $b['id']])) continue; ?><option value="<?= (int)$b['id'] ?>"<?= $fb === (int)$b['id'] ? ' selected' : '' ?>><?= h($b['name']) ?></option><?php endforeach; ?></select>
-    <select name="d"><option value="">All departments</option><?php foreach ($depts as $d): ?><option<?= $fd === $d ? ' selected' : '' ?>><?= h($d) ?></option><?php endforeach; ?></select>
-    <select name="s"><?php foreach (['roll' => 'On the roll', 'notice' => 'On notice', 'left' => 'Left', 'all' => 'Everyone'] + ($canEdit ? ['off' => 'Switched off'] : []) as $k => $l): ?><option value="<?= $k ?>"<?= $fs === $k ? ' selected' : '' ?>><?= $l ?></option><?php endforeach; ?></select>
+    <select name="b" aria-label="Branch"><option value="0">All branches</option><?php foreach ($brs as $b): if (!emp_in_scope($u, ['branch_id' => $b['id']])) continue; ?><option value="<?= (int)$b['id'] ?>"<?= $fb === (int)$b['id'] ? ' selected' : '' ?>><?= h($b['name']) ?></option><?php endforeach; ?></select>
+    <select name="d" aria-label="Department"><option value="">All departments</option><?php foreach ($depts as $d): ?><option<?= $fd === $d ? ' selected' : '' ?>><?= h($d) ?></option><?php endforeach; ?></select>
+    <select name="s" aria-label="Status"><?php foreach (['roll' => 'On the roll', 'notice' => 'On notice', 'left' => 'Left', 'all' => 'Everyone'] + ($canEdit ? ['off' => 'Switched off'] : []) as $k => $l): ?><option value="<?= $k ?>"<?= $fs === $k ? ' selected' : '' ?>><?= $l ?></option><?php endforeach; ?></select>
     <button class="btn sm">Show</button>
     <?php if ($canEdit): ?><a class="btn sm" href="?new=1">+ New employee</a><a class="btn sm ghost" href="?import=1">Import</a><?php endif; ?>
     <a class="btn sm ghost" href="?csv=1">Download CSV</a>

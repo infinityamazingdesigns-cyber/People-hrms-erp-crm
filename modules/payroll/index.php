@@ -85,7 +85,7 @@ if ($view === 'csv') {
 ui_head('Payroll', $u, 'payroll');
 ?>
 <nav class="row"><?php foreach (['month' => 'Month', 'people' => 'People & CTC', 'loans' => 'Loans & advances', 'rules' => 'Rules', 'log' => 'Log'] as $k => $l): ?><a class="btn sm<?= $view === $k ? '' : ' ghost' ?>" href="?view=<?= $k ?>&ym=<?= $ym ?>"><?= $l ?></a><?php endforeach; ?>
-  <form class="row"><input type="hidden" name="view" value="<?= h($view) ?>"><input type="month" name="ym" value="<?= h($ym) ?>" onchange="this.form.submit()"></form></nav>
+  <form class="row"><input type="hidden" name="view" value="<?= h($view) ?>"><input type="month" name="ym" value="<?= h($ym) ?>" onchange="this.form.submit()" aria-label="Month"></form></nav>
 
 <?php if ($view === 'month'):
     $rows = pay_build($db, $ym, $u); $t = pay_totals($rows); $draft = $m['status'] === 'draft'; $open = (string)($_GET['code'] ?? ''); ?>

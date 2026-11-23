@@ -146,7 +146,7 @@ ui_head('Leave', $u, 'leave');
 
 <?php elseif ($view === 'balances'):
     $code = strtoupper((string)($_GET['code'] ?? '')); $people = emp_on_roll($db, $u); ?>
-<form class="card row"><input type="hidden" name="view" value="balances"><select name="code"><option value="">Pick a person…</option><?php foreach ($people as $p): ?><option value="<?= h($p['code']) ?>"<?= $p['code'] === $code ? ' selected' : '' ?>><?= h($p['name'] . ' · ' . $p['code']) ?></option><?php endforeach; ?></select><button class="btn sm">Show</button></form>
+<form class="card row"><input type="hidden" name="view" value="balances"><select name="code" aria-label="Employee"><option value="">Pick a person…</option><?php foreach ($people as $p): ?><option value="<?= h($p['code']) ?>"<?= $p['code'] === $code ? ' selected' : '' ?>><?= h($p['name'] . ' · ' . $p['code']) ?></option><?php endforeach; ?></select><button class="btn sm">Show</button></form>
 <?php if ($code !== '' && ($e = emp_by_code($db, $code)) && emp_in_scope($u, $e)): $b = lv_balance_for($db, $e);
     $adj = $db->prepare('SELECT a.*, u.name AS by_name FROM leave_adjust a LEFT JOIN users u ON u.id = a.by_user WHERE a.emp_code = ? ORDER BY a.id DESC LIMIT 50'); $adj->execute([$code]); ?>
 <section class="card"><h2><?= h($e['name']) ?> · <?= h(date('M Y', strtotime($b['year'][0])) . ' – ' . date('M Y', strtotime($b['year'][1]))) ?></h2>

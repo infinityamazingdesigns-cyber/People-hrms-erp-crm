@@ -68,7 +68,7 @@ $brCheck = fn(array $sel) => implode('', array_map(fn($b) => '<label class="tick
 ?>
 <section class="card">
   <div class="row"><a class="btn sm ghost" href="?y=<?= $prev ?>">‹</a><h2 style="margin:0"><?= h($yLabel) ?></h2><a class="btn sm ghost" href="?y=<?= $next ?>">›</a>
-  <?php if ($canEdit): ?><form class="row"><input type="hidden" name="y" value="<?= h($anchor) ?>"><select name="b" onchange="this.form.submit()"><option value="0">All branches</option><?php foreach ($brs as $b): ?><option value="<?= (int)$b['id'] ?>"<?= $fb === (int)$b['id'] ? ' selected' : '' ?>><?= h($b['name']) ?></option><?php endforeach; ?></select></form><?php elseif ($myBranch): ?><span class="muted">Holidays of <?= h($brName[$myBranch] ?? '') ?></span><?php endif; ?></div>
+  <?php if ($canEdit): ?><form class="row"><input type="hidden" name="y" value="<?= h($anchor) ?>"><select name="b" onchange="this.form.submit()" aria-label="Branch"><option value="0">All branches</option><?php foreach ($brs as $b): ?><option value="<?= (int)$b['id'] ?>"<?= $fb === (int)$b['id'] ? ' selected' : '' ?>><?= h($b['name']) ?></option><?php endforeach; ?></select></form><?php elseif ($myBranch): ?><span class="muted">Holidays of <?= h($brName[$myBranch] ?? '') ?></span><?php endif; ?></div>
   <table><thead><tr><th>Date</th><th>Day</th><th>Holiday</th><?php if ($canEdit): ?><th>Branches</th><th></th><?php endif; ?></tr></thead><tbody>
   <?php foreach ($rows as $h): $ids = hol_branch_ids((string)$h['branches']); ?>
     <tr<?= $h['active'] ? '' : ' style="opacity:.5"' ?>><td><?= h(date($fmt, strtotime($h['day']))) ?></td><td><?= h(date('D', strtotime($h['day']))) ?></td>
@@ -76,7 +76,7 @@ $brCheck = fn(array $sel) => implode('', array_map(fn($b) => '<label class="tick
     <?php if ($canEdit): ?><td><?= $ids ? h(implode(', ', array_map(fn($i) => $brName[$i] ?? '#' . $i, $ids))) : 'Every branch' ?></td>
     <td><?php if ($h['active']): ?><details><summary class="btn sm ghost">Edit</summary>
       <form method="post"><?= csrf_field() ?><input type="hidden" name="a" value="edit"><input type="hidden" name="id" value="<?= (int)$h['id'] ?>">
-        <div class="row"><input type="date" name="day" value="<?= h($h['day']) ?>"><input name="name" value="<?= h($h['name']) ?>"><select name="kind"><?php foreach (HOL_KINDS as $k => $l): ?><option value="<?= $k ?>"<?= $h['kind'] === $k ? ' selected' : '' ?>><?= $l ?></option><?php endforeach; ?></select></div>
+        <div class="row"><input type="date" name="day" value="<?= h($h['day']) ?>" aria-label="Day"><input name="name" value="<?= h($h['name']) ?>" aria-label="Name"><select name="kind" aria-label="Kind"><?php foreach (HOL_KINDS as $k => $l): ?><option value="<?= $k ?>"<?= $h['kind'] === $k ? ' selected' : '' ?>><?= $l ?></option><?php endforeach; ?></select></div>
         <p><?= $brCheck($ids) ?></p><button class="btn sm">Save</button></form>
       <form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="off"><input type="hidden" name="id" value="<?= (int)$h['id'] ?>"><input name="reason" placeholder="Reason" required><button class="btn sm ghost">Switch off</button></form></details><?php endif; ?></td><?php endif; ?></tr>
   <?php endforeach; ?>
@@ -99,15 +99,15 @@ $brCheck = fn(array $sel) => implode('', array_map(fn($b) => '<label class="tick
   <p>Branches (none ticked = every branch):<br><?= $brCheck([]) ?></p><button class="btn sm">Add</button></form>
 <section class="card"><h2>Import & copy</h2>
   <form method="post" enctype="multipart/form-data" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="check">
-    <input type="file" name="file" accept=".csv" required><button class="btn sm">Check file</button></form>
+    <input type="file" name="file" accept=".csv" required aria-label="File"><button class="btn sm">Check file</button></form>
   <p class="muted">CSV columns: Date, To (optional), Holiday, Branch (names, comma separated, or "All"), Type. Check writes nothing.</p>
   <form method="post"><?= csrf_field() ?><input type="hidden" name="a" value="copy"><button class="btn sm ghost">Copy <?= h($yLabel) ?> to next year</button></form>
 </section>
 </div>
 <form method="post" class="card"><?= csrf_field() ?><input type="hidden" name="a" value="pin"><h2>Follow another branch's holidays</h2>
   <p class="muted">For someone working from another office. Only holidays change — shift and weekly off stay with their own branch.</p>
-  <div class="row"><select name="code" required><option value="">Person…</option><?php foreach (emp_on_roll($db, $u) as $p): ?><option value="<?= h($p['code']) ?>"><?= h($p['name'] . ' · ' . $p['code']) ?></option><?php endforeach; ?></select>
-  <select name="branch"><option value="0">Their own branch (clear)</option><?php foreach ($brs as $b): ?><option value="<?= (int)$b['id'] ?>"><?= h($b['name']) ?></option><?php endforeach; ?></select>
+  <div class="row"><select name="code" required aria-label="Employee"><option value="">Person…</option><?php foreach (emp_on_roll($db, $u) as $p): ?><option value="<?= h($p['code']) ?>"><?= h($p['name'] . ' · ' . $p['code']) ?></option><?php endforeach; ?></select>
+  <select name="branch" aria-label="Branch"><option value="0">Their own branch (clear)</option><?php foreach ($brs as $b): ?><option value="<?= (int)$b['id'] ?>"><?= h($b['name']) ?></option><?php endforeach; ?></select>
   <label class="tick">until <input type="date" name="until"></label><input name="reason" placeholder="Reason"><button class="btn sm">Save</button></div>
   <?php $pins = $db->query('SELECT o.*, e.name FROM holiday_branch_override o LEFT JOIN employee e ON e.code = o.emp_code ORDER BY e.name')->fetchAll(); if ($pins): ?>
   <table><tbody><?php foreach ($pins as $p): ?><tr><td><?= h($p['name'] ?? $p['emp_code']) ?></td><td>→ <?= h($brName[$p['branch_id']] ?? '') ?></td><td><?= $p['until_day'] ? 'until ' . h($p['until_day']) : 'until further notice' ?></td><td class="muted"><?= h($p['reason']) ?></td></tr><?php endforeach; ?></tbody></table><?php endif; ?>

@@ -67,7 +67,7 @@ ui_head('Announcement board', $u, 'board'); ?>
 <?php if ($R['post']): ?>
 <details class="card"><summary><b>New post</b></summary>
 <form method="post" enctype="multipart/form-data"><?= csrf_field() ?><input type="hidden" name="a" value="post">
-<div class="grid"><select name="kind"><?php foreach (BOARD_KINDS as $k => $l): ?><option value="<?= $k ?>"><?= h($l) ?></option><?php endforeach; ?></select>
+<div class="grid"><select name="kind" aria-label="Kind"><?php foreach (BOARD_KINDS as $k => $l): ?><option value="<?= $k ?>"><?= h($l) ?></option><?php endforeach; ?></select>
 <input name="title" placeholder="Title" maxlength="140" required></div>
 <textarea name="body" rows="3" placeholder="Write the announcement" maxlength="4000"></textarea>
 <div class="row"><input type="file" name="files[]" multiple> <label><input type="checkbox" name="pinned" value="1"> Pin it</label> <button class="btn">Post</button></div>
@@ -123,12 +123,12 @@ ui_head('Announcement board', $u, 'board'); ?>
     $list = board_challenges($db, $u, $me, $today);
     $depts = $db->query("SELECT DISTINCT department FROM employee WHERE department <> '' AND active = 1 ORDER BY department")->fetchAll(PDO::FETCH_COLUMN); ?>
 <form method="post" class="card"><?= csrf_field() ?><input type="hidden" name="a" value="chal"><h2>New challenge</h2>
-<div class="grid"><input name="title" placeholder="Challenge" maxlength="90" required><input type="date" name="from_day" value="<?= $today ?>" required><input type="date" name="to_day" value="<?= $today ?>">
-<select name="photo"><?php foreach (BOARD_PHOTO_MODES as $k => $l): ?><option value="<?= $k ?>"><?= h($l) ?></option><?php endforeach; ?></select></div>
+<div class="grid"><input name="title" placeholder="Challenge" maxlength="90" required><input type="date" name="from_day" value="<?= $today ?>" required aria-label="From"><input type="date" name="to_day" value="<?= $today ?>" aria-label="To">
+<select name="photo" aria-label="Photo"><?php foreach (BOARD_PHOTO_MODES as $k => $l): ?><option value="<?= $k ?>"><?= h($l) ?></option><?php endforeach; ?></select></div>
 <input name="note" placeholder="Note (optional)" maxlength="300">
 <p class="muted">For: leave everything blank for everyone.</p>
-<div class="grid"><select name="branches[]" multiple size="4"><?php foreach (branches() as $b): ?><option value="<?= (int)$b['id'] ?>"><?= h($b['name']) ?></option><?php endforeach; ?></select>
-<select name="depts[]" multiple size="4"><?php foreach ($depts as $d): ?><option><?= h($d) ?></option><?php endforeach; ?></select>
+<div class="grid"><select name="branches[]" multiple size="4" aria-label="Branches"><?php foreach (branches() as $b): ?><option value="<?= (int)$b['id'] ?>"><?= h($b['name']) ?></option><?php endforeach; ?></select>
+<select name="depts[]" multiple size="4" aria-label="Departments"><?php foreach ($depts as $d): ?><option><?= h($d) ?></option><?php endforeach; ?></select>
 <input name="people" placeholder="Employee codes, comma separated"></div>
 <button class="btn">Set challenge</button></form>
 <div class="card"><h2>Challenges</h2><table><tr><th>Challenge</th><th>Days</th><th>For</th><th>Photo</th><th>Done by</th><th></th></tr>

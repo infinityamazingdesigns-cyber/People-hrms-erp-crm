@@ -125,7 +125,7 @@ ui_head('Expense claims', $u, 'claims'); ?>
 <?php elseif ($view === 'report' && ec_role($u, 'report', $set)):
     $from = preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)($_GET['from'] ?? '')) ? $_GET['from'] : date('Y-m-01', strtotime('-5 months')); $to = preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)($_GET['to'] ?? '')) ? $_GET['to'] : date('Y-m-d');
     $r = ec_report($db, $u, $from, $to); ?>
-<section class="card"><h2>Report</h2><form class="row"><input type="hidden" name="view" value="report"><input type="date" name="from" value="<?= h($from) ?>"><input type="date" name="to" value="<?= h($to) ?>"><button class="btn sm ghost">Show</button></form>
+<section class="card"><h2>Report</h2><form class="row"><input type="hidden" name="view" value="report"><input type="date" name="from" value="<?= h($from) ?>" aria-label="From"><input type="date" name="to" value="<?= h($to) ?>" aria-label="To"><button class="btn sm ghost">Show</button></form>
   <p><span class="pill">Claims <?= $r['claims'] ?></span> <span class="pill on">Paid <?= $M($r['paid']) ?></span> <span class="pill port">In process <?= $M($r['open']) ?></span></p>
   <div class="grid2"><table><thead><tr><th>Category</th><th>Allowed spending</th></tr></thead><tbody><?php foreach ($r['by_category'] as $k => $v): ?><tr><td><?= h($k) ?></td><td><?= $M($v) ?></td></tr><?php endforeach; ?></tbody></table>
   <table><thead><tr><th>Month</th><th>Allowed spending</th></tr></thead><tbody><?php foreach ($r['by_month'] as $k => $v): ?><tr><td><?= h(date('M Y', strtotime($k . '-01'))) ?></td><td><?= $M($v) ?></td></tr><?php endforeach; ?></tbody></table></div>

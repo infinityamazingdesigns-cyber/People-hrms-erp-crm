@@ -87,7 +87,7 @@ $lateTag = fn(array $d) => (!empty($d['corrected']) ? ' <span class="pill planne
 <section class="card">
   <form class="row"><input type="hidden" name="view" value="register">
     <label class="tick">From <input type="date" name="from" value="<?= h($from) ?>"></label><label class="tick">To <input type="date" name="to" value="<?= h($to) ?>"></label>
-    <?php if ($scope === null): ?><select name="b"><option value="0">All branches</option><?php foreach (branches() as $b): ?><option value="<?= (int)$b['id'] ?>"<?= $fb === (int)$b['id'] ? ' selected' : '' ?>><?= h($b['name']) ?></option><?php endforeach; ?></select><?php endif; ?>
+    <?php if ($scope === null): ?><select name="b" aria-label="Branch"><option value="0">All branches</option><?php foreach (branches() as $b): ?><option value="<?= (int)$b['id'] ?>"<?= $fb === (int)$b['id'] ? ' selected' : '' ?>><?= h($b['name']) ?></option><?php endforeach; ?></select><?php endif; ?>
     <input name="code" value="<?= h($one) ?>" placeholder="Employee code" size="10"><button class="btn sm">Show</button>
     <a class="btn sm ghost" href="?view=register&csv=1&from=<?= h($from) ?>&to=<?= h($to) ?>&b=<?= $fb ?>&code=<?= h(urlencode($one)) ?>">Download CSV</a></form>
   <?php if ($one !== '' && count($rows) === 1): $r = $rows[0]; ?>

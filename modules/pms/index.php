@@ -165,7 +165,7 @@ elseif ($view === 'console' && $hr): $rows = pms_console($db, $u, $per); $cnt = 
     $roll = $db->query('SELECT code, name FROM employee WHERE active = 1 AND (last_day IS NULL OR last_day >= CURDATE()) ORDER BY name')->fetchAll(PDO::FETCH_KEY_PAIR); ?>
 <div class="card"><h3>Holders</h3><table><?php foreach ($hold as $hd): ?><tr><td><?= h((string)$hd['name']) ?> <span class="muted"><?= h($hd['emp_code']) ?></span></td><td><?= (int)$hd['share'] ?>% from <?= h($hd['from_ym']) ?></td>
 <td><form method="post"><?= $hidden('unassign', (int)$s['id']) ?><input type="hidden" name="aid" value="<?= (int)$hd['id'] ?>"><button class="btn sm ghost">Unlink</button></form></td></tr><?php endforeach; ?></table>
-<?php if ($s['status'] === 'active'): ?><form method="post" class="row"><?= $hidden('assign', (int)$s['id']) ?><select name="code" required><option value="">Person on the roll</option><?php foreach ($roll as $c => $n): ?><option value="<?= h($c) ?>"><?= h($n . ' · ' . $c) ?></option><?php endforeach; ?></select>
+<?php if ($s['status'] === 'active'): ?><form method="post" class="row"><?= $hidden('assign', (int)$s['id']) ?><select name="code" required aria-label="Employee"><option value="">Person on the roll</option><?php foreach ($roll as $c => $n): ?><option value="<?= h($c) ?>"><?= h($n . ' · ' . $c) ?></option><?php endforeach; ?></select>
 <input name="share" value="100" style="width:60px" inputmode="numeric">% <input type="month" name="from_ym" value="<?= date('Y-m') ?>" required><button class="btn sm">Link</button></form><?php else: ?><p class="muted">Make the sheet active to link people.</p><?php endif; ?></div>
 <?php endif;
 
