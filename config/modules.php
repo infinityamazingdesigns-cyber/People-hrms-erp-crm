@@ -190,6 +190,10 @@ return [
         'about' => 'Laptops, phones, SIMs, office assets; allot / return; no deletion; yearly audit; IT accounts.',
         'roles' => ['SUPERADMIN', 'HRMANAGER', 'ITADMIN'], 'entry' => 'modules/assets/',
         'ref' => ['lib/asset_access.php', 'lib/asset_import.php', 'my_assets.php', 'lib/my_assets.php']],
+    'officereg' => ['name' => 'Office registers', 'group' => 'assets', 'needs' => ['employees'], 'status' => 'built',
+        'about' => 'Counted property each branch holds, and the office library: books, copies, lending and history.',
+        'roles' => ['SUPERADMIN', 'HRMANAGER'], 'entry' => 'modules/officereg/',
+        'ref' => ['office_reg.php', 'lib/office_reg.php']],
 
     /* ---------------- Communication ---------------- */
     'board' => ['name' => 'Announcement board', 'group' => 'comms', 'status' => 'built',

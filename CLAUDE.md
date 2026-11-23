@@ -61,6 +61,9 @@ A product for **any** organisation. Nothing in this repository may belong to one
   `lib/legal.php`): the organisation's own text, plain text only (`lg_html()` escapes everything), placeholders filled from
   `org()`; every save a new version in `legal_version` (none updated or deleted). Until saved, a neutral starting text
   marked as such — it names no organisation, country or law. Linked from every page footer. Tests LG01–LG07.
+- **Office registers** (`modules/officereg/`, `lib/office_reg.php`): counted property per branch and the office library
+  (copies, lending to people on the roll, history, past-due list). Branch scope as the employee list; nothing deleted
+  (taken off with a reason); imports check first and never overwrite. Tests OR01–OR09.
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 
 ## Organisation values come from settings
