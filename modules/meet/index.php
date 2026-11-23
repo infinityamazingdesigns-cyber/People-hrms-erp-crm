@@ -66,7 +66,7 @@ ui_head('Video meetings', $u, 'meet'); ?>
 <!-- pre-join -->
 <div id="vPre" hidden><div class="card pre">
   <div class="preview"><video id="preview" autoplay playsinline muted></video><div class="pre-off" id="preOff" hidden>Camera is off</div>
-    <div class="pre-ctrls"><button id="pMic" class="round" type="button"></button><button id="pCam" class="round" type="button"></button></div></div>
+    <div class="pre-ctrls"><button id="pMic" class="round" type="button" aria-label="Microphone"></button><button id="pCam" class="round" type="button" aria-label="Camera"></button></div></div>
   <div><div class="eyebrow">Ready to join</div><h2 id="preTitle">Meeting</h2><div class="mono muted" id="preCode"></div>
     <label>Transcript language for your voice <select id="preLang"><?php foreach ($langs as $k => $l): ?><option value="<?= h($k) ?>"><?= h($l) ?></option><?php endforeach; ?></select></label>
     <p class="muted small" id="preNote"></p>
@@ -101,7 +101,7 @@ ui_head('Video meetings', $u, 'meet'); ?>
           <label class="check"><input type="checkbox" id="setLock"> Lock (nobody new)</label>
           <label class="check"><input type="checkbox" id="setOpen"> Anyone with the code joins directly</label>
           <label class="check"><input type="checkbox" id="setMin"> Send the minutes when it ends</label></div>
-        <h4>Share</h4><div class="row"><span class="mono" id="codeInline"></span><button class="link" id="copyLink" type="button">Copy link</button><button class="link" id="copyLink2" type="button" hidden></button><a class="link" id="waShare" target="_blank" rel="noopener">WhatsApp</a></div>
+        <h4>Share</h4><div class="row"><span class="mono" id="codeInline"></span><button class="link" id="copyLink" type="button">Copy link</button><button class="link" id="copyLink2" type="button" aria-label="Copy the meeting link" hidden></button><a class="link" id="waShare" target="_blank" rel="noopener">WhatsApp</a></div>
       </section>
       <section class="pane" data-pane="transcript" hidden><div class="sh"><h4>Live transcript</h4><button class="link" id="dlTr" type="button">Download</button></div>
         <p class="muted small" id="ccNote"></p><ol class="tr" id="trList"></ol></section>
@@ -114,11 +114,11 @@ ui_head('Video meetings', $u, 'meet'); ?>
     </aside>
   </div>
   <footer class="ctrls">
-    <div class="cg"><button class="ctl" id="bMic" type="button"></button><button class="ctl" id="bCam" type="button"></button><button class="ctl" id="bShare" type="button"></button>
-      <button class="ctl" id="bCC" type="button"></button><button class="ctl" id="bHand" type="button"></button>
-      <span class="rpop"><button class="ctl" id="bReact" type="button"></button><span class="rmenu" id="rMenu" hidden></span></span></div>
-    <div class="cg"><button class="ctl" data-open="chat" type="button"></button><button class="ctl" data-open="people" type="button"></button><button class="ctl" data-open="minutes" type="button"></button></div>
-    <div class="cg"><button class="ctl end" id="bLeave" type="button"></button></div>
+    <div class="cg"><button class="ctl" id="bMic" type="button" aria-label="Mute"></button><button class="ctl" id="bCam" type="button" aria-label="Stop video"></button><button class="ctl" id="bShare" type="button" aria-label="Share screen"></button>
+      <button class="ctl" id="bCC" type="button" aria-label="Captions"></button><button class="ctl" id="bHand" type="button" aria-label="Raise hand"></button>
+      <span class="rpop"><button class="ctl" id="bReact" type="button" aria-label="React"></button><span class="rmenu" id="rMenu" hidden></span></span></div>
+    <div class="cg"><button class="ctl" data-open="chat" type="button" aria-label="Chat"></button><button class="ctl" data-open="people" type="button" aria-label="People"></button><button class="ctl" data-open="minutes" type="button" aria-label="Minutes"></button></div>
+    <div class="cg"><button class="ctl end" id="bLeave" type="button" aria-label="Leave"></button></div>
   </footer>
 </div>
 <!-- ended / minutes -->

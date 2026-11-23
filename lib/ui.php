@@ -58,6 +58,17 @@ function ui_head(string $title, ?array $u = null, string $active = ''): void {
 }
 
 function ui_foot(): void { ?>
+  <script>(function(){   // every wide table scrolls inside its own box (first column stays in view); module tabs keep the open one in view
+    function wrap(){document.querySelectorAll('main table').forEach(function(t){var p=t.parentElement;if(!p||p.classList.contains('tbl-wrap'))return;
+      var cs=getComputedStyle(p);if(/(auto|scroll)/.test(cs.overflowX)){if(p.children.length===1)p.classList.add('tbl-wrap');return;}var w=document.createElement('div');w.className='tbl-wrap';p.insertBefore(w,t);w.appendChild(t);});
+      document.querySelectorAll('.tbl-wrap').forEach(function(w){w.classList.toggle('scrolls',w.scrollWidth>w.clientWidth+2);});}
+    function names(){document.querySelectorAll('main td input:not([type=hidden]),main td select,main td textarea').forEach(function(i){   // a field in a table cell is named by its column and row
+      if((i.labels&&i.labels.length)||i.getAttribute('aria-label')||i.getAttribute('title'))return;var td=i.closest('td'),tr=td&&td.parentElement,tb=tr&&tr.closest('table');if(!tb)return;
+      var hr=tb.querySelector('thead tr')||tb.rows[0],col=hr&&hr!==tr?hr.children[td.cellIndex]:null,row=tr.children[0]!==td?tr.children[0]:null,t=function(e){return e?(e.innerText||e.textContent).replace(/\s+/g,' ').trim():'';};
+      var n=[t(col),t(row),i.getAttribute('placeholder')||''].filter(Boolean).join(' · ');if(n)i.setAttribute('aria-label',n.slice(0,80));});}
+    wrap();names();addEventListener('resize',wrap);document.addEventListener('toggle',wrap,true);
+    var on=document.querySelector('.main>nav.row:first-of-type .btn:not(.ghost)');if(on&&on.scrollIntoView)on.scrollIntoView({block:'nearest',inline:'center'});
+  })();</script>
   <footer class="foot">© <?= date('Y') ?> <?= h(wn_installed() ? (org('legal_name') ?: org('name')) : '') ?> · WorkNest HR <?= h(WN_VERSION) ?><?php if (wn_installed()): ?> · <a href="<?= wn_base() ?>privacy.php">Privacy</a> · <a href="<?= wn_base() ?>terms.php">Terms</a><?php endif; ?></footer>
 </main></div></body></html>
 <?php }

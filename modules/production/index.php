@@ -58,7 +58,7 @@ $monthBar = fn(string $v) => '<form class="card row" style="flex-wrap:wrap"><inp
 <?php if ($x['scope'] === []): ?><div class="card">No branch is ticked for your login on Users &amp; access, so no worker shows. Ask the Super Admin.</div><?php endif; ?>
 
 <?php if ($view === 'hours'): $H = prd_hours($db, $ym); $days = prd_days($ym); $act = array_filter($W, fn($w) => (int)$w['active'] || isset($H[$w['code']])); echo $monthBar('hours'); ?>
-<form method="post" class="card" style="overflow:auto"><?= csrf_field() ?><input type="hidden" name="a" value="hours"><input type="hidden" name="ym" value="<?= h($ym) ?>">
+<form method="post" class="card"><?= csrf_field() ?><input type="hidden" name="a" value="hours"><input type="hidden" name="ym" value="<?= h($ym) ?>">
 <table style="font-size:.85em"><tr><th>Worker</th><?php foreach ($days as $d): ?><th><?= (int)substr($d, 8) ?><br><span class="muted"><?= h(substr(date('D', strtotime($d)), 0, 2)) ?></span></th><?php endforeach; ?><th>Total</th></tr>
 <?php foreach ($act as $c => $w): $tot = array_sum($H[$c] ?? []); ?><tr><td><?= h($w['name']) ?><div class="muted"><?= h($c) ?></div></td>
 <?php foreach ($days as $d): $v = $H[$c][$d] ?? 0; ?><td><?php if ($d > $today || $locked || !$R['entry']): ?><?= $v ? h(prd_hrs($v)) : '' ?><?php else: ?><input name="h[<?= h($c) ?>][<?= $d ?>]" value="<?= $v ? h(prd_hrs($v)) : '' ?>" size="3" style="width:3.2em" inputmode="decimal"><?php endif; ?></td><?php endforeach; ?>
@@ -107,7 +107,7 @@ $monthBar = fn(string $v) => '<form class="card row" style="flex-wrap:wrap"><inp
 <?php if ($R['money']): $tot = array_sum(array_map(fn($r) => $r['pay']['net'], $rows)); $flags = array_sum(array_map(fn($r) => count(array_filter($r['pay']['flags'], fn($f) => $f[0] === 'bad')), $rows)); ?>
 <div class="card row" style="flex-wrap:wrap"><span><b><?= count($rows) ?></b> workers</span> · <span>Gross <b><?= h(prd_money(array_sum(array_map(fn($r) => $r['pay']['gross'], $rows)))) ?></b></span> · <span>Net <b><?= h(prd_money($tot)) ?></b> <?= h($cur) ?></span> · <span><?= $flags ? '<b>' . $flags . ' to fix</b>' : 'Nothing to fix' ?></span>
  · <a class="btn sm ghost" href="?view=csv&ym=<?= h($ym) ?>">Download CSV</a></div>
-<form method="post" class="card" style="overflow:auto"><?= csrf_field() ?><input type="hidden" name="a" value="inputs"><input type="hidden" name="ym" value="<?= h($ym) ?>">
+<form method="post" class="card"><?= csrf_field() ?><input type="hidden" name="a" value="inputs"><input type="hidden" name="ym" value="<?= h($ym) ?>">
 <table style="font-size:.85em"><tr><th>Worker</th><th>Days</th><th>Hours / OT</th><th>Pieces</th><th>Wages + OT + pieces</th><th>Other earnings</th><th>Advance recovery<br><span class="muted">outstanding</span></th><th><?= h($dl[0]) ?></th><th><?= h($dl[1]) ?></th><th><?= h($dl[2]) ?></th><th>Other ded.</th><th>Net</th></tr>
 <?php foreach ($rows as $c => $r): $p = $r['pay']; $in = fn($k) => $locked ? h(prd_money($p['in'][$k])) : '<input name="in[' . h($c) . '][' . $k . ']" value="' . ($p['in'][$k] ? h(prd_money($p['in'][$k])) : '') . '" size="6" style="width:5.5em">'; ?>
 <tr><td><?= h($r['name']) ?><div class="muted"><?= h($c) ?></div><?php foreach ($p['flags'] as [$k, $m]): ?><div style="color:<?= $k === 'bad' ? 'var(--bad,#b00)' : '#a60' ?>"><?= h($m) ?></div><?php endforeach; ?></td><td><?= $p['days'] ?></td><td><?= h(prd_hrs($p['worked'])) ?> / <?= h(prd_hrs($p['ot'])) ?></td><td><?= $p['pcs'] ?></td>
