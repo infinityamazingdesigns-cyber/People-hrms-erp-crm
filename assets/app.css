@@ -63,3 +63,25 @@ th,td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
 .hm-list form{margin:0}.hm-tick{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-size:12px;line-height:1;color:transparent}
 .hm-tick:hover,.hm-tick:focus{color:#1E7A43;border-color:#1E7A43}
 .hm-late{box-shadow:inset 3px 0 #C0392B;padding-left:6px!important}.hm-list li.hm-today{box-shadow:inset 3px 0 #E5A00D;padding-left:6px}
+
+/* Sign-in pictures (login.php, lib/login_slides.php) */
+body.lg{background:var(--brand)}
+body.lg .shell{position:relative;z-index:2;min-height:100vh}
+body.lg .main{background:transparent;min-height:100vh;display:flex;flex-direction:column}
+body.lg header.top{border:0;background:transparent;position:absolute;left:0;right:0;top:0}body.lg header.top h1{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.lg-visual{position:fixed;inset:0;z-index:0;background:linear-gradient(135deg,var(--brand),#0B0D1C)}
+.lg-visual::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(0,0,0,.05) 60%)}
+.lg-slide{position:absolute;inset:0;background:center/cover no-repeat;opacity:0;transition:opacity 1.2s ease}.lg-slide.on{opacity:1}
+.lg-cap{position:fixed;left:clamp(16px,4vw,56px);bottom:clamp(16px,5vh,56px);z-index:1;color:#fff;max-width:min(520px,60vw);display:flex;flex-direction:column;gap:4px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.lg-cap span:first-child{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}.lg-cap b{font-size:clamp(20px,2.6vw,32px);line-height:1.2}
+#lgDots{display:flex;gap:6px;margin-top:8px}.lg-dot{width:22px;height:4px;border:0;border-radius:2px;background:rgba(255,255,255,.45);cursor:pointer;padding:0}.lg-dot[aria-current=true]{background:var(--accent)}
+body.lg .main>form,body.lg .main>.flash{position:relative;z-index:3}
+body.lg form.login{box-shadow:0 20px 60px rgba(0,0,0,.35)}
+body.lg .main{justify-content:center;max-width:none;width:100%;box-sizing:border-box}body.lg .shell.no-side{display:block}
+body.lg-right .main>form.login{margin:auto clamp(16px,6vw,96px) auto auto}
+body.lg-right .main>form.narrow:not(.login){margin:0 clamp(16px,6vw,96px) 0 auto}
+body.lg-centre .main>form.login{margin:auto}
+body.lg-panel .main{padding:0}body.lg-panel .main>form.login{margin:0 0 0 auto;min-height:100vh;box-sizing:border-box;padding:40px 36px;max-width:420px;width:100%;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:0;display:flex;flex-direction:column;justify-content:center}
+body.lg-panel .main>form.narrow{margin-left:auto}
+@media (max-width:760px){.lg-cap{display:none}body.lg-right .main>form.login{margin:auto}body.lg-panel .main{padding:16px}body.lg-panel .main>form.login{min-height:0;border-radius:var(--r)}}
+@media (prefers-reduced-motion:reduce){.lg-slide{transition:none}}

@@ -64,8 +64,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $db) {
     }
 }
 $p = $db ? tfa_pending() : null;
+require_once __DIR__ . '/lib/login_slides.php';
+$lay = $db ? ls_layout() : 'plain';
+$slides = $db && $lay !== 'plain' ? ls_public($db) : [];
 ui_head('Sign in');
-?>
+if ($lay !== 'plain'): ?>
+<div class="lg-visual" id="lgStage" aria-hidden="true"></div>
+<div class="lg-cap" id="lgCaption"><span id="lgTag"></span><b id="lgTitle"></b><span id="lgText"></span><div id="lgDots"></div></div>
+<script type="application/json" id="lgSlides"><?= json_encode($slides, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
+<script>document.body.classList.add('lg', 'lg-<?= h($lay) ?>');</script>
+<script src="assets/login.js?v=<?= h(WN_VERSION) ?>" defer></script>
+<?php endif; ?>
 <?php if ($step === 'code' && $p): ?>
 <form method="post" class="card narrow login">
   <h2><?= h(org('name')) ?></h2>

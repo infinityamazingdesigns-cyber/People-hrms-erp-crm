@@ -53,6 +53,10 @@ A product for **any** organisation. Nothing in this repository may belong to one
   service, messages per login, nobody (Super Admin included) sees another login's. Secrets sealed, last 4 shown; mail
   read live and shown sandboxed; replies refused on a staging copy; WhatsApp replies only within 24 h. Every outside
   call through `ib_http()` (injectable). Tests IB01–IB18.
+- **Sign-in pictures** (`admin/login_pictures.php`, `lib/login_slides.php`, public `login_slide.php`): up to 5 pictures
+  behind organisation-settings rights, each re-drawn on the server (camera details dropped) and kept in the database;
+  only pictures on the list are served; removing switches one off. Layout `org('login_layout')`: plain (default) / card
+  right / centre / glass panel. Fields, CSRF, the code step and Lite are the same in every layout. Tests LS01–LS09.
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 
 ## Organisation values come from settings
