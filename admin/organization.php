@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ui_head('Organisation', $u, 'org');
 $days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 ?>
-<p><a href="login_pictures.php">Sign-in pictures — background pictures and layout of the sign-in page</a></p>
+<p><a href="login_pictures.php">Sign-in pictures — background pictures and layout of the sign-in page</a> · <a href="legal.php">Privacy notice &amp; terms</a></p>
 <form method="post" enctype="multipart/form-data" class="card">
   <h2>Profile</h2><?= csrf_field() ?><input type="hidden" name="a" value="profile">
   <div class="grid">

@@ -57,6 +57,10 @@ A product for **any** organisation. Nothing in this repository may belong to one
   behind organisation-settings rights, each re-drawn on the server (camera details dropped) and kept in the database;
   only pictures on the list are served; removing switches one off. Layout `org('login_layout')`: plain (default) / card
   right / centre / glass panel. Fields, CSRF, the code step and Lite are the same in every layout. Tests LS01–LS09.
+- **Privacy notice & terms** (public `privacy.php`, `terms.php`; editor `admin/legal.php` behind organisation settings;
+  `lib/legal.php`): the organisation's own text, plain text only (`lg_html()` escapes everything), placeholders filled from
+  `org()`; every save a new version in `legal_version` (none updated or deleted). Until saved, a neutral starting text
+  marked as such — it names no organisation, country or law. Linked from every page footer. Tests LG01–LG07.
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 
 ## Organisation values come from settings

@@ -58,6 +58,6 @@ function ui_head(string $title, ?array $u = null, string $active = ''): void {
 }
 
 function ui_foot(): void { ?>
-  <footer class="foot">© <?= date('Y') ?> <?= h(wn_installed() ? (org('legal_name') ?: org('name')) : '') ?> · WorkNest HR <?= h(WN_VERSION) ?></footer>
+  <footer class="foot">© <?= date('Y') ?> <?= h(wn_installed() ? (org('legal_name') ?: org('name')) : '') ?> · WorkNest HR <?= h(WN_VERSION) ?><?php if (wn_installed()): ?> · <a href="<?= wn_base() ?>privacy.php">Privacy</a> · <a href="<?= wn_base() ?>terms.php">Terms</a><?php endif; ?></footer>
 </main></div></body></html>
 <?php }

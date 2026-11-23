@@ -18,6 +18,7 @@ const ORG_DEFAULTS = [
     'color_accent' => '#F2B705',
     'logo' => '',                    // data: URL of the uploaded logo (PNG / SVG / WebP, ≤ 300 KB)
     'support_email' => '',
+    'privacy_contact' => '',          // shown on the privacy notice; blank = the HR support email
     'week_start' => 'Mon',
     'fy_start_month' => '4',         // financial / leave year start (1–12)
     'setup_done' => '0',
@@ -36,6 +37,7 @@ const ORG_FIELDS = [
     'color_primary' => ['label' => 'Primary colour', 'color' => true],
     'color_accent' => ['label' => 'Accent colour', 'color' => true],
     'support_email' => ['label' => 'HR support email', 'email' => true, 'max' => 160],
+    'privacy_contact' => ['label' => 'Privacy contact email (privacy notice; blank = HR support email)', 'email' => true, 'max' => 160],
     'week_start' => ['label' => 'Week starts on', 'choices' => ['Mon' => 'Monday', 'Sun' => 'Sunday', 'Sat' => 'Saturday']],
     'fy_start_month' => ['label' => 'Year starts in month', 'choices' => ['1' => 'January', '4' => 'April', '7' => 'July', '10' => 'October']],
 ];
