@@ -40,7 +40,7 @@ function lite_head(string $title, ?array $u): void {
 <style>body{font:15px/1.45 system-ui,sans-serif;margin:0;color:#111;background:#f5f6f8}header{background:<?= h($p) ?>;color:#fff;padding:10px 12px}header a{color:#fff}main{padding:10px;max-width:640px;margin:0 auto}
 .c{background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px;margin:0 0 10px}a{color:<?= h($p) ?>}.b{display:inline-block;background:<?= h($p) ?>;color:#fff;border:0;border-radius:6px;padding:9px 14px;font:inherit;text-decoration:none}
 .m{color:#666;font-size:13px}.e{background:#fde8e8;padding:8px;border-radius:6px}.o{background:#e7f6ea;padding:8px;border-radius:6px}input,select{font:inherit;width:100%;box-sizing:border-box;padding:7px;margin:2px 0 8px}
-table{width:100%;border-collapse:collapse}td{padding:4px 2px;border-bottom:1px solid #eee;vertical-align:top}nav a{margin-right:10px}@media(prefers-color-scheme:dark){body{background:#111;color:#eee}.c{background:#1c1c1c;border-color:#333}a{color:#9cc3ff}td{border-color:#333}.m{color:#aaa}}</style>
+table{width:100%;border-collapse:collapse}td{padding:4px 2px;border-bottom:1px solid #eee;vertical-align:top}nav{display:flex;flex-wrap:wrap;gap:2px 12px}body{overflow-wrap:anywhere}@media(prefers-color-scheme:dark){body{background:#111;color:#eee}.c{background:#1c1c1c;border-color:#333}a{color:#9cc3ff}td{border-color:#333}.m{color:#aaa}}</style>
 </head><body><header><b><?= h(org('name')) ?></b> · <?= h($title) ?><?php if ($u): ?><br><nav><a href="<?= $b ?>modules/lite/">Home</a><?php foreach (lite_links($u) as [$l, $href]): ?><a href="<?= $b . $href ?>"><?= h($l) ?></a><?php endforeach; ?></nav><?php endif; ?></header><main>
 <?php if ($f): ?><p class="<?= $f[0] === 'err' ? 'e' : 'o' ?>"><?= h($f[1]) ?></p><?php endif;
 }
