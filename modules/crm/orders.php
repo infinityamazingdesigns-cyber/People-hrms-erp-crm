@@ -151,7 +151,7 @@ elseif ($view === 'order' || $view === 'edit'):
 
 <?php elseif ($view === 'sameday'): $from = (string)($_GET['from'] ?? date('Y-m-01')); $to = (string)($_GET['to'] ?? date('Y-m-d'));
     try { $sd = so_sameday($db, $u, $from, $to); } catch (RuntimeException $e) { $sd = null; flash($e->getMessage(), 'err'); } ?>
-<form class="card row"><input type="hidden" name="view" value="sameday">From <input type="date" name="from" value="<?= h($from) ?>"> to <input type="date" name="to" value="<?= h($to) ?>"><button class="btn sm">Show</button></form>
+<form class="card row"><input type="hidden" name="view" value="sameday">From <input type="date" name="from" value="<?= h($from) ?>" aria-label="From"> to <input type="date" name="to" value="<?= h($to) ?>" aria-label="To"><button class="btn sm">Show</button></form>
 <?php if ($sd): $t = $sd['total']; ?><div class="card"><h2>Same-day dispatch: <?= $t['score'] === null ? '—' : $t['score'] . '%' ?></h2>
 <p><?= $t['punched'] ?> orders punched · <?= $t['same_day'] ?> dispatched the same day · <?= $t['next_day'] ?> the next day · <?= $t['customer_hold'] ?> held by the customer (left out) · <?= $t['internal_hold'] ?> held by us · <?= $t['late'] ?> late<?= $t['median_min'] !== null ? ' · median ' . $t['median_min'] . ' min to dispatch' : '' ?></p>
 <p class="muted">An order counts for the day it was submitted<?= $sd['cutoff'] !== '' ? ' (after ' . h($sd['cutoff']) . ' it counts for the next day)' : '' ?>; it is same-day when its first consignment left that day.</p>

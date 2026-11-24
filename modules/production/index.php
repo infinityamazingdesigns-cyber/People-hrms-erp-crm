@@ -53,7 +53,7 @@ if ($view === 'csv' && $R['money']) {
 }
 ui_head('Production workers', $u, 'production');
 $tab = fn(string $k, string $l) => '<a class="btn sm' . ($view === $k ? '' : ' ghost') . '" href="?view=' . $k . '&ym=' . $ym . '">' . h($l) . '</a> ';
-$monthBar = fn(string $v) => '<form class="card row" style="flex-wrap:wrap"><input type="hidden" name="view" value="' . $v . '">Month <input type="month" name="ym" value="' . h($ym) . '"><button class="btn sm">Show</button>' . ($locked ? ' <b>Confirmed — locked</b>' : '') . '</form>'; ?>
+$monthBar = fn(string $v) => '<form class="card row" style="flex-wrap:wrap"><input type="hidden" name="view" value="' . $v . '">Month <input type="month" name="ym" value="' . h($ym) . '" aria-label="Month"><button class="btn sm">Show</button>' . ($locked ? ' <b>Confirmed — locked</b>' : '') . '</form>'; ?>
 <nav class="row" style="flex-wrap:wrap"><?= $tab('hours', 'Hours') . $tab('pieces', 'Piece work') . $tab('workers', 'Workers') . ($R['money'] ? $tab('pay', 'Pay run') . $tab('adv', 'Advances') . $tab('rates', 'Piece rates') : '') . ($R['money'] ? '' : $tab('pay', 'Month totals')) . ($isAdmin ? $tab('settings', 'Settings') . $tab('log', 'Change log') : '') ?></nav>
 <?php if ($x['scope'] === []): ?><div class="card">No branch is ticked for your login on Users &amp; access, so no worker shows. Ask the Super Admin.</div><?php endif; ?>
 
@@ -100,7 +100,7 @@ $monthBar = fn(string $v) => '<form class="card row" style="flex-wrap:wrap"><inp
 <label>Paid by <select name="paid_by"><?= $opts(PRD_PAID_BY, (string)$e['paid_by']) ?></select></label><label>Note <input name="note" value="<?= h((string)$e['note']) ?>"></label></div>
 <label><input type="checkbox" name="active" value="1"<?= (int)($e['active'] ?? 1) ? ' checked' : '' ?>> On the register</label> <input name="off_reason" placeholder="Why switched off (when unticking)"> <label><input type="checkbox" name="same_ok" value="1"> A different person</label><br><button class="btn sm">Save</button></form><?php endif; ?>
 <?php if ($R['money']): $hist = prd_rate_hist($db)[$c] ?? []; ?><div class="card"><h3>Hourly rate</h3><table><tr><th>From</th><th>Per hour</th></tr><?php foreach (array_reverse($hist, true) as $from => $m): ?><tr><td><?= h($from) ?></td><td><?= h($cur . ' ' . prd_money($m)) ?></td></tr><?php endforeach; ?><?php if (!$hist): ?><tr><td colspan="2" class="muted">No rate yet — hours cannot be paid.</td></tr><?php endif; ?></table>
-<form method="post" class="row" style="flex-wrap:wrap"><?= csrf_field() ?><input type="hidden" name="a" value="rate"><input type="hidden" name="code" value="<?= h($c) ?>"><input type="date" name="from" required><input name="amount" placeholder="Per hour" required size="8"><input name="note" placeholder="Note"><button class="btn sm">Add rate</button></form>
+<form method="post" class="row" style="flex-wrap:wrap"><?= csrf_field() ?><input type="hidden" name="a" value="rate"><input type="hidden" name="code" value="<?= h($c) ?>"><input type="date" name="from" required aria-label="From"><input name="amount" placeholder="Per hour" required size="8"><input name="note" placeholder="Note"><button class="btn sm">Add rate</button></form>
 <p class="muted">Each day is paid at the rate in force that day. A rate inside a confirmed month needs the month reopened.</p></div><?php endif; ?>
 
 <?php elseif ($view === 'pay'): $rows = prd_month_rows($db, $x, $ym); $I = $R['money'] ? prd_inputs($db, $ym) : []; $dl = $set['ded_labels']; echo $monthBar('pay'); ?>
@@ -127,9 +127,9 @@ $monthBar = fn(string $v) => '<form class="card row" style="flex-wrap:wrap"><inp
 
 <?php elseif ($view === 'rates' && $R['money']): $T = prd_piece_types($db); ?>
 <div class="card"><h3>Piece-rate types</h3><table><tr><th>Type</th><th>Rates (from → per piece)</th><th></th></tr>
-<?php foreach ($T as $id => $t): ?><tr<?= (int)$t['active'] ? '' : ' class="muted"' ?>><td><form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="type"><input type="hidden" name="id" value="<?= $id ?>"><input name="name" value="<?= h($t['name']) ?>" size="12"><label><input type="checkbox" name="active" value="1"<?= (int)$t['active'] ? ' checked' : '' ?>> on</label><button class="btn sm ghost">Save</button></form></td>
+<?php foreach ($T as $id => $t): ?><tr<?= (int)$t['active'] ? '' : ' class="muted"' ?>><td><form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="type"><input type="hidden" name="id" value="<?= $id ?>"><input name="name" value="<?= h($t['name']) ?>" size="12" aria-label="Name"><label><input type="checkbox" name="active" value="1"<?= (int)$t['active'] ? ' checked' : '' ?>> on</label><button class="btn sm ghost">Save</button></form></td>
 <td><?= h(implode(' · ', array_map(fn($f, $m) => $f . ' → ' . prd_money($m), array_keys($t['hist']), $t['hist'])) ?: 'No rate yet') ?></td>
-<td><form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="prate"><input type="hidden" name="id" value="<?= $id ?>"><input type="date" name="from" required><input name="amount" placeholder="Per piece" size="6" required><button class="btn sm">Add rate</button></form></td></tr><?php endforeach; ?></table>
+<td><form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="prate"><input type="hidden" name="id" value="<?= $id ?>"><input type="date" name="from" required aria-label="From"><input name="amount" placeholder="Per piece" size="6" required><button class="btn sm">Add rate</button></form></td></tr><?php endforeach; ?></table>
 <form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="type"><input type="hidden" name="active" value="1"><input name="name" placeholder="New type of work" required><button class="btn sm">Add type</button></form>
 <p class="muted">Pieces are paid at the type's rate in force on the day they were made.</p></div>
 

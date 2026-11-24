@@ -63,7 +63,7 @@ ui_head('Office registers', $u, 'officereg');
 <nav class="row" style="margin-bottom:10px">
   <?php foreach (['property' => 'Property', 'books' => 'Library', 'import' => 'Import', 'off' => 'Taken off'] as $k => $l): ?><a class="btn sm<?= $tab === $k ? '' : ' ghost' ?>" href="?t=<?= $k ?>"><?= $l ?></a><?php endforeach; ?>
   <?php if (count($brs) > 1 && in_array($tab, ['property', 'books'], true)): ?>
-  <form method="get" class="row" style="margin-left:auto"><input type="hidden" name="t" value="<?= h($tab) ?>"><select name="b" onchange="this.form.submit()"><option value="">Every branch</option><?php foreach ($brs as $b): ?><option value="<?= (int)$b['id'] ?>"<?= $fb === (int)$b['id'] ? ' selected' : '' ?>><?= h($b['name']) ?></option><?php endforeach; ?></select></form>
+  <form method="get" class="row" style="margin-left:auto"><input type="hidden" name="t" value="<?= h($tab) ?>"><select name="b" onchange="this.form.submit()" aria-label="Branch"><option value="">Every branch</option><?php foreach ($brs as $b): ?><option value="<?= (int)$b['id'] ?>"<?= $fb === (int)$b['id'] ? ' selected' : '' ?>><?= h($b['name']) ?></option><?php endforeach; ?></select></form>
   <?php endif; ?>
 </nav>
 
@@ -75,7 +75,7 @@ ui_head('Office registers', $u, 'officereg');
     <tr><td><?= h($p['no']) ?></td><td><?= h($p['name']) ?></td><td><?= h($p['labels']) ?></td><td><?= (int)$p['qty'] ?></td><td><?= h($p['place']) ?></td><td><?= h($bName[$p['branch_id']] ?? '') ?></td><td><?= h($p['notes']) ?></td>
       <td><details><summary>Change</summary>
         <form method="post" class="grid"><?= csrf_field() ?><input type="hidden" name="a" value="prop"><input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
-          <input name="no" value="<?= h($p['no']) ?>" placeholder="No" maxlength="10"><input name="name" value="<?= h($p['name']) ?>" required maxlength="160"><input name="labels" value="<?= h($p['labels']) ?>" placeholder="Labels" maxlength="120">
+          <input name="no" value="<?= h($p['no']) ?>" placeholder="No" maxlength="10"><input name="name" value="<?= h($p['name']) ?>" required maxlength="160" aria-label="Name"><input name="labels" value="<?= h($p['labels']) ?>" placeholder="Labels" maxlength="120">
           <input name="qty" type="number" min="1" value="<?= (int)$p['qty'] ?>"><input name="place" value="<?= h($p['place']) ?>" placeholder="Where / with whom" maxlength="160"><?= $brSel('branch_id', $p['branch_id']) ?>
           <input name="notes" value="<?= h($p['notes']) ?>" placeholder="Notes" maxlength="500"><button class="btn sm">Save</button></form>
         <form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="off"><input type="hidden" name="what" value="prop"><input type="hidden" name="id" value="<?= (int)$p['id'] ?>"><input name="reason" placeholder="Why off the register" required maxlength="200"><button class="btn sm ghost">Take off</button></form>
@@ -99,7 +99,7 @@ ui_head('Office registers', $u, 'officereg');
         <form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="back"><input type="hidden" name="issue" value="<?= (int)$i['id'] ?>"><input type="date" name="date" value="<?= $today ?>" max="<?= $today ?>"><button class="btn sm ghost">Back</button></form><?php endforeach; ?></td>
       <td><details><summary>More</summary>
         <?php if ($b['free'] > 0): ?><form method="post" class="grid"><?= csrf_field() ?><input type="hidden" name="a" value="lend"><input type="hidden" name="id" value="<?= (int)$b['id'] ?>">
-          <select name="code"><option value="">Someone on the roll…</option><?php foreach ($roll as $e): ?><option value="<?= h($e['code']) ?>"><?= h($e['name']) ?></option><?php endforeach; ?></select>
+          <select name="code" aria-label="Employee"><option value="">Someone on the roll…</option><?php foreach ($roll as $e): ?><option value="<?= h($e['code']) ?>"><?= h($e['name']) ?></option><?php endforeach; ?></select>
           <input name="person" placeholder="…or type a name" maxlength="120"><label>Given on <input type="date" name="date" value="<?= $today ?>" max="<?= $today ?>"></label><label>Back by <input type="date" name="due"></label><button class="btn sm">Give</button></form><?php endif; ?>
         <form method="post" class="grid"><?= csrf_field() ?><input type="hidden" name="a" value="book"><input type="hidden" name="id" value="<?= (int)$b['id'] ?>">
           <input name="title" value="<?= h($b['title']) ?>" required maxlength="160"><input name="type" value="<?= h($b['type']) ?>" placeholder="Type" maxlength="40"><input name="author" value="<?= h($b['author']) ?>" placeholder="Author" maxlength="120">
@@ -120,9 +120,9 @@ ui_head('Office registers', $u, 'officereg');
 <div class="card"><h2>Import a list</h2>
   <p class="note">CSV or Excel (.xlsx). Columns are found by their titles — property: Name / Item, Labels, Quantity, Place, Notes, Branch; books: Title / Book name, Type, Author, Language, Copies, Branch. Check writes nothing; a line already on the register (same branch and name) is skipped, never overwritten. The file is not kept.</p>
   <form method="post" enctype="multipart/form-data" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="check">
-    <select name="kind"><option value="prop">Property list</option><option value="book">Book list</option></select>
+    <select name="kind" aria-label="Kind"><option value="prop">Property list</option><option value="book">Book list</option></select>
     <?= $brSel('branch_id', 0) ?><span class="note">(branch when the file has none)</span>
-    <input type="file" name="file" accept=".csv,.xlsx" required><button class="btn">Check</button></form>
+    <input type="file" name="file" accept=".csv,.xlsx" required aria-label="File"><button class="btn">Check</button></form>
 </div>
 <?php if ($P && $P['uid'] === (int)$u['id'] && empty($P['plan']['error'])): $pl = $P['plan']; $kk = $P['kind'] === 'book' ? 'title' : 'name'; ?>
 <div class="card"><h2>Checked <small><?= $pl['new'] ?> new · <?= $pl['same'] ?> already there · <?= $pl['bad'] ?> not readable</small></h2>

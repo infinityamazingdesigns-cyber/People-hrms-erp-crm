@@ -120,7 +120,7 @@ $st = fn($l) => '<span class="pill ' . (in_array($l['status'], ['issued', 'appro
   <label>Employee <select name="emp_code"><option value="">— not an employee yet —</option><?php foreach (emp_on_roll($db, $u) as $p): ?><option value="<?= h($p['code']) ?>"><?= h($p['name'] . ' · ' . $p['code']) ?></option><?php endforeach; ?></select></label>
   <label>…or name <input name="person" maxlength="160"></label><label>Email <input type="email" name="email"></label></div><button class="btn sm">Make the letter</button></form>
 <section class="card"><h2>Letters</h2>
-  <form class="row"><select name="st" onchange="this.form.submit()"><option value="">Every status</option><?php foreach (LET_STATUS as $k => $v): ?><option value="<?= $k ?>"<?= ($_GET['st'] ?? '') === $k ? ' selected' : '' ?>><?= h($v) ?></option><?php endforeach; ?></select></form>
+  <form class="row"><select name="st" onchange="this.form.submit()" aria-label="Status"><option value="">Every status</option><?php foreach (LET_STATUS as $k => $v): ?><option value="<?= $k ?>"<?= ($_GET['st'] ?? '') === $k ? ' selected' : '' ?>><?= h($v) ?></option><?php endforeach; ?></select></form>
   <table><thead><tr><th>Ref</th><th>Type</th><th>Person</th><th>Status</th><th></th></tr></thead><tbody><?php foreach ($all as $l): ?><tr><td><?= h((string)$l['ref']) ?></td><td><?= h($l['tname']) ?></td><td><?= h($l['person']) ?></td><td><?= $st($l) ?></td><td><a href="?id=<?= (int)$l['id'] ?>">Open</a></td></tr><?php endforeach; ?>
   <?= $all ? '' : '<tr><td colspan="5" class="muted">No letters yet.</td></tr>' ?></tbody></table></section>
 <?php else: ?><section class="card"><p>Letters waiting for your approval show under <b>To approve</b>.</p></section><?php endif; ?>

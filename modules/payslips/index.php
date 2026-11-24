@@ -72,7 +72,7 @@ if (is_superadmin($u)): $set = ps_settings(); ?>
 <form method="post" class="card"><?= csrf_field() ?><input type="hidden" name="a" value="who"><h2>Who sees their own payslips</h2>
   <p><label class="tick"><input type="radio" name="who" value="everyone"<?= $set['who'] === 'everyone' ? ' checked' : '' ?>> Everyone linked to an employee record</label>
   <label class="tick"><input type="radio" name="who" value="chosen"<?= $set['who'] === 'chosen' ? ' checked' : '' ?>> Only people allowed on Admin → Modules → Payslips</label></p><button class="btn sm">Save</button></form>
-<form method="post" class="card row"><?= csrf_field() ?><input type="hidden" name="a" value="reset"><select name="uid" required><option value="">Reset a forgotten PIN for…</option>
+<form method="post" class="card row"><?= csrf_field() ?><input type="hidden" name="a" value="reset"><select name="uid" required aria-label="Login"><option value="">Reset a forgotten PIN for…</option>
   <?php foreach ($db->query('SELECT u.id, u.name FROM users u JOIN pay_pin p ON p.user_id = u.id ORDER BY u.name') as $r) if ((int)$r['id'] !== $uid): ?><option value="<?= (int)$r['id'] ?>"><?= h($r['name']) ?></option><?php endif; ?></select><button class="btn sm ghost">Reset PIN</button></form>
 <?php endif;
 ui_foot();

@@ -80,7 +80,7 @@ $reviewShow = function (array $r) use ($fmt) {
 <section class="card"><h2><?= $m ?>-month check-in <small class="muted">due <?= h($fmt($due)) ?></small></h2>
   <?php if ($row): ?><p><span class="pill <?= $row['status'] === 'on_track' ? 'on' : 'port' ?>"><?= h(PR_CHECK_STATUS[$row['status']]) ?></span> <?= h($row['note']) ?><?= $row['actions'] !== '' ? ' · <i>' . h($row['actions']) . '</i>' : '' ?> <small class="muted">— <?= h($row['by_name'] . ', ' . $fmt($row['done_at'])) ?></small></p><?php endif; ?>
   <?php if (!$dec && pr_open_by($due, (int)$set['check_early'], date('Y-m-d'))): ?><form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="checkin"><input type="hidden" name="code" value="<?= h($code) ?>"><input type="hidden" name="month" value="<?= $m ?>">
-    <select name="status" required><option value="">—</option><?php foreach (PR_CHECK_STATUS as $k => $l): ?><option value="<?= $k ?>"><?= h($l) ?></option><?php endforeach; ?></select>
+    <select name="status" required aria-label="Status"><option value="">—</option><?php foreach (PR_CHECK_STATUS as $k => $l): ?><option value="<?= $k ?>"><?= h($l) ?></option><?php endforeach; ?></select>
     <input name="note" placeholder="How it is going" required maxlength="1500"><input name="actions" placeholder="Agreed actions" maxlength="1000"><button class="btn sm"><?= $row ? 'Record again' : 'Save' ?></button></form>
   <?php elseif (!$row): ?><p class="muted">Opens <?= h($fmt(date('Y-m-d', strtotime($due . ' -' . $set['check_early'] . ' days')))) ?>.</p><?php endif; ?></section>
 <?php endforeach; ?>

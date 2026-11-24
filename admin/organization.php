@@ -76,9 +76,9 @@ $days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 <table><thead><tr><th>Code</th><th>Name</th><th>Other spellings</th><th>State</th><th>Shift</th><th>Weekly off</th><th>Office location (lat, lng, radius m)</th><th>Active</th><th></th></tr></thead><tbody>
 <?php foreach (array_merge(branches(false), [['id' => 0, 'code' => '', 'name' => '', 'aliases' => '', 'state' => '', 'city' => '', 'address' => '', 'shift_start' => '', 'shift_end' => '', 'weekoffs' => 'Sun', 'active' => 1, 'lat' => null, 'lng' => null, 'radius_m' => null]]) as $b): $fid = 'b' . $b['id']; ?>
 <tr><td><input form="<?= $fid ?>" name="code" value="<?= h($b['code']) ?>" size="6" placeholder="New"></td>
-<td><input form="<?= $fid ?>" name="name" value="<?= h($b['name']) ?>"></td>
+<td><input form="<?= $fid ?>" name="name" value="<?= h($b['name']) ?>" aria-label="Name"></td>
 <td><input form="<?= $fid ?>" name="aliases" value="<?= h($b['aliases']) ?>" placeholder="comma separated"></td>
-<td><input form="<?= $fid ?>" name="state" value="<?= h($b['state']) ?>" size="10"></td>
+<td><input form="<?= $fid ?>" name="state" value="<?= h($b['state']) ?>" size="10" aria-label="State"></td>
 <td><input form="<?= $fid ?>" name="shift_start" type="time" value="<?= h(substr((string)$b['shift_start'], 0, 5)) ?>"> – <input form="<?= $fid ?>" name="shift_end" type="time" value="<?= h(substr((string)$b['shift_end'], 0, 5)) ?>"></td>
 <td class="days"><?php foreach ($days as $d): ?><label><input form="<?= $fid ?>" type="checkbox" name="weekoffs[]" value="<?= $d ?>"<?= in_array($d, explode(',', (string)$b['weekoffs']), true) ? ' checked' : '' ?>><?= $d[0] ?></label><?php endforeach; ?></td>
 <td><input form="<?= $fid ?>" name="lat" value="<?= h((string)$b['lat']) ?>" size="8" placeholder="lat"> <input form="<?= $fid ?>" name="lng" value="<?= h((string)$b['lng']) ?>" size="8" placeholder="lng"> <input form="<?= $fid ?>" name="radius_m" value="<?= h((string)$b['radius_m']) ?>" size="4" placeholder="200"></td>

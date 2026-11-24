@@ -90,9 +90,9 @@ $tabs = ['mine' => 'My reporting line', 'all' => 'Whole chart'] + ($holder ? ['p
 <?php if ($canEdit): $roll = emp_on_roll($db, $u, $today); ?>
 <form method="post" class="card row"><?= csrf_field() ?><input type="hidden" name="a" value="move">
   <b>Move someone</b>
-  <select name="code" required><option value="">Person…</option><?php foreach ($roll as $p): ?><option value="<?= h($p['code']) ?>"><?= h($p['name'] . ' · ' . $p['code']) ?></option><?php endforeach; ?></select>
+  <select name="code" required aria-label="Employee"><option value="">Person…</option><?php foreach ($roll as $p): ?><option value="<?= h($p['code']) ?>"><?= h($p['name'] . ' · ' . $p['code']) ?></option><?php endforeach; ?></select>
   <span>now reports to</span>
-  <select name="manager"><option value="">Nobody (top of the chart)</option><?php foreach ($roll as $p): ?><option value="<?= h($p['code']) ?>"><?= h($p['name'] . ' · ' . $p['code']) ?></option><?php endforeach; ?></select>
+  <select name="manager" aria-label="Reports to"><option value="">Nobody (top of the chart)</option><?php foreach ($roll as $p): ?><option value="<?= h($p['code']) ?>"><?= h($p['name'] . ' · ' . $p['code']) ?></option><?php endforeach; ?></select>
   <button class="btn sm">Move</button></form>
 <?php endif; ?>
 <script>

@@ -54,9 +54,9 @@ Tick which roles may use each module; per-person exceptions are at the foot of t
 
 <section class="card"><h2>Per-person exceptions</h2>
 <form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="person">
-  <select name="uid" required><option value="">Person…</option><?php foreach ($people as $p): ?><option value="<?= (int)$p['id'] ?>"><?= h($p['name'] . ' (' . $p['username'] . ')') ?></option><?php endforeach; ?></select>
-  <select name="key" required><option value="">Module…</option><?php foreach (module_catalog() as $k => $m): ?><option value="<?= h($k) ?>"><?= h($m['name']) ?></option><?php endforeach; ?></select>
-  <select name="mode"><option value="allow">Allow</option><option value="deny">Deny</option><option value="">As their role (remove exception)</option></select>
+  <select name="uid" required aria-label="Login"><option value="">Person…</option><?php foreach ($people as $p): ?><option value="<?= (int)$p['id'] ?>"><?= h($p['name'] . ' (' . $p['username'] . ')') ?></option><?php endforeach; ?></select>
+  <select name="key" required aria-label="Module"><option value="">Module…</option><?php foreach (module_catalog() as $k => $m): ?><option value="<?= h($k) ?>"><?= h($m['name']) ?></option><?php endforeach; ?></select>
+  <select name="mode" aria-label="Allow or deny"><option value="allow">Allow</option><option value="deny">Deny</option><option value="">As their role (remove exception)</option></select>
   <input name="reason" placeholder="Reason" maxlength="300">
   <button class="btn sm">Save</button></form>
 <table><thead><tr><th>Person</th><th>Module</th><th>Exception</th><th>Reason</th><th>Set</th></tr></thead><tbody>
