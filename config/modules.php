@@ -175,6 +175,10 @@ return [
         'about' => 'Rent, utilities and other branch bills paid from head office; repeating bills.',
         'roles' => ['HRMANAGER', 'CEO', 'ACCOUNTS', 'SUPERADMIN'], 'entry' => 'modules/vendorbills/', 'ref' => ['vendor_bills.php', 'lib/vendor_pay.php']],
 
+    'finance' => ['name' => 'Finance (books)', 'group' => 'pay', 'status' => 'built',
+        'about' => 'Tax registrations, sealed bank accounts, approval rule; ledgers, vouchers with maker-checker, reversal, lock, day book, trial balance.',
+        'roles' => ['SUPERADMIN', 'CEO', 'ACCOUNTS'], 'entry' => 'modules/finance/', 'ref' => ['finance.php', 'lib/finance.php', 'lib/fin_ledger.php']],
+
     /* ---------------- Performance & conduct ---------------- */
     'pms' => ['name' => 'Performance (KRA)', 'group' => 'perform', 'needs' => ['employees'], 'status' => 'built',
         'about' => 'Role sheets with weighted KRAs and KPIs, holders, self-evaluation, manager review, HR close, console + CSV.',

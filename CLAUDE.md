@@ -64,6 +64,9 @@ A product for **any** organisation. Nothing in this repository may belong to one
 - **Office registers** (`modules/officereg/`, `lib/office_reg.php`): counted property per branch and the office library
   (copies, lending to people on the roll, history, past-due list). Branch scope as the employee list; nothing deleted
   (taken off with a reason); imports check first and never overwrite. Tests OR01–OR09.
+- **Finance (books)** (`modules/finance/`, `lib/finance.php`): tax registrations by the rule pack, sealed bank accounts,
+  Finance team, approval rule; ledgers, vouchers with insert-only lines, numbers at posting, maker-checker (nobody
+  decides their own), reversal never edit, books start + lock, restricted ledgers. Money in minor units. Tests FIN01–FIN13.
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 
 ## Organisation values come from settings
