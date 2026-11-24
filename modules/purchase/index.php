@@ -4,6 +4,7 @@
 declare(strict_types=1);
 require __DIR__ . '/../../lib/bootstrap.php';
 require_once WN_ROOT . '/lib/purchase.php';
+require_once WN_ROOT . '/lib/fin_note.php';
 $u = module_require('purchase');
 $db = pdo(); $R = pur_rights($u); $S = pur_settings(); $uid = (int)$u['id']; $brs = pur_branches($u);
 $view = (string)($_GET['view'] ?? 'wait'); $id = (int)($_GET['id'] ?? 0);
@@ -160,6 +161,7 @@ ui_head('Purchase', $u, 'purchase'); ?>
 <p><?= h($bname((int)$o['branch_id'])) ?> · <?= $o['vendor'] ? '<a href="?view=vendor&id=' . (int)$o['vendor']['id'] . '">' . h($o['vendor']['name']) . '</a> (' . h(PUR_VSTATUS[$o['vendor']['status']]) . ')' : 'no vendor yet' ?> · before tax <?= $m($o['sub']) ?><?php foreach ($o['parts'] as [$pl, $pa]): ?> · <?= h($pl) ?> <?= $m($pa) ?><?php endforeach; ?> · <b>total <?= $m($o['total']) ?></b> <a class="btn sm ghost" href="print.php?id=<?= (int)$o['id'] ?>" target="_blank">Print</a></p>
 <?php if ($o['vendor'] && $o['vendor']['status'] !== 'approved'): ?><p class="muted">This vendor is not approved yet.</p><?php endif; ?>
 <?php foreach (['mgr' => 'Approver', 'ceo' => 'CEO'] as $k => $l): if ($o[$k . '_at']): ?><p class="muted"><?= $l ?>: <?= h((string)$o[$k . '_at']) ?><?= $o[$k . '_note'] !== '' ? ' — ' . h($o[$k . '_note']) : '' ?></p><?php endif; endforeach; ?>
+<?php if ($o['status'] === 'issued' && ($fn = fin_feed_note($db, $u, 'purchase', (string)$o['id'])) !== ''): ?><p><?= $fn ?></p><?php endif; ?>
 <?php if ($o['cancelled_why'] !== ''): ?><p class="muted"><?= h($o['cancelled_why']) ?></p><?php endif; ?>
 <?php if ($prob): ?><p class="muted">Before it can go on: <?= h(implode('; ', $prob)) ?></p><?php endif; ?>
 <?php if (!$edit): ?><table><tr><th>#</th><th>Item</th><th>Quantity</th><th>Rate</th><th>Tax %</th><th>Deliver by</th><th>Amount</th><th>Received</th></tr><?php foreach ($o['lines'] as $l): ?><tr><td><?= (int)$l['line_no'] ?></td><td><?= h($l['item']) ?></td><td><?= $q3($l['qty']) ?> <?= h($l['uom']) ?></td><td><?= $m($l['rate']) ?></td><td><?= (float)$l['tax_pct'] ?></td><td><?= h((string)$l['deliv_date']) ?></td><td><?= $m($l['taxable']) ?></td><td><?= (float)$l['qty_recv'] ? $q3($l['qty_recv']) : '' ?></td></tr><?php endforeach; ?></table><?php endif; ?></div>

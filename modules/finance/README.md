@@ -13,6 +13,10 @@ Tax registrations, sealed bank accounts, approval rule; ledgers, vouchers with m
 - `finance.php`
 - `lib/finance.php`
 - `lib/fin_ledger.php`
+- `lib/fin_feed.php`
+- `lib/fin_more.php`
+- `lib/fin_bankrec.php`
+- `lib/fin_insight.php`
 
 ## Porting rules
 1. Take the logic, never the data: no names, employee codes, phone numbers, emails, addresses, amounts, GSTIN / PAN / ID numbers, bank details or company wording.

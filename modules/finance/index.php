@@ -1,12 +1,13 @@
 <?php
 // Finance (books) — overview, vouchers (drafts / waiting / posted, one voucher: send on, decide, reverse), new voucher,
 // day book, ledgers + chart of accounts, ledger statement, trial balance, setup (registrations, banks, team, approval
-// rule, books start / lock), settings. Rules in lib/finance.php.
+// rule, books start / lock), settings; bring in from other modules, ledger mapping, openings, P&L and balance sheet,
+// management view, bank reconciliation. Rules in lib/finance.php and lib/fin_more.php.
 declare(strict_types=1);
 require __DIR__ . '/../../lib/bootstrap.php';
-require_once WN_ROOT . '/lib/finance.php';
+require_once WN_ROOT . '/lib/fin_more.php';
 $u = module_require('finance');
-$db = pdo(); $uid = (int)$u['id']; $R = fin_rights($db, $u); $B = fin_book($db);
+$db = pdo(); $uid = (int)$u['id']; $R = fin_rights($db, $u); $B = fin_book($db); $codes = user_roles($uid, !empty($u['is_owner']));
 $today = date('Y-m-d'); $ind = org('currency') === 'INR';
 $view = (string)($_GET['v'] ?? 'home');
 $d = fn(string $k, string $def) => fin_date_ok((string)($_GET[$k] ?? '')) ? (string)$_GET[$k] : $def;
@@ -32,6 +33,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'member': fin_member_save($db, $R, $uid, (int)$_POST['who'], (string)($_POST['role'] ?? '')); flash('Team saved.'); $back = 'index.php?v=setup'; break;
             case 'rule': fin_rule_add($db, $R, $uid, $_POST, $today); flash('Approval rule saved; earlier rules stay as history.'); $back = 'index.php?v=setup'; break;
             case 'books': fin_books_set($db, $R, $uid, (string)($_POST['books_from'] ?? ''), (string)($_POST['locked_upto'] ?? ''), (string)($_POST['reason'] ?? '')); flash('Saved.'); $back = 'index.php?v=setup'; break;
+            case 'map': $n = fin_map_save($db, $R, $uid, $_POST); flash($n ? "$n mapping lines saved." : 'Nothing changed.'); $back = 'index.php?v=map'; break;
+            case 'feed': $src = (string)($_POST['src'] ?? ''); [$n, $bad] = fin_feed_make($db, $R, $codes, $uid, $src, (array)($_POST['refs'] ?? []), $today);
+                flash(($n ? "$n draft vouchers made; post them or send them for approval." : 'Nothing brought in.') . ($bad ? ' Left out: ' . implode('; ', array_slice($bad, 0, 5)) : ''), $bad && !$n ? 'err' : 'ok'); $back = 'index.php?v=feeds&src=' . urlencode($src); break;
+            case 'openings': $n = fin_openings_save($db, $R, $uid, $_POST); flash($n ? "$n opening balances saved." : 'Nothing changed.'); $back = 'index.php?v=openings'; break;
+            case 'stmt': $lid = (int)($_POST['ledger'] ?? 0); $back = 'index.php?v=bank&id=' . $lid;
+                $f = $_FILES['file'] ?? null;
+                if (!$f || ($f['error'] ?? 1) !== UPLOAD_ERR_OK || ($f['size'] ?? 0) > 5 * 1024 * 1024) throw new RuntimeException('Pick a statement file (CSV or .xlsx, up to 5 MB).');
+                try { [$n, $sk, $er] = fin_stmt_import($db, $R, $uid, $lid, (string)$f['tmp_name'], (string)$f['name']); } finally { @unlink((string)$f['tmp_name']); }
+                flash("$n lines added" . ($sk ? ", $sk already there" : '') . ($er ? '; ' . count($er) . ' rows not read: ' . implode(' ', array_slice($er, 0, 3)) : '') . '.'); break;
+            case 'recauto': $lid = (int)($_POST['ledger'] ?? 0); $n = fin_rec_auto($db, $R, $uid, $lid); flash($n ? "$n sure matches made." : 'No sure matches; match the rest by hand.'); $back = 'index.php?v=bank&id=' . $lid; break;
+            case 'recmatch': fin_rec_match($db, $R, $uid, $id, (int)($_POST['voucher'] ?? 0)); flash('Matched.'); $back = 'index.php?v=bank&id=' . (int)($_POST['ledger'] ?? 0); break;
+            case 'recset': fin_rec_set($db, $R, $uid, $id, (string)($_POST['to'] ?? ''), (string)($_POST['reason'] ?? '')); flash('Done.'); $back = 'index.php?v=bank&id=' . (int)($_POST['ledger'] ?? 0) . '&st=' . urlencode((string)($_POST['st'] ?? 'open')); break;
+            case 'recdraft': $n = fin_rec_draft($db, $R, $uid, $id, (int)($_POST['other'] ?? 0), $today); flash('Draft made; check it, then post or send it on. Match the line once it is posted.'); $back = 'index.php?v=voucher&id=' . $n; break;
             case 'settings':
                 if (!has_role($u, 'SUPERADMIN')) throw new RuntimeException('Only the Super Admin changes these.');
                 [$new, $err] = fin_settings_check($_POST, role_labels());
@@ -48,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $m = fn(int $x) => h(fin_amt($x, $ind));
 $dc = fn(int $x) => h(fin_drcr($x, $ind));
+$sg = fn(int $x) => h(($x < 0 ? '−' : '') . fin_amt(abs($x), $ind));
 $hid = fn(string $a, int $id = 0) => csrf_field() . '<input type="hidden" name="a" value="' . h($a) . '"><input type="hidden" name="id" value="' . $id . '">';
 $people = $db->query('SELECT id, name FROM users WHERE active = 1 ORDER BY name')->fetchAll(PDO::FETCH_KEY_PAIR);
 $L = fin_ledgers($db);
@@ -69,7 +84,8 @@ $waitMine = fin_waiting($db, $u);
 $dates = fn(string $v, string $extra = '') => '<form class="card row" style="flex-wrap:wrap"><input type="hidden" name="v" value="' . $v . '">' . $extra . '<label>From <input type="date" name="from" value="' . h($from) . '"></label><label>To <input type="date" name="to" value="' . h($to) . '"></label><button class="btn sm">Show</button></form>';
 ui_head('Finance', $u, 'finance'); ?>
 <nav class="row" style="flex-wrap:wrap"><?= $tab('home', 'Overview') ?><?= $tab('vouchers', 'Vouchers', $waitMine) ?><?= $R['enter'] ? $tab('new', 'New voucher') : '' ?><?= $tab('daybook', 'Day book') ?>
-<?= $tab('ledgers', 'Ledgers') ?><?= $tab('tb', 'Trial balance') ?><?= $tab('setup', 'Setup') ?><?= has_role($u, 'SUPERADMIN') ? $tab('settings', 'Settings') : '' ?></nav>
+<?= $tab('ledgers', 'Ledgers') ?><?= $tab('tb', 'Trial balance') ?><?= $tab('reports', 'P&L and balance sheet') ?><?= $tab('mgmt', 'Management view') ?>
+<?= $R['enter'] ? $tab('feeds', 'Bring in', $feedN = fin_feed_waiting($db, $u)) : '' ?><?= $tab('bank', 'Bank reconciliation') ?><?= $R['masters'] ? $tab('map', 'Ledger mapping') . $tab('openings', 'Opening balances') : '' ?><?= $tab('setup', 'Setup') ?><?= has_role($u, 'SUPERADMIN') ? $tab('settings', 'Settings') : '' ?></nav>
 
 <?php if ($view === 'home'): $D = fin_dash($db, $R, $uid, $today, (int)$B['fy_start']); $todo = $R['setup'] ? fin_todo($db) : []; ?>
 <?php if ($todo): ?><div class="card"><h2>Still to set up</h2><ul><?php foreach ($todo as $t): ?><li><?= h($t) ?></li><?php endforeach; ?></ul></div><?php endif; ?>
@@ -201,9 +217,87 @@ t.addEventListener('input',c);document.getElementById('finAdd').onclick=function
 <div class="card"><h2>Books start and lock</h2><p>Books start <b><?= h((string)($B['books_from'] ?: 'not set')) ?></b> · locked up to <b><?= h((string)($B['locked_upto'] ?: 'nothing locked')) ?></b> · year starts in month <?= (int)$B['fy_start'] ?> (Organisation settings)</p>
 <?php if ($R['lock']): ?><form method="post" class="row" style="flex-wrap:wrap"><?= $hid('books') ?><label>Books start <input type="date" name="books_from" value="<?= h((string)$B['books_from']) ?>"></label><label>Locked up to <input type="date" name="locked_upto" value="<?= h((string)$B['locked_upto']) ?>"></label><label>Reason (to open a locked period) <input name="reason" maxlength="300"></label><button class="btn sm">Save</button></form><?php endif; ?></div>
 
+<?php elseif ($view === 'feeds' && $R['enter']): $set = fin_settings(); $src = (string)($_GET['src'] ?? ''); $map = fin_map_get($db); ?>
+<div class="card"><h2>Bring in from other modules</h2><p class="muted">Finished records come in as draft vouchers, one per record, ever. Post them or send them for approval as usual.</p>
+<table><tr><th>From</th><th>Waiting</th><th>Already in</th><th>Ledger mapping</th></tr>
+<?php foreach (FIN_FEEDS as $k => [$lab, $need]): $can = fin_feed_can($R, $codes, $k, $set); $I = $can ? fin_feed_items($db, $R, $codes, $k) : null; $miss = array_filter($need, fn($x) => empty($map[$x])); ?>
+<tr><td><?= $can ? '<a href="?v=feeds&src=' . h($k) . '">' . h($lab) . '</a>' : h($lab) . ' <span class="muted">(not for your role)</span>' ?></td><td><?= $I ? count($I['items']) : '–' ?></td><td><?= $I ? (int)$I['done'] : '–' ?></td>
+<td><?= $miss ? '<span class="pill">Set ' . h(implode(', ', array_map(fn($x) => FIN_MAP_KEYS[$x][0], $miss))) . '</span>' : 'Ready' ?></td></tr>
+<?php endforeach; ?></table></div>
+<?php if (isset(FIN_FEEDS[$src]) && fin_feed_can($R, $codes, $src, $set)): $I = fin_feed_items($db, $R, $codes, $src); ?>
+<form method="post" class="card"><?= $hid('feed') ?><input type="hidden" name="src" value="<?= h($src) ?>"><h2><?= h(FIN_FEEDS[$src][0]) ?></h2>
+<?php if ($I['missing']): ?><p class="muted">That module has no records yet.</p><?php elseif (!$I['items']): ?><p class="muted">Nothing waiting.</p><?php else: ?>
+<table><tr><th></th><th>Date</th><th>Record</th><th></th><th style="text-align:right">Amount</th><th>Check</th></tr>
+<?php foreach ($I['items'] as $it): ?><tr><td><?= $it['problem'] === '' ? '<input type="checkbox" name="refs[]" value="' . h($it['ref']) . '" checked>' : '' ?></td><td><?= h($it['date']) ?></td><td><?= h($it['label']) ?></td><td class="muted"><?= h($it['sub']) ?></td><td style="text-align:right"><?= $m((int)$it['amount']) ?></td><td><?= $it['problem'] !== '' ? '<span class="pill">' . h($it['problem']) . '</span>' : 'OK' ?></td></tr><?php endforeach; ?>
+</table><button class="btn">Make draft vouchers for the ticked ones</button><?php endif; ?></form><?php endif; ?>
+
+<?php elseif ($view === 'map' && $R['masters']): $map = fin_map_get($db); ?>
+<form method="post" class="card"><?= $hid('map') ?><h2>Ledger mapping</h2><p class="muted">Which ledger each line of a record brought in from another module goes to. "Paid from" lines need a bank or cash ledger.</p>
+<table><tr><th>Line</th><th>Ledger</th></tr><?php $grp = ''; foreach (FIN_MAP_KEYS as $k => [$lab, $nat]): $g = explode('.', $k)[0]; if ($g !== $grp): $grp = $g; ?><tr><th colspan="2"><?= h(['pay' => 'Payroll', 'claim' => 'Expense claims', 'vendor' => 'Vendor bills', 'sale' => 'CRM orders', 'purchase' => 'Purchase orders', 'bank' => 'Bank reconciliation'][$g] ?? $g) ?></th></tr><?php endif; ?>
+<tr><td><?= h($lab) ?> <span class="muted">(<?= h(FIN_NATURES[$nat]) ?>)</span></td><td><select name="map[<?= h($k) ?>]"><option value="">— not set —</option><?php foreach ($Ls as $l): ?><option value="<?= (int)$l['id'] ?>"<?= ($map[$k] ?? 0) === (int)$l['id'] ? ' selected' : '' ?>><?= h($l['name'] . ' · ' . $l['group_name']) ?></option><?php endforeach; ?></select></td></tr>
+<?php endforeach; ?></table><button class="btn">Save mapping</button></form>
+
+<?php elseif ($view === 'openings' && $R['masters']): $LA = array_values(array_filter(fin_ledgers($db), fn($l) => !(int)$l['restricted'] || $R['sens'])); $diff = fin_opening_diff(fin_ledgers($db, true)); $openOk = fin_openings_open($B); ?>
+<form method="post" class="card"><?= $hid('openings') ?><h2>Opening balances as at <?= h((string)($B['books_from'] ?: 'the books start')) ?></h2>
+<p><?= $diff === 0 ? 'Dr and Cr openings agree.' : 'Openings do not agree: difference ' . $dc($diff) . '. Put the difference in a suspense or capital ledger.' ?></p>
+<?php if (!$openOk): ?><p class="muted">The books start is locked; openings no longer change.</p><?php endif; ?>
+<table><tr><th>Group</th><th>Ledger</th><th>Opening</th><th>Side</th></tr><?php foreach ($LA as $l): $o = (int)$l['opening_minor']; ?>
+<tr><td class="muted"><?= h($l['group_name']) ?></td><td><?= h($l['name']) ?></td><td><input name="ops[<?= (int)$l['id'] ?>]" value="<?= $o ? h(fin_amt(abs($o))) : '' ?>" inputmode="decimal" style="max-width:10em"<?= $openOk ? '' : ' disabled' ?>></td>
+<td><select name="side[<?= (int)$l['id'] ?>]"<?= $openOk ? '' : ' disabled' ?>><option value="dr">Dr</option><option value="cr"<?= $o < 0 || ($o === 0 && in_array($l['nature'], ['liability', 'income'], true)) ? ' selected' : '' ?>>Cr</option></select></td></tr><?php endforeach; ?></table>
+<?php if ($openOk): ?><button class="btn">Save openings</button><?php endif; ?></form>
+
+<?php elseif ($view === 'reports'): $P = fin_pl($db, $R, $from, $to); $S = fin_bs($db, $R, $to);
+$side = function (array $groups, int $total, string $title) use ($m) { $o = '<table><tr><th colspan="2">' . h($title) . '</th></tr>';
+    foreach ($groups as $g) { $o .= '<tr><td><b>' . h($g['group']) . '</b></td><td style="text-align:right"><b>' . $m($g['total']) . '</b></td></tr>'; foreach ($g['rows'] as [$n, $lid, $a]) $o .= '<tr><td style="padding-left:1.5em">' . ($lid ? '<a href="?v=statement&id=' . $lid . '">' . h($n) . '</a>' : h($n)) . '</td><td style="text-align:right">' . $m($a) . '</td></tr>'; }
+    return $o . '<tr><th>Total</th><th style="text-align:right">' . $m($total) . '</th></tr></table>'; }; ?>
+<?= $dates('reports') ?>
+<div class="card"><h2>Profit and loss · <?= h($from) ?> to <?= h($to) ?></h2><div class="grid"><div><?= $side($P['income'], $P['income_total'], 'Income') ?></div><div><?= $side($P['expense'], $P['expense_total'], 'Expenses') ?></div></div>
+<p><b><?= $P['profit'] >= 0 ? 'Profit' : 'Loss' ?>: <?= $m(abs($P['profit'])) ?></b></p></div>
+<div class="card"><h2>Balance sheet as at <?= h($to) ?></h2><div class="grid"><div><?= $side($S['liabilities'], $S['liability_total'], 'Liabilities and capital') ?><p>Profit and loss not yet closed: <?= $sg($S['profit']) ?></p></div><div><?= $side($S['assets'], $S['asset_total'], 'Assets') ?></div></div>
+<?= $S['diff'] !== 0 ? '<p class="pill">Assets and liabilities differ by ' . $m(abs($S['diff'])) . ' — the opening balances do not agree.</p>' : '<p class="muted">Assets = liabilities + profit and loss.</p>' ?></div>
+
+<?php elseif ($view === 'mgmt'): $M = fin_mgmt($db, $R, $u, $today, (int)$B['fy_start']); ?>
+<div class="grid">
+<div class="card"><div class="muted">Profit this month</div><h2><?= $sg($M['pl_month']['profit']) ?></h2><div class="muted">Income <?= $m($M['pl_month']['income_total']) ?> · expenses <?= $m($M['pl_month']['expense_total']) ?></div></div>
+<div class="card"><div class="muted">Profit this year</div><h2><?= $sg($M['pl_fy']['profit']) ?></h2></div>
+<div class="card"><div class="muted">Bank and cash</div><h2><?= $dc($M['cash']) ?></h2></div>
+<div class="card"><div class="muted">Customers owe</div><h2><?= $m($M['debtors']) ?></h2></div>
+<div class="card"><div class="muted">Owed to suppliers</div><h2><?= $m($M['creditors']) ?></h2></div>
+<div class="card"><div class="muted">Taxes payable</div><h2><?= $m($M['tax']) ?></h2></div>
+<div class="card"><div class="muted">Bank lines to reconcile</div><h2><a href="?v=bank"><?= (int)$M['open_lines'] ?></a></h2></div>
+<div class="card"><div class="muted">Records to bring in</div><h2><?= $R['enter'] ? '<a href="?v=feeds">' . (int)$M['feeds'] . '</a>' : (int)$M['feeds'] ?></h2></div>
+</div>
+<div class="card"><h2>Last six months</h2><table><tr><th>Month</th><th style="text-align:right">Income</th><th style="text-align:right">Expenses</th><th style="text-align:right">Profit</th></tr>
+<?php foreach ($M['months'] as [$ym, $in, $ex, $pr]): ?><tr><td><?= h($ym) ?></td><td style="text-align:right"><?= $m($in) ?></td><td style="text-align:right"><?= $m($ex) ?></td><td style="text-align:right"><?= $sg($pr) ?></td></tr><?php endforeach; ?></table>
+<p class="muted">Worked out from posted vouchers each time; restricted ledgers count in totals only.</p></div>
+
+<?php elseif ($view === 'bank'): $BL = array_values(array_filter($Ls, fn($l) => $l['kind'] === 'bank')); $lid = (int)($_GET['id'] ?? ($BL[0]['id'] ?? 0)); $st = in_array($_GET['st'] ?? '', ['open', 'matched', 'out'], true) ? $_GET['st'] : 'open'; ?>
+<div class="card row" style="flex-wrap:wrap"><?php foreach ($BL as $b): ?><a class="btn sm<?= (int)$b['id'] === $lid ? '' : ' ghost' ?>" href="?v=bank&id=<?= (int)$b['id'] ?>"><?= h($b['name']) ?></a> <?php endforeach; ?><?= $BL ? '' : '<span class="muted">No bank ledgers yet — make them on Ledgers.</span>' ?></div>
+<?php if ($lid && in_array($lid, array_map(fn($b) => (int)$b['id'], $BL), true)): $lines = fin_rec_lines($db, $lid, $st); $E = fin_rec_entries($db, $lid); $cand = $st === 'open' ? fin_rec_candidates($lines, $E) : []; $byKey = array_column($E, null, 'key'); $sug = $st === 'open' ? fin_rec_suggestions($db, $lid, $lines) : []; $Lm = fin_ledger_map($db); $brs = fin_brs($db, $lid, $to); ?>
+<?php if ($R['enter']): ?><form method="post" enctype="multipart/form-data" class="card row" style="flex-wrap:wrap"><?= $hid('stmt') ?><input type="hidden" name="ledger" value="<?= $lid ?>"><label>Bank statement (CSV / .xlsx) <input type="file" name="file" accept=".csv,.xlsx" required></label><button class="btn sm">Import</button><span class="muted">Columns found by their titles; a line already imported is never added twice.</span></form>
+<form method="post" class="card row"><?= $hid('recauto') ?><input type="hidden" name="ledger" value="<?= $lid ?>"><button class="btn sm">Match the sure ones</button><span class="muted">Same side and amount within <?= FIN_REC_DAYS ?> days, only where one voucher fits one line.</span></form><?php endif; ?>
+<nav class="row"><?php foreach (['open' => 'To reconcile', 'matched' => 'Matched', 'out' => 'Left out'] as $k => $l): ?><a class="btn sm<?= $st === $k ? '' : ' ghost' ?>" href="?v=bank&id=<?= $lid ?>&st=<?= $k ?>"><?= $l ?></a> <?php endforeach; ?></nav>
+<div class="card"><table><tr><th>Date</th><th>Narration</th><th style="text-align:right">Withdrawal</th><th style="text-align:right">Deposit</th><th></th></tr>
+<?php foreach ($lines as $l): ?><tr><td><?= h($l['line_date']) ?></td><td><?= h($l['narration']) ?><?= $l['ref'] !== '' ? ' <span class="muted">' . h($l['ref']) . '</span>' : '' ?><?= $l['note'] !== '' ? '<div class="muted">' . h($l['note']) . '</div>' : '' ?></td>
+<td style="text-align:right"><?= $l['out_minor'] ? $m((int)$l['out_minor']) : '' ?></td><td style="text-align:right"><?= $l['in_minor'] ? $m((int)$l['in_minor']) : '' ?></td><td>
+<?php if ($st === 'matched'): ?><a href="?v=voucher&id=<?= (int)$l['voucher_id'] ?>"><?= h((string)$l['number']) ?></a><?php endif; ?>
+<?php if ($R['enter'] && $st === 'open'): foreach ($cand[(int)$l['id']] ?? [] as $k): $e = $byKey[$k]; ?><form method="post" class="row"><?= $hid('recmatch', (int)$l['id']) ?><input type="hidden" name="ledger" value="<?= $lid ?>"><input type="hidden" name="voucher" value="<?= (int)$e['voucher_id'] ?>"><button class="btn sm">Match <?= h($e['number'] . ' · ' . $e['vdate']) ?></button></form><?php endforeach; ?>
+<?php if ($l['draft_id']): ?><a href="?v=voucher&id=<?= (int)$l['draft_id'] ?>">Draft made</a><?php else: ?><form method="post" class="row"><?= $hid('recdraft', (int)$l['id']) ?><select name="other"><option value="">Suspense (mapping)</option><?php foreach ($Ls as $x) if ($x['kind'] !== 'bank' && $x['kind'] !== 'cash'): ?><option value="<?= (int)$x['id'] ?>"<?= ($sug[(int)$l['id']][0] ?? 0) === (int)$x['id'] ? ' selected' : '' ?>><?= h($x['name']) ?></option><?php endif; ?></select><button class="btn sm ghost">Make draft</button><?= isset($sug[(int)$l['id']]) ? '<span class="muted">suggested from ' . (int)$sug[(int)$l['id']][1] . ' earlier line(s)</span>' : '' ?></form><?php endif; ?><?php endif; ?>
+<?php if ($R['enter']): ?><form method="post" class="row"><?= $hid('recset', (int)$l['id']) ?><input type="hidden" name="ledger" value="<?= $lid ?>"><input type="hidden" name="st" value="<?= h($st) ?>"><input type="hidden" name="to" value="<?= $st === 'out' ? 'open' : ($st === 'matched' ? 'open' : 'out') ?>"><input name="reason" placeholder="Reason" required maxlength="300"><button class="btn sm ghost"><?= $st === 'open' ? 'Leave out' : ($st === 'matched' ? 'Unmatch' : 'Bring back') ?></button></form><?php endif; ?>
+</td></tr><?php endforeach; ?><?= $lines ? '' : '<tr><td colspan="5" class="muted">Nothing here.</td></tr>' ?></table></div>
+<div class="card"><h2>Reconciliation statement as at <?= h($to) ?></h2><table>
+<tr><td>Balance in the books</td><td style="text-align:right"><?= $dc($brs['book']) ?></td></tr>
+<tr><td>Less deposits in the books, not yet on the statement</td><td style="text-align:right"><?= $m($brs['not_cleared']) ?></td></tr>
+<tr><td>Add payments in the books, not yet on the statement</td><td style="text-align:right"><?= $m($brs['not_presented']) ?></td></tr>
+<tr><td>Add bank credits not yet in the books</td><td style="text-align:right"><?= $m($brs['bank_in']) ?></td></tr>
+<tr><td>Less bank debits not yet in the books</td><td style="text-align:right"><?= $m($brs['bank_out']) ?></td></tr>
+<tr><th>Balance the statement should show</th><th style="text-align:right"><?= $dc($brs['bank']) ?></th></tr></table>
+<form class="row"><input type="hidden" name="v" value="bank"><input type="hidden" name="id" value="<?= $lid ?>"><label>As at <input type="date" name="to" value="<?= h($to) ?>"></label><button class="btn sm">Show</button></form></div>
+<?php endif; ?>
+
 <?php elseif ($view === 'settings' && has_role($u, 'SUPERADMIN')): $set = fin_settings(); $roles = role_labels(); ?>
 <form method="post" class="card"><?= $hid('settings') ?><h2>Settings</h2>
-<?php foreach (['setup_roles' => 'Change the setup, approve over the limit when no approver is set, lock the books', 'restricted_roles' => 'See restricted ledgers'] as $k => $l): ?><fieldset><legend><?= h($l) ?></legend><?php foreach ($roles as $c => $n): ?><label><input type="checkbox" name="<?= $k ?>[]" value="<?= h($c) ?>"<?= in_array($c, $set[$k], true) ? ' checked' : '' ?>> <?= h($n) ?></label> <?php endforeach; ?></fieldset><?php endforeach; ?>
+<?php foreach (['setup_roles' => 'Change the setup, approve over the limit when no approver is set, lock the books', 'restricted_roles' => 'See restricted ledgers', 'payroll_feed_roles' => 'Bring payroll totals into the books (never one person)'] as $k => $l): ?><fieldset><legend><?= h($l) ?></legend><?php foreach ($roles as $c => $n): ?><label><input type="checkbox" name="<?= $k ?>[]" value="<?= h($c) ?>"<?= in_array($c, $set[$k], true) ? ' checked' : '' ?>> <?= h($n) ?></label> <?php endforeach; ?></fieldset><?php endforeach; ?>
 <label>Role that works as Accounts executive <select name="team_role"><option value="">None</option><?php foreach ($roles as $c => $n): ?><option value="<?= h($c) ?>"<?= $set['team_role'] === $c ? ' selected' : '' ?>><?= h($n) ?></option><?php endforeach; ?></select></label>
 <button class="btn">Save</button></form>
 <?php else: ?><div class="card">Not available.</div><?php endif;
