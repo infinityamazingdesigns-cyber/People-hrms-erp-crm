@@ -26,7 +26,7 @@ const FIN_NATURES = ['asset' => 'Assets', 'liability' => 'Liabilities', 'income'
 const FIN_VTYPES = ['payment' => ['Payment', 'PMT'], 'receipt' => ['Receipt', 'RCT'], 'contra' => ['Contra', 'CTR'], 'journal' => ['Journal', 'JV']];
 const FIN_VSTATUS = ['draft' => 'Draft', 'waiting' => 'Waiting for approval', 'posted' => 'Posted'];
 const FIN_MAX_LINES = 60;
-const FIN_DEFAULTS = ['setup_roles' => ['SUPERADMIN'], 'restricted_roles' => ['SUPERADMIN', 'CEO'], 'team_role' => 'ACCOUNTS'];
+const FIN_DEFAULTS = ['setup_roles' => ['SUPERADMIN'], 'restricted_roles' => ['SUPERADMIN', 'CEO'], 'team_role' => 'ACCOUNTS', 'payroll_feed_roles' => ['SUPERADMIN']];
 /** Seeded groups: [name, nature, parent name or '', kind ('bank' | 'cash' | 'tax' | '')]. Parents come first. */
 const FIN_GROUP_SEED = [
     ['Capital Account', 'liability', '', ''], ['Reserves & Surplus', 'liability', 'Capital Account', ''],
@@ -51,11 +51,12 @@ function fin_settings(): array {
 }
 function fin_settings_check(array $in, array $roles): array {
     $o = []; $e = [];
+    $o['payroll_feed_roles'] = array_values(array_intersect(array_keys($roles), (array)($in['payroll_feed_roles'] ?? [])));
     foreach (['setup_roles' => 'changing the setup', 'restricted_roles' => 'seeing restricted ledgers'] as $k => $l) {
         $o[$k] = array_values(array_intersect(array_keys($roles), (array)($in[$k] ?? [])));
         if (!$o[$k]) $e[] = "Pick at least one role for $l.";
     }
-    if (!in_array('SUPERADMIN', $o['setup_roles'] ?? [], true)) $o['setup_roles'][] = 'SUPERADMIN';
+    foreach (['setup_roles', 'payroll_feed_roles'] as $k) if (!in_array('SUPERADMIN', $o[$k] ?? [], true)) $o[$k][] = 'SUPERADMIN';
     $t = (string)($in['team_role'] ?? '');
     $o['team_role'] = $t === '' || isset($roles[$t]) ? $t : 'ACCOUNTS';
     return [$o, $e];

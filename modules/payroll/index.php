@@ -3,6 +3,7 @@
 declare(strict_types=1);
 require __DIR__ . '/../../lib/bootstrap.php';
 require_once WN_ROOT . '/lib/payroll.php';
+require_once WN_ROOT . '/lib/fin_note.php';
 $u = module_require('payroll');
 $db = pdo();
 if (!pay_can($u)) { http_response_code(403); ui_head('Payroll', $u, 'payroll'); echo '<section class="card"><p>Salary figures are open only to logins the Super Admin allows (pay data).</p></section>'; ui_foot(); exit; }
@@ -89,7 +90,7 @@ ui_head('Payroll', $u, 'payroll');
 
 <?php if ($view === 'month'):
     $rows = pay_build($db, $ym, $u); $t = pay_totals($rows); $draft = $m['status'] === 'draft'; $open = (string)($_GET['code'] ?? ''); ?>
-<section class="card"><h2><?= h(date('F Y', strtotime($ym . '-01'))) ?> <span class="pill <?= $draft ? 'port' : 'on' ?>"><?= h(PAY_STATUS[$m['status']]) ?></span></h2>
+<section class="card"><h2><?= h(date('F Y', strtotime($ym . '-01'))) ?> <span class="pill <?= $draft ? 'port' : 'on' ?>"><?= h(PAY_STATUS[$m['status']]) ?></span><?= $draft || $m['status'] === 'checked' ? '' : ' ' . fin_feed_note($db, $u, 'payroll', $ym) ?></h2>
   <p><span class="pill">People <?= $t['people'] ?></span> <span class="pill">Gross <?= $M($t['gross']) ?></span> <span class="pill">Deductions <?= $M($t['deductions']) ?></span> <span class="pill">Net <?= $M($t['net']) ?></span>
      <span class="pill">Employer <?= $M($t['employer']) ?></span> <span class="pill">Cost <?= $M($t['cost']) ?></span><?= $t['held'] ? ' <span class="pill port">On hold ' . $t['held'] . '</span>' : '' ?><?= $t['flags'] ? ' <span class="pill port">To look at ' . $t['flags'] . '</span>' : '' ?></p>
   <form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="ym" value="<?= $ym ?>">

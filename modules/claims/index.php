@@ -3,6 +3,7 @@
 declare(strict_types=1);
 require __DIR__ . '/../../lib/bootstrap.php';
 require_once WN_ROOT . '/lib/claims.php';
+require_once WN_ROOT . '/lib/fin_note.php';
 $u = module_require('claims');
 $db = pdo();
 $set = ec_settings();
@@ -111,7 +112,7 @@ ui_head('Expense claims', $u, 'claims'); ?>
         <?php if ((int)$l['allowed']): ?><input name="note" placeholder="Why not allowed" size="14"><button class="btn sm ghost">Not allowed</button><?php else: ?><button class="btn sm ghost" name="allow" value="1">Allow</button><?php endif; ?></form><?php endif; ?></td></tr>
   <?php endforeach; ?></tbody></table>
   <p><span class="pill">Spent <?= $M($t['spent']) ?></span><?= $t['allowed'] < $t['spent'] ? ' <span class="pill port">Allowed ' . $M($t['allowed']) . '</span>' : '' ?><?= $t['received'] ? ' <span class="pill">Received ' . $M($t['received']) . '</span>' : '' ?> <span class="pill on"><?= ec_payable($c) < 0 ? 'To give back ' . $M(-ec_payable($c)) : 'To pay ' . $M(ec_payable($c)) ?></span></p>
-  <?php if ($c['status'] === 'paid'): ?><p>Paid on <?= h(date('j M Y', strtotime((string)$c['paid_on']))) ?> · <?= h($c['pay_mode']) ?><?= $c['pay_ref'] !== '' ? ' · ' . h($c['pay_ref']) : '' ?></p><?php endif; ?>
+  <?php if ($c['status'] === 'paid'): ?><p>Paid on <?= h(date('j M Y', strtotime((string)$c['paid_on']))) ?> · <?= h($c['pay_mode']) ?><?= $c['pay_ref'] !== '' ? ' · ' . h($c['pay_ref']) : '' ?> <?= fin_feed_note($db, $u, 'claim', (string)$c['id']) ?></p><?php endif; ?>
   <?php if ($own && in_array($c['status'], ['draft', 'submitted', 'returned'], true)): ?><p><a class="btn sm ghost" href="?view=edit&id=<?= $id ?>">Change</a></p>
     <form method="post" class="row"><?= csrf_field() ?><input type="hidden" name="a" value="withdraw"><input type="hidden" name="id" value="<?= $id ?>"><input name="note" placeholder="Reason (optional)"><button class="btn sm ghost">Withdraw</button></form><?php endif; ?>
   <?php if (!$own): foreach (['audit' => ['ok' => 'Audit done — send for approval', 'return' => 'Return to the person'], 'approve' => ['approve' => 'Approve', 'back' => 'Send back to HR', 'reject' => 'Reject']] as $step => $ds) if (ec_role($u, $step, $set) && $c['status'] === ['audit' => 'submitted', 'approve' => 'audited'][$step]): ?>

@@ -4,6 +4,7 @@
 declare(strict_types=1);
 require __DIR__ . '/../../lib/bootstrap.php';
 require_once WN_ROOT . '/lib/vendorbills.php';
+require_once WN_ROOT . '/lib/fin_note.php';
 $u = module_require('vendorbills');
 $db = pdo(); $set = vb_settings(); $c = vb_ctx($db, $u); $uid = (int)$u['id'];
 $isAdmin = has_role($u, 'SUPERADMIN');
@@ -113,7 +114,7 @@ ui_head('Vendor bills', $u, 'vendorbills'); ?>
 <tr><th>Entered by</th><td><?= h($b['entered_name']) ?></td></tr>
 <?php if ($b['check_by']): ?><tr><th>Checked</th><td><?= h((string)$b['check_at']) ?> <?= h($b['check_note']) ?></td></tr><?php endif; ?>
 <?php if ($b['approve_by']): ?><tr><th>Approval</th><td><?= h((string)$b['approve_at']) ?> <?= h($b['approve_note']) ?></td></tr><?php endif; ?>
-<?php if ($b['status'] === 'paid'): ?><tr><th>Paid</th><td><?= h((string)$b['paid_on']) ?> · <?= h($b['pay_mode']) ?> · <?= h($b['pay_ref']) ?> <?= h($b['pay_note']) ?></td></tr><?php endif; ?></table>
+<?php if ($b['status'] === 'paid'): ?><tr><th>Paid</th><td><?= h((string)$b['paid_on']) ?> · <?= h($b['pay_mode']) ?> · <?= h($b['pay_ref']) ?> <?= h($b['pay_note']) ?> <?= fin_feed_note($db, $u, 'vendor', (string)$b['id']) ?></td></tr><?php endif; ?></table>
 <?php if ($same && in_array($b['status'], ['submitted', 'checked'], true)): ?><p style="color:#b42318">Another bill of the same kind, vendor and month is already in: <?= h($same) ?>.</p><?php endif; ?>
 <p><?php foreach ($fl as $f): ?><a href="?v=file&id=<?= (int)$f['id'] ?>" target="_blank" rel="noopener"><?= h(($f['kind'] === 'slip' ? 'Payment slip: ' : '') . $f['name']) ?></a> <?php endforeach; ?></p></div>
 <?php foreach (['check' => ['submitted', ['ok' => 'Checked, send for approval', 'return' => 'Return for correction']], 'approve' => ['checked', ['approve' => 'Approve', 'return' => 'Return for correction', 'reject' => 'Reject']]] as $step => [$st, $ds]):

@@ -67,6 +67,9 @@ A product for **any** organisation. Nothing in this repository may belong to one
 - **Finance (books)** (`modules/finance/`, `lib/finance.php`): tax registrations by the rule pack, sealed bank accounts,
   Finance team, approval rule; ledgers, vouchers with insert-only lines, numbers at posting, maker-checker (nobody
   decides their own), reversal never edit, books start + lock, restricted ledgers. Money in minor units. Tests FIN01–FIN13.
+  Part 2 (`lib/fin_more.php`): ledger mapping, records from payroll (totals only, payroll-feed roles) / claims / vendor bills
+  / CRM orders / purchase orders come in as DRAFTS once each (`fin_feed`), source pages show their book state
+  (`fin_note.php`), openings, P&L, balance sheet, management view, bank reconciliation. Tests FM01–FM17.
 - `needs` keeps dependencies honest: switching on pulls them in; switching off is refused while a dependant is on.
 
 ## Organisation values come from settings

@@ -59,7 +59,7 @@ function hm_waiting(PDO $db, array $u): array {
     $try('vendorbills', 'vendorbills', function () use ($db, $u) { $w = vb_waiting($db, vb_ctx($db, $u)); return [['Vendor bills to act on', $w['check'] + $w['approve'] + $w['pay'], 'modules/vendorbills/index.php'], ['Vendor bills returned to you', $w['returned'], 'modules/vendorbills/index.php']]; });
     $try('purchase', 'purchase', function () use ($db, $u) { $w = pur_waiting($db, $u); return [['Purchase approvals', count($w['reqs']) + count($w['orders']) + count($w['vendors']), 'modules/purchase/index.php']]; });
     $try('contracts', 'contracts', fn() => [['Agreements to approve', count(ct_waiting($db, $u)), 'modules/contracts/index.php']]);
-    $try('finance', 'finance', fn() => [['Vouchers to approve', fin_waiting($db, $u), 'modules/finance/index.php?v=vouchers']]);
+    $try('finance', 'fin_more', fn() => [['Vouchers to approve', fin_waiting($db, $u), 'modules/finance/index.php?v=vouchers'], ['Records to bring into the books', fin_feed_waiting($db, $u), 'modules/finance/index.php?v=feeds']]);
     $try('tasks', 'tasks', function () use ($db, $u) { $l = tk_lists($db, $u); return [['Tasks to approve', count($l['approve']), 'modules/tasks/index.php?view=given']]; });
     return hm_waiting_clean($L);
 }

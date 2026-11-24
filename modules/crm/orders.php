@@ -4,6 +4,7 @@
 declare(strict_types=1);
 require __DIR__ . '/../../lib/bootstrap.php';
 require_once WN_ROOT . '/lib/crm_orders.php';
+require_once WN_ROOT . '/lib/fin_note.php';
 $u = module_require('crm');
 $db = pdo(); $set = crm_settings(); $R = crm_rights($u); $uid = (int)$u['id'];
 $view = (string)($_GET['view'] ?? 'list'); $id = (int)($_GET['id'] ?? 0);
@@ -111,7 +112,7 @@ elseif ($view === 'order' || $view === 'edit'):
     $bt = $both(array_merge(crm_lines($set['internal_blockers']), crm_lines($set['customer_blockers']))); ?>
 <div class="card"><div class="row" style="justify-content:space-between"><h2><?= h($o['order_no']) ?> · <a href="index.php?view=cust&id=<?= (int)$cu['id'] ?>"><?= h($cu['name']) ?></a></h2>
 <?php if ($can && in_array($o['status'], ['Draft', 'Submitted'], true)): ?><a class="btn sm" href="?view=edit&id=<?= (int)$o['id'] ?>">Change</a><?php endif; ?></div>
-<p><b><?= h($o['status']) ?></b> · dispatch: <?= h($o['dispatch_status']) ?><?= $o['assign'] ? ' (' . h($o['assign'][0]['who']) . ($o['assign'][0]['accepted_at'] ? ', accepted' : '') . ')' : '' ?> · customer sees: <?= h(SO_STAGES[$o['stage']] ?? '—') ?></p>
+<p><b><?= h($o['status']) ?></b> · dispatch: <?= h($o['dispatch_status']) ?><?= $o['assign'] ? ' (' . h($o['assign'][0]['who']) . ($o['assign'][0]['accepted_at'] ? ', accepted' : '') . ')' : '' ?> · customer sees: <?= h(SO_STAGES[$o['stage']] ?? '—') ?><?= in_array($o['status'], ['Dispatched', 'Delivered', 'Closed'], true) ? ' · ' . fin_feed_note($db, $u, 'sale', (string)$o['id']) : '' ?></p>
 <p class="muted"><?= h(implode(' · ', array_filter(['From ' . $o['source'] . ($o['source_ref'] !== '' ? ' ' . $o['source_ref'] : ''), 'received ' . substr($o['received_at'], 0, 16), $o['po_number'] !== '' ? 'PO ' . $o['po_number'] . ($o['po_date'] ? ' of ' . $o['po_date'] : '') : '', 'advance ' . $o['advance_status'], $o['expected_dispatch'] ? 'expected ' . $o['expected_dispatch'] : '', $o['confirmed_dispatch'] ? 'confirmed ' . $o['confirmed_dispatch'] : '']))) ?></p>
 <p>Deliver to: <?= h($o['delivery_address']) ?> <?= h($o['delivery_postcode']) ?></p>
 <table><tr><th>#</th><th>Product</th><th>Qty</th><th>Sent</th><th>Rate</th><th>Disc</th><th>Tax</th><th>Value</th></tr><?php foreach ($o['lines'] as $l): ?><tr><td><?= (int)$l['line_no'] ?></td><td><?= h($l['description']) ?></td><td><?= $qty($l['qty']) ?> <?= h($l['unit']) ?></td><td><?= $qty($l['qty_dispatched']) ?></td><td><?= $money($l['rate']) ?></td><td><?= (float)$l['discount_pct'] ?>%</td><td><?= (float)$l['tax_pct'] ?>%</td><td><?= $money($l['line_value']) ?></td></tr><?php endforeach; ?>

@@ -177,7 +177,7 @@ return [
 
     'finance' => ['name' => 'Finance (books)', 'group' => 'pay', 'status' => 'built',
         'about' => 'Tax registrations, sealed bank accounts, approval rule; ledgers, vouchers with maker-checker, reversal, lock, day book, trial balance.',
-        'roles' => ['SUPERADMIN', 'CEO', 'ACCOUNTS'], 'entry' => 'modules/finance/', 'ref' => ['finance.php', 'lib/finance.php', 'lib/fin_ledger.php']],
+        'roles' => ['SUPERADMIN', 'CEO', 'ACCOUNTS'], 'entry' => 'modules/finance/', 'ref' => ['finance.php', 'lib/finance.php', 'lib/fin_ledger.php', 'lib/fin_feed.php', 'lib/fin_more.php', 'lib/fin_bankrec.php', 'lib/fin_insight.php']],
 
     /* ---------------- Performance & conduct ---------------- */
     'pms' => ['name' => 'Performance (KRA)', 'group' => 'perform', 'needs' => ['employees'], 'status' => 'built',
