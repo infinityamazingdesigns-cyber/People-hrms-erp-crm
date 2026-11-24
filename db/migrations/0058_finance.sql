@@ -1,0 +1,61 @@
+-- Finance: setup (tax registrations, bank accounts, team, approval rule) and the books (groups, ledgers, vouchers,
+-- insert-only entry lines, numbering per type and financial year). Money in whole minor units. Nothing is deleted.
+CREATE TABLE IF NOT EXISTS fin_book (
+  id TINYINT PRIMARY KEY, books_from DATE NULL, locked_upto DATE NULL, updated_by INT NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS fin_reg (
+  id INT AUTO_INCREMENT PRIMARY KEY, number VARCHAR(30) NULL, region VARCHAR(60) NOT NULL DEFAULT '', branches VARCHAR(200) NOT NULL DEFAULT '',
+  address VARCHAR(500) NOT NULL DEFAULT '', note VARCHAR(300) NOT NULL DEFAULT '', active TINYINT NOT NULL DEFAULT 1, off_reason VARCHAR(300) NULL,
+  created_by INT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_by INT NULL, updated_at DATETIME NULL,
+  UNIQUE KEY uk_number (number)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS fin_bank (
+  id INT AUTO_INCREMENT PRIMARY KEY, kind VARCHAR(12) NOT NULL DEFAULT 'current', bank VARCHAR(120) NOT NULL, branch_name VARCHAR(120) NOT NULL DEFAULT '',
+  code VARCHAR(20) NOT NULL DEFAULT '', box TEXT NOT NULL, last4 VARCHAR(4) NOT NULL DEFAULT '', acct_hash CHAR(64) NOT NULL,
+  settles_into INT NULL, reg_id INT NULL, is_main TINYINT NOT NULL DEFAULT 0, note VARCHAR(300) NOT NULL DEFAULT '',
+  active TINYINT NOT NULL DEFAULT 1, off_reason VARCHAR(300) NULL,
+  created_by INT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_by INT NULL, updated_at DATETIME NULL,
+  UNIQUE KEY uk_acct (acct_hash)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS fin_member (
+  user_id INT PRIMARY KEY, role VARCHAR(12) NOT NULL, active TINYINT NOT NULL DEFAULT 1, set_by INT NULL,
+  set_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS fin_approval (
+  id INT AUTO_INCREMENT PRIMARY KEY, limit_minor BIGINT NOT NULL, approver_id INT NOT NULL, from_date DATE NOT NULL,
+  note VARCHAR(300) NOT NULL DEFAULT '', set_by INT NULL, set_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, KEY k_from (from_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS fin_group (
+  id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(120) NOT NULL, nature VARCHAR(10) NOT NULL, parent_id INT NULL, kind VARCHAR(8) NOT NULL DEFAULT '',
+  seeded TINYINT NOT NULL DEFAULT 0, active TINYINT NOT NULL DEFAULT 1, off_reason VARCHAR(300) NULL,
+  created_by INT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY uk_name (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS fin_ledger (
+  id INT AUTO_INCREMENT PRIMARY KEY, group_id INT NOT NULL, name VARCHAR(160) NOT NULL, kind VARCHAR(8) NOT NULL DEFAULT '',
+  bank_id INT NULL, reg_id INT NULL, restricted TINYINT NOT NULL DEFAULT 0, opening_minor BIGINT NOT NULL DEFAULT 0,
+  note VARCHAR(300) NOT NULL DEFAULT '', active TINYINT NOT NULL DEFAULT 1, off_reason VARCHAR(300) NULL,
+  created_by INT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_by INT NULL, updated_at DATETIME NULL,
+  UNIQUE KEY uk_name (name), UNIQUE KEY uk_bank (bank_id), KEY k_group (group_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS fin_voucher (
+  id INT AUTO_INCREMENT PRIMARY KEY, reg_id INT NULL, vtype VARCHAR(10) NOT NULL, vdate DATE NOT NULL, fy VARCHAR(5) NOT NULL DEFAULT '',
+  number VARCHAR(30) NULL, narration VARCHAR(500) NOT NULL DEFAULT '', total_minor BIGINT NOT NULL DEFAULT 0, status VARCHAR(8) NOT NULL DEFAULT 'draft',
+  rev INT NOT NULL DEFAULT 1, restricted TINYINT NOT NULL DEFAULT 0, request_id VARCHAR(40) NULL, need VARCHAR(10) NOT NULL DEFAULT '', approver_id INT NULL,
+  created_by INT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NULL,
+  submitted_by INT NULL, submitted_at DATETIME NULL, decided_by INT NULL, decided_at DATETIME NULL, decide_note VARCHAR(300) NULL,
+  posted_by INT NULL, posted_at DATETIME NULL, reverses_id INT NULL, reversed_by_id INT NULL, reverse_reason VARCHAR(300) NULL,
+  UNIQUE KEY uk_req (request_id), UNIQUE KEY uk_no (vtype, fy, number), KEY k_date (status, vdate)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS fin_entry (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY, voucher_id INT NOT NULL, rev INT NOT NULL, line_no SMALLINT NOT NULL, ledger_id INT NOT NULL,
+  dr_minor BIGINT NOT NULL DEFAULT 0, cr_minor BIGINT NOT NULL DEFAULT 0, line_note VARCHAR(200) NOT NULL DEFAULT '',
+  KEY k_v (voucher_id, rev), KEY k_l (ledger_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS fin_seq (
+  vtype VARCHAR(10) NOT NULL, fy VARCHAR(5) NOT NULL, next_no INT NOT NULL DEFAULT 1, PRIMARY KEY (vtype, fy)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS fin_log (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY, user_id INT NULL, action VARCHAR(40) NOT NULL, entity VARCHAR(20) NOT NULL DEFAULT '',
+  entity_id VARCHAR(40) NOT NULL DEFAULT '', detail VARCHAR(600) NOT NULL DEFAULT '', at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, KEY k_ent (entity, entity_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

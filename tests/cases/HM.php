@@ -20,7 +20,7 @@ t('HM02 late, then today (priority, time), tomorrow, high; not urgent / waiting 
 t('HM03 at most ten tasks', count(hm_task_pick(array_map(fn($i) => ['id' => $i, 'prio' => 1, 'due_date' => '2026-01-01'], range(1, 30)), $d)) === HM_TASKS_SHOW);
 t('HM04 waiting lines: empty dropped, biggest first', hm_waiting_clean([['A', 0, 'x'], ['B', 2, 'y'], ['C', 5, 'z'], ['D', 2, 'w']]) === [['C', 5, 'z'], ['B', 2, 'y'], ['D', 2, 'w']]);
 $src = file_get_contents(WN_ROOT . '/lib/home.php');
-t('HM05 every waiting count sits behind module_allowed()', str_contains($src, "if (!module_allowed(\$u, \$key)) return;") && substr_count($src, '$try(') === 13);
+t('HM05 every waiting count sits behind module_allowed()', str_contains($src, "if (!module_allowed(\$u, \$key)) return;") && substr_count($src, '$try(') === 14);
 t('HM06 HR desks also check the module\'s own HR rule', str_contains($src, 'pf_is_hr($u) ?') && str_contains($src, 'kyc_is_hr($u) ?'));
 $tk = file_get_contents(WN_ROOT . '/modules/tasks/index.php');
 t('HM07 the home tick goes through Tasks\' own done rule and comes back home', str_contains($tk, "(\$_POST['back'] ?? '') === 'home' && \$a === 'done'") && str_contains(file_get_contents(WN_ROOT . '/index.php'), 'action="modules/tasks/index.php"'));

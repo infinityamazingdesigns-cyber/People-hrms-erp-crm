@@ -38,6 +38,7 @@ Generated from `config/modules.php`. Order of porting: see `PORTING.md`.
 - [x] Expense claims (`claims`)
 - [x] Branch day book (`daybook`)
 - [x] Vendor bills (HO) (`vendorbills`)
+- [x] Finance (books) (`finance`)
 - [x] Performance (KRA) (`pms`)
 - [x] Feedback & conduct (`conduct`)
 - [x] Asset register (`assets`)

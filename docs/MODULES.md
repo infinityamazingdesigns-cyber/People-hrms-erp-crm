@@ -2,7 +2,7 @@
 
 Generated from `config/modules.php` by `php tools/gen_docs.php`.
 
-**58 modules** — 58 ready · 0 porting · 0 planned
+**59 modules** — 59 ready · 0 porting · 0 planned
 
 ## For me
 
@@ -72,6 +72,7 @@ Generated from `config/modules.php` by `php tools/gen_docs.php`.
 | **Expense claims** `claims` | Multi-line claims with bills, HR audit → CEO approval → Accounts pay; drafts; duplicate checks. | — | Employee, HR Manager, CEO / Director, Accounts / Payment, Super Admin | Ready |
 | **Branch day book** `daybook` | Daily cash sheet per branch: bills, dispatch, money received, petty cash, close the day. | — | Employee, HR Manager, CEO / Director, Super Admin | Ready |
 | **Vendor bills (HO)** `vendorbills` | Rent, utilities and other branch bills paid from head office; repeating bills. | — | HR Manager, CEO / Director, Accounts / Payment, Super Admin | Ready |
+| **Finance (books)** `finance` | Tax registrations, sealed bank accounts, approval rule; ledgers, vouchers with maker-checker, reversal, lock, day book, trial balance. | — | Super Admin, CEO / Director, Accounts / Payment | Ready |
 
 ## Performance & conduct
 
